@@ -703,6 +703,126 @@ ANT_TRAILS_AGENTS = ExperimentPreset(
 )
 
 
+MYCELIUM_NETWORK = ExperimentPreset(
+    id="mycelium_network",
+    title="Mycelium Network / Fungal Growth",
+    category="Pattern Formation",
+    description=(
+        "Explores filamentary branching structures inspired by fungal mycelium. "
+        "High memory imprint and low decay create persistent thread-like traces. "
+        "Branching emerges from local coupling gradients."
+    ),
+    inspiration=(
+        "Fungal mycelium forms highly branched networks that optimise resource transport. "
+        "Tero et al. (2010) showed Physarum polycephalum produces near-optimal networks. "
+        "This preset uses abstract coupling and memory fields as substrate — "
+        "no real biochemistry is modelled."
+    ),
+    config=SimConfig(
+        height=64, width=64, seed=23,
+        noise_amplitude=0.04,
+        diffusion_energy=0.05,
+        diffusion_information=0.02,
+        memory_decay=0.995,
+        memory_imprint_strength=0.55,
+        coupling_gain=0.08,
+        coupling_loss=0.03,
+        flow_gradient_strength=0.04,
+        reaction_strength=0.18,
+        reaction_energy_threshold=0.55,
+    ),
+    expected_patterns=[
+        "thin branching filaments in memory field",
+        "high branch count and skeleton complexity",
+        "fractal dimension ~1.4-1.7",
+        "low active fraction but high boundary complexity",
+    ],
+    key_parameters=[
+        "memory_decay",
+        "memory_imprint_strength",
+        "coupling_gain",
+        "diffusion_energy",
+        "reaction_strength",
+    ],
+    limitations=[
+        "No hyphal tip guidance chemistry.",
+        "No nutrient gradient source/sink.",
+        "Branching is field-emergent, not rule-encoded.",
+    ],
+    suggested_metrics=[
+        "branch_count over time",
+        "fractal dimension of memory field",
+        "skeleton_density",
+        "boundary_complexity",
+    ],
+    tags=["mycelium", "fungal", "branching", "filaments", "morphogenesis"],
+    initial_condition=RandomClusteredSeed(
+        n_clusters=5, cluster_radius=3.0, energy_value=0.88, seed=23
+    ),
+)
+
+
+RIVER_NETWORK = ExperimentPreset(
+    id="river_network",
+    title="River Network / Dendritic Erosion",
+    category="Pattern Formation",
+    description=(
+        "Simulates dendritic channel formation via energy-flow erosion. "
+        "Flow gradient channels energy downhill, creating branching river-like networks "
+        "in the matter field as energy erodes substrate."
+    ),
+    inspiration=(
+        "Natural river networks form via positive feedback: channels concentrate flow, "
+        "flow erodes substrate, erosion deepens channels (Howard 1994). "
+        "This is a structural analogy using the energy and matter fields — "
+        "no real hydrology or sediment transport is simulated."
+    ),
+    config=SimConfig(
+        height=64, width=64, seed=31,
+        noise_amplitude=0.06,
+        diffusion_energy=0.18,
+        flow_gradient_strength=0.22,
+        flow_damping=0.88,
+        flow_advection_rate=0.12,
+        matter_erosion_rate=0.06,
+        matter_deposition_rate=0.002,
+        memory_decay=0.98,
+        memory_imprint_strength=0.3,
+        coupling_gain=0.03,
+        reaction_strength=0.08,
+    ),
+    expected_patterns=[
+        "branching channel-like structures in matter field",
+        "high flow-field directionality",
+        "increasing elongation of largest connected component",
+        "dendritic skeleton with many tips",
+    ],
+    key_parameters=[
+        "flow_gradient_strength",
+        "matter_erosion_rate",
+        "flow_advection_rate",
+        "diffusion_energy",
+        "flow_damping",
+    ],
+    limitations=[
+        "No true watershed geometry or elevation model.",
+        "No sediment budget or deposition chemistry.",
+        "Channel competition requires longer runs (500+ ticks).",
+    ],
+    suggested_metrics=[
+        "tip_count in matter field skeleton",
+        "branch_count over time",
+        "directionality of growth front",
+        "fractal dimension of matter field",
+    ],
+    tags=["river", "erosion", "dendritic", "channels", "morphogenesis", "flow"],
+    initial_condition=CompoundInitialCondition([
+        TopDownEnergyGradient(top_value=0.9, bottom_value=0.2),
+        RandomClusteredSeed(n_clusters=3, cluster_radius=2.5, energy_value=0.95, seed=31),
+    ]),
+)
+
+
 # ──────────────────────────────────────────────────────────────────
 # Registry
 # ──────────────────────────────────────────────────────────────────
@@ -720,6 +840,8 @@ PRESETS: Dict[str, ExperimentPreset] = {
         ECOSYSTEM_PATCH_DYNAMICS,
         BOIDS_AGENTS,
         ANT_TRAILS_AGENTS,
+        MYCELIUM_NETWORK,
+        RIVER_NETWORK,
     ]
 }
 

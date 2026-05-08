@@ -4,7 +4,7 @@
 > Each epic corresponds to a phase of the simulation architecture (workbook sections 10–16).  
 > Status: ✅ Done · 🔄 In Progress · 📋 Planned · 💡 Research
 >
-> **Current: v2.3.0 — Epics 9–11 complete — 266 tests, all passing.**
+> **Current: v2.4.0 — Epics 9–12 complete — 304 tests, all passing.**
 
 ---
 
@@ -234,23 +234,24 @@
 
 ---
 
-## Epic 12 – Morphogenesis & Growth Systems 📋
+## Epic 12 – Morphogenesis & Growth Systems ✅
 
 **Goal:** Branching, skeleton extraction, fractal metrics, growth front analysis.
 
 | # | Task | Status |
 |---|------|--------|
-| 12.1 | `GrowthFront` abstraction | 📋 |
-| 12.2 | Branching probability rule | 📋 |
-| 12.3 | Resource gradient following | 📋 |
-| 12.4 | Memory stabilisation for grown structures | 📋 |
-| 12.5 | Pruning / decay dynamics | 📋 |
-| 12.6 | Branch skeleton extraction | 📋 |
-| 12.7 | Branch count metric | 📋 |
-| 12.8 | Fractal dimension estimate | 📋 |
-| 12.9 | Tree-growth-specific visualization | 📋 |
-| 12.10 | Mycelium-like preset | 📋 |
-| 12.11 | River-network-like preset | 📋 |
+| 12.1 | `extract_skeleton` — medial-axis approximation via iterative thinning | ✅ |
+| 12.2 | `branch_count` — skeleton cells with ≥ 3 neighbours | ✅ |
+| 12.3 | `tip_count` — skeleton endpoints (1 neighbour) | ✅ |
+| 12.4 | `fractal_dimension` — box-counting estimate | ✅ |
+| 12.5 | `analyse_growth_front` — front area, energy, directionality vector | ✅ |
+| 12.6 | `GrowthFrontMetrics` dataclass | ✅ |
+| 12.7 | `MorphogenesisResult` dataclass (composite) | ✅ |
+| 12.8 | `analyse_morphogenesis` — single entry-point for all metrics | ✅ |
+| 12.9 | Dashboard: Morphogenese panel in 🧭 Spurenlesen tab | ✅ |
+| 12.10 | `mycelium_network` preset (Pattern Formation) | ✅ |
+| 12.11 | `river_network` preset (Pattern Formation) | ✅ |
+| 12.12 | `tests/test_morphogenesis.py` — 38 tests | ✅ |
 
 ---
 
@@ -285,6 +286,7 @@
 | **v2.1.0** | Epic 9 | Simulation gallery, 8 presets, dashboard gallery, CLI runner |
 | **v2.2.0** | Epic 10 | Initial conditions: 10 condition types, preset integration, dashboard selector |
 | **v2.3.0** | Epic 11 | Real agent layer: Boids + Ant policies, spatial hashing, field coupling, 2 new presets |
+| **v2.4.0** | Epic 12 | Morphogenesis: skeleton, fractal dim, growth front, 2 new presets (mycelium, river) |
 | **v3.0.0** | Epic 10–11 | Initial conditions + real agent layer |
 | **v3.1.0** | Epic 12–13 | Morphogenesis metrics + trace reading metrics |
 

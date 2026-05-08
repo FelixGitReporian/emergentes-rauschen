@@ -55,6 +55,7 @@ from emergent_noise.analysis.attractors import (
 )
 from emergent_noise.analysis.entropy import state_entropy_summary
 from emergent_noise.analysis.compartments import detect_compartments, particle_compartments
+from emergent_noise.analysis.morphogenesis import analyse_morphogenesis
 from emergent_noise.analysis.morphology import compute_morphology
 from emergent_noise.analysis.mutual_information import mi_matrix
 from emergent_noise.analysis.novelty import genome_diversity, genome_entropy
@@ -657,6 +658,72 @@ with tab_trace:
         phase_cols[2].metric(
             "Status",
             "⚠️ Nahe Übergang" if ph.get("near_transition") else "✅ Stabil",
+        )
+
+        # ── Morphogenese (Epic 12) ────────────────────────────────
+        st.divider()
+        st.subheader("🌱 Morphogenese-Analyse (Epic 12)")
+        st.caption(
+            "Skelett-Extraktion, Verzweigungspunkte, Wachstumsfront und fraktale Dimension. "
+            "Alle Metriken sind geometrische Deskriptoren, keine Kausalaussagen."
+        )
+        _morph_field = st.selectbox(
+            "Feld analysieren",
+            ["energy", "memory", "matter", "information", "coupling"],
+            key="morpho_field",
+        )
+        _morph_arr = getattr(state, _morph_field)
+        _morph = analyse_morphogenesis(
+            _morph_field, _morph_arr, tick=state.tick, compute_fractal=True,
+        )
+        mc1, mc2, mc3, mc4 = st.columns(4)
+        mc1.metric("🪷 Skelett-Dichte",       f"{_morph.skeleton_density:.3f}")
+        mc2.metric("🌳 Verzweigungspunkte",    _morph.branch_count)
+        mc3.metric("💡 Wachstumsspitzen",      _morph.tip_count)
+        mc4.metric("📐 Fraktale Dimension",    f"{_morph.fractal_dimension:.3f}")
+        mc5, mc6, mc7, mc8 = st.columns(4)
+        mc5.metric("🌍 Aktive Fläche",        f"{_morph.active_fraction:.1%}")
+        mc6.metric("🌐 Wachstumsfront",        _morph.growth_front.front_area)
+        mc7.metric("⚡ Front-Energie",          f"{_morph.growth_front.mean_front_energy:.3f}")
+        mc8.metric("🧭 Direktionalität",        f"{_morph.growth_front.directionality_magnitude:.3f}")
+
+        _skel_c1, _skel_c2 = st.columns(2)
+        with _skel_c1:
+            from emergent_noise.analysis.morphogenesis import extract_skeleton as _exskel
+            _skel_bin = _morph_arr > 0.5
+            _skel = _exskel(_skel_bin)
+            _overlay = np.stack([
+                _morph_arr,
+                np.zeros_like(_morph_arr),
+                _skel.astype(np.float32),
+            ], axis=-1)
+            fig_sk, ax_sk = plt.subplots(figsize=(4, 4))
+            ax_sk.imshow(np.clip(_overlay, 0, 1), origin="upper", interpolation="nearest")
+            ax_sk.set_title(f"Skelett ({_morph_field}, rot=Feld, blau=Skelett)", fontsize=8)
+            ax_sk.axis("off")
+            st.pyplot(fig_sk, use_container_width=True)
+            plt.close(fig_sk)
+
+        with _skel_c2:
+            from scipy.ndimage import binary_dilation as _bdil
+            _struct4 = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], dtype=bool)
+            _front_cells = _skel_bin & _bdil(~_skel_bin, structure=_struct4)
+            fig_gf, ax_gf = plt.subplots(figsize=(4, 4))
+            ax_gf.imshow(_morph_arr, cmap="Greens", origin="upper",
+                         interpolation="nearest", alpha=0.75)
+            if _front_cells.any():
+                _fy, _fx = np.where(_front_cells)
+                ax_gf.scatter(_fx, _fy, c="orange", s=5, alpha=0.85, label="Wachstumsfront")
+                ax_gf.legend(fontsize=7, loc="upper right")
+            ax_gf.set_title("Wachstumsfront (orange)", fontsize=8)
+            ax_gf.axis("off")
+            st.pyplot(fig_gf, use_container_width=True)
+            plt.close(fig_gf)
+
+        st.caption(
+            "⚠️ Skelett-Thinning ist eine topologische Näherung. "
+            "Box-Counting-Dimension erfordert Muster über mehrere Größenordnungen. "
+            "Direktionalität = 0 bei symmetrischen Mustern."
         )
 
         # ── JSON-Export ───────────────────────────────────────────
