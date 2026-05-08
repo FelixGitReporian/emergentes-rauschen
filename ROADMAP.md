@@ -4,7 +4,7 @@
 > Each epic corresponds to a phase of the simulation architecture (workbook sections 10–16).  
 > Status: ✅ Done · 🔄 In Progress · 📋 Planned · 💡 Research
 >
-> **Current: v2.1.0 — Epic 9 complete — 199 tests, all passing.**
+> **Current: v2.2.0 — Epics 9–10 complete — 236 tests, all passing.**
 
 ---
 
@@ -183,22 +183,28 @@
 
 ---
 
-## Epic 10 – Initial Conditions & Pattern Seeds 📋
+## Epic 10 – Initial Conditions & Pattern Seeds ✅
 
 **Goal:** Let presets define starting conditions (seed points, gradients, bursts) for reproducible pattern types.
 
 | # | Task | Status |
 |---|------|--------|
-| 10.1 | `InitialCondition` abstraction | 📋 |
-| 10.2 | Centered seed (single-point excitation) | 📋 |
-| 10.3 | Bottom seed for tree/root growth | 📋 |
-| 10.4 | Top-down energy gradient (light model) | 📋 |
-| 10.5 | Radial burst event | 📋 |
-| 10.6 | Moving disturbance event | 📋 |
-| 10.7 | Line/path seed | 📋 |
-| 10.8 | Random clustered seed | 📋 |
-| 10.9 | Allow presets to define `initial_condition` | 📋 |
-| 10.10 | Tests for deterministic initialization | 📋 |
+| 10.1 | `InitialCondition` abstract base + `CompoundInitialCondition` + `+` operator | ✅ |
+| 10.2 | `CenteredSeed` — high-energy spot at grid centre | ✅ |
+| 10.3 | `BottomSeed` — root zone / nutrient band at bottom edge | ✅ |
+| 10.4 | `TopSeed` — light / atmospheric input from top edge | ✅ |
+| 10.5 | `TopDownEnergyGradient` — smooth gradient, top high → bottom low | ✅ |
+| 10.6 | `BottomUpEnergyGradient` — smooth gradient, bottom high → top low | ✅ |
+| 10.7 | `RadialBurst` — ring of high energy at configurable radius | ✅ |
+| 10.8 | `LineSeed` — horizontal or vertical energy line | ✅ |
+| 10.9 | `PointSeed` — spot at arbitrary (row, col) with wrap | ✅ |
+| 10.10 | `RandomClusteredSeed` — N random circular energy blobs | ✅ |
+| 10.11 | `SinusoidalDisturbance` — stripe-like sinusoidal overlay | ✅ |
+| 10.12 | Named registry (`INITIAL_CONDITIONS`) + `get_initial_condition` helper | ✅ |
+| 10.13 | `GridState.initialize(initial_condition=...)` — zero-breakage hook | ✅ |
+| 10.14 | `ExperimentPreset.initial_condition` field; 4 presets updated | ✅ |
+| 10.15 | Dashboard: IC selector in sidebar; preset IC applied on Apply & Reset | ✅ |
+| 10.16 | `tests/test_initial_conditions.py` — 37 tests | ✅ |
 
 ---
 
@@ -271,6 +277,7 @@
 | **v1.0.0** | Epic 5–6 | Graph mode, multiscale model (meso/macro) |
 | **v2.0.0** | Epic 7–8 | Experiment framework, consciousness markers, learning dashboard |
 | **v2.1.0** | Epic 9 | Simulation gallery, 8 presets, dashboard gallery, CLI runner |
+| **v2.2.0** | Epic 10 | Initial conditions: 10 condition types, preset integration, dashboard selector |
 | **v3.0.0** | Epic 10–11 | Initial conditions + real agent layer |
 | **v3.1.0** | Epic 12–13 | Morphogenesis metrics + trace reading metrics |
 

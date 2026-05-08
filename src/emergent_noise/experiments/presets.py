@@ -16,8 +16,20 @@ Scientific caution:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List
+from typing import Dict, List, Optional
 
+from emergent_noise.core.initial_conditions import (
+    InitialCondition,
+    BottomSeed,
+    BottomUpEnergyGradient,
+    CenteredSeed,
+    CompoundInitialCondition,
+    RadialBurst,
+    RandomClusteredSeed,
+    SinusoidalDisturbance,
+    TopDownEnergyGradient,
+    UniformBaseline,
+)
 from emergent_noise.core.state import SimConfig
 
 
@@ -89,6 +101,7 @@ class ExperimentPreset:
     particle_settings: ParticleSettings = field(default_factory=ParticleSettings)
     tags: List[str] = field(default_factory=list)
     experimental: bool = False
+    initial_condition: Optional[InitialCondition] = None
 
 
 # ──────────────────────────────────────────────────────────────────
@@ -157,6 +170,7 @@ STIGMERGY_ANT_TRAILS = ExperimentPreset(
         "entropy reduction over time",
     ],
     tags=["stigmergy", "ants", "pheromones", "collective-behavior", "memory"],
+    initial_condition=RandomClusteredSeed(n_clusters=6, cluster_radius=3.0, energy_value=0.8, seed=42),
 )
 
 
@@ -290,6 +304,10 @@ TREE_GROWTH_BRANCHING = ExperimentPreset(
         "spatial entropy over time",
     ],
     tags=["tree-growth", "morphogenesis", "branching", "plants", "growth"],
+    initial_condition=CompoundInitialCondition([
+        TopDownEnergyGradient(top_value=0.15, bottom_value=0.85),
+        BottomSeed(band_height=5, energy_value=0.9, also_matter=True),
+    ]),
 )
 
 
@@ -347,6 +365,7 @@ REACTION_DIFFUSION_TURING = ExperimentPreset(
         "field variance over time",
     ],
     tags=["reaction-diffusion", "turing-patterns", "morphogenesis", "pattern-formation"],
+    initial_condition=SinusoidalDisturbance(wavelength=20.0, amplitude=0.15, axis=0),
 )
 
 
@@ -404,6 +423,7 @@ EXCITABLE_MEDIA_WAVES = ExperimentPreset(
         "spatial coherence",
     ],
     tags=["excitable-media", "waves", "neural-inspired", "bio-inspired", "oscillation"],
+    initial_condition=RadialBurst(ring_width=3.0, energy_value=0.95),
 )
 
 

@@ -38,6 +38,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
 
+from emergent_noise.core.initial_conditions import (
+    get_initial_condition,
+    list_initial_condition_names,
+)
 from emergent_noise.experiments.presets import (
     ExperimentPreset,
     list_categories,
@@ -117,6 +121,20 @@ with st.sidebar:
             _apply_preset = False
     else:
         _apply_preset = False
+
+    st.divider()
+
+    # ── Manual Initial Condition ────────────────────────────────
+    st.subheader("🌱 Initial Condition")
+    _ic_names = list_initial_condition_names()
+    _sel_ic_name = st.selectbox(
+        "Starting pattern",
+        _ic_names,
+        index=_ic_names.index("none"),
+        key="manual_ic",
+        help="Applied on Reset / Apply Preset. Injects a structured seed into the initial state.",
+    )
+    _manual_ic = get_initial_condition(_sel_ic_name) if _sel_ic_name != "none" else None
 
     st.divider()
 
@@ -232,7 +250,8 @@ def _apply_preset_to_session(preset: ExperimentPreset) -> None:
         min_mass_for_compartment=ps.min_mass_for_compartment,
         seed=cfg.seed,
     )
-    st.session_state.sim_state = GridState.initialize(cfg)
+    ic = preset.initial_condition
+    st.session_state.sim_state = GridState.initialize(cfg, initial_condition=ic)
     st.session_state.sim_config = cfg
     st.session_state.loop = TickLoop(cfg)
     st.session_state.running = False
@@ -282,7 +301,7 @@ with col_btn3:
     if st.button("🔄 Reset"):
         cfg = _build_config()
         pcfg = _build_particle_config()
-        st.session_state.sim_state = GridState.initialize(cfg)
+        st.session_state.sim_state = GridState.initialize(cfg, initial_condition=_manual_ic)
         st.session_state.sim_config = cfg
         st.session_state.loop = TickLoop(cfg)
         st.session_state.running = False

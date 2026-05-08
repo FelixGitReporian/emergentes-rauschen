@@ -47,10 +47,12 @@ def run(preset_id: str, steps: int, analyze_every: int = 50) -> None:
     if preset.experimental:
         print("   ⚠️  Experimental — interpret results carefully.")
     print(f"   {preset.description}\n")
+    ic_name = type(preset.initial_condition).__name__ if preset.initial_condition else "UniformBaseline"
     print(f"   Grid:  {preset.config.height}×{preset.config.width}  |  Seed: {preset.config.seed}")
+    print(f"   IC:    {ic_name}")
     print(f"   Steps: {steps}  |  Analyzing every {analyze_every} ticks\n")
 
-    state = GridState.initialize(preset.config)
+    state = GridState.initialize(preset.config, initial_condition=preset.initial_condition)
     loop = TickLoop(preset.config)
     canalyzer = ConsciousnessAnalyzer()
 

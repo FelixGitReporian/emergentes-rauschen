@@ -17,10 +17,13 @@ Simulation werden hier definiert – keine magischen Zahlen in anderen Modulen.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict
+from typing import TYPE_CHECKING, Dict, Optional
 
 import numpy as np
 from pydantic import BaseModel, Field, model_validator
+
+if TYPE_CHECKING:
+    from emergent_noise.core.initial_conditions import InitialCondition
 
 
 FIELD_NAMES: tuple[str, ...] = (
@@ -199,11 +202,24 @@ class GridState:
     # ------------------------------------------------------------------
 
     @classmethod
-    def initialize(cls, config: SimConfig) -> "GridState":
+    def initialize(
+        cls,
+        config: SimConfig,
+        initial_condition: Optional["InitialCondition"] = None,
+    ) -> "GridState":
         """Erzeuge einen neuen Anfangszustand aus ``config``.
 
         Zufallswerte werden mit ``config.seed`` initialisiert, damit Läufe
         vollständig reproduzierbar sind. Alle Werte werden auf [0, 1] geclippt.
+
+        Parameters
+        ----------
+        config:
+            Simulation configuration.
+        initial_condition:
+            Optional InitialCondition applied after random initialisation.
+            Allows presets to inject structured seeds (gradients, spots, lines)
+            without changing SimConfig. If None, the random baseline is used.
         """
         rng = np.random.default_rng(config.seed)
         H, W = config.height, config.width
@@ -215,7 +231,7 @@ class GridState:
         def _uniform_field() -> np.ndarray:
             return rng.uniform(0.0, 1.0, (H, W)).astype(np.float32)
 
-        return cls(
+        state = cls(
             energy=_rand_field(config.init_energy_mean, config.init_energy_std),
             matter=_rand_field(config.init_matter_mean, config.init_matter_std),
             information=_rand_field(config.init_information_mean, config.init_information_std),
@@ -236,6 +252,14 @@ class GridState:
             ),
             tick=0,
         )
+        if initial_condition is not None:
+            initial_condition.apply(state)
+            for _f in (
+                state.energy, state.matter, state.information, state.coupling,
+                state.reactivity, state.memory, state.coherence,
+            ):
+                np.clip(_f, 0.0, 1.0, out=_f)
+        return state
 
     # ------------------------------------------------------------------
     # Hilfsmethoden
