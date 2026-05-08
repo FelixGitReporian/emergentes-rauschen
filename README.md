@@ -91,6 +91,23 @@ python -m emergent_noise.experiments.runner -e stability_sweep
 
 ---
 
+## Results
+
+Reproducible experiment results are documented in [`docs/results/`](docs/results/):
+
+| Document | Summary |
+|---|---|
+| [benchmark-10k-stability-sweep.md](docs/results/benchmark-10k-stability-sweep.md) | 10k-tick stability sweep across 6 noise levels; 32×32 (~188 ticks/s) and 64×64 (~115 ticks/s). Regime transition at noise≈0.05. Compartments peak at noise=0.10. |
+| [experiment-reaction-diffusion-memory.md](docs/results/experiment-reaction-diffusion-memory.md) | 36-run parameter sweep (`memory_decay` × `diffusion_energy`). Diffusion dominates over memory decay. Low diffusion → higher compartment count. Higher memory retention → slightly higher integrated score. |
+
+Raw CSV data is gitignored but fully reproducible:
+```bash
+python examples/benchmark_10k.py --grid 32
+python -m emergent_noise.experiments.runner -e reaction_diffusion_memory
+```
+
+---
+
 ## Tests
 
 ```bash
@@ -125,9 +142,10 @@ src/emergent_noise/
 tests/                  172 pytest-Tests
 docs/
   design-decisions/     ADR-0001 … ADR-0007
+  results/              Benchmark + experiment result summaries
   scientific-scope.md   Was das Projekt kann und was nicht
   research-context.md   Einordnung: ALife, Wolfram, IIT, Free-Energy
-outputs/                Simulationsergebnisse (gitignore)
+outputs/                Simulationsergebnisse (gitignore, reproducible)
 ```
 
 ---
