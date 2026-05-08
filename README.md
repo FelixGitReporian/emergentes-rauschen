@@ -7,8 +7,8 @@
 [![CI](https://github.com/FelixGitReporian/emergentes-rauschen/actions/workflows/ci.yml/badge.svg)](https://github.com/FelixGitReporian/emergentes-rauschen/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-354%20passing-brightgreen.svg)](#tests)
-[![Version](https://img.shields.io/badge/version-v2.0.0-blue.svg)](CHANGELOG.md)
+[![Tests](https://img.shields.io/badge/tests-398%20passing-brightgreen.svg)](#tests)
+[![Version](https://img.shields.io/badge/version-v2.6.0-blue.svg)](CHANGELOG.md)
 
 ---
 
@@ -279,6 +279,29 @@ python -m pytest
 
 # Pull Request auf develop
 ```
+
+---
+
+## Learning Mode
+
+Emergent Noise includes an interactive **Learning Mode** built into the dashboard (Tab 4 🎓).
+
+Each experiment preset explains:
+
+- **What you are seeing** — intuitive description with scientific caution
+- **Which parameters matter** — mathematical role, increase/decrease effects, mini-experiments
+- **Mathematical background** — key equations and concepts in plain language
+- **Guided experiments** — 2–5 step-by-step observation questions per preset
+- **Research Trail** — curated books, papers, courses, podcasts and projects, filterable by level and type
+
+The goal is to make artificial life, complex systems science, information theory and emergent
+simulation learnable through direct experimentation — not just watching, but asking questions.
+
+Presets with Learning Modules: `stigmergy_ant_trails`, `boids_field_approx`, `tree_growth_branching`,
+`reaction_diffusion_turing`, `excitable_media_waves`, `trace_reading_fossil_field`,
+`autopoiesis_membrane`, `ecosystem_patch_dynamics`.
+
+Docs: [docs/learning/](docs/learning/)
 
 ---
 

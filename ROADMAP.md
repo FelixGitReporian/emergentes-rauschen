@@ -4,7 +4,7 @@
 > Each epic corresponds to a phase of the simulation architecture (workbook sections 10–16).  
 > Status: ✅ Done · 🔄 In Progress · 📋 Planned · 💡 Research
 >
-> **Current: v2.5.0 — Epics 9–13 complete — 354 tests, all passing.**
+> **Current: v2.6.0 — Epics 9–14 complete — 398 tests, all passing.**
 
 ---
 
@@ -276,6 +276,56 @@
 
 ---
 
+## Epic 14 — Interactive Learning Layer ✅
+
+**Goal:** Learning modules, concept library, resource registry, dashboard Learning Mode.
+
+| # | Task | Status |
+|---|------|--------|
+| 14.1 | `LearningResource` dataclass + RESOURCES registry (21 resources) | ✅ |
+| 14.2 | `ConceptNote` dataclass + CONCEPTS registry (13 concepts) | ✅ |
+| 14.3 | `ParameterLearningNote` + `GuidedExperiment` + `LearningModule` dataclasses | ✅ |
+| 14.4 | LEARNING_MODULES registry with 8 modules linked to existing presets | ✅ |
+| 14.5 | All modules reference valid preset IDs, SimConfig fields, concept IDs, resource IDs | ✅ |
+| 14.6 | Dashboard: Learning Mode panel in Tab 4 (5 inner tabs) | ✅ |
+| 14.7 | Dashboard: What am I seeing? — intuition, concepts, observation questions | ✅ |
+| 14.8 | Dashboard: Parameters — per-parameter expanders with math role and experiments | ✅ |
+| 14.9 | Dashboard: Mathematics — mathematical background + next steps | ✅ |
+| 14.10 | Dashboard: Guided Experiments — numbered steps with hints | ✅ |
+| 14.11 | Dashboard: Research Trail — filterable by level + type | ✅ |
+| 14.12 | `active_preset_id` session state wired to Learning Mode | ✅ |
+| 14.13 | `tests/test_learning.py` — 44 tests | ✅ |
+| 14.14 | `docs/learning/` — index.md, concepts.md, parameter-guide.md, research-trail.md, guided-experiments.md | ✅ |
+
+---
+
+## Epic 15 — Concept Library & Research Trail 📋
+
+**Goal:** Standalone concept browser, extended resource registry, resource filtering UI.
+
+| # | Task | Status |
+|---|------|--------|
+| 15.1 | Extend CONCEPTS to 20+ concepts | 📋 |
+| 15.2 | Extend RESOURCES to 40+ entries | 📋 |
+| 15.3 | Concept browser tab or panel in dashboard | 📋 |
+| 15.4 | Resource search (full text across title + description + tags) | 📋 |
+| 15.5 | Cross-link concepts to live metrics (e.g. click Moran's I → concept) | 📋 |
+
+---
+
+## Epic 16 — Guided Experiments & Parameter Sensitivity 📋
+
+**Goal:** Parameter sensitivity hints, compare-runs scaffolding, experiment journal.
+
+| # | Task | Status |
+|---|------|--------|
+| 16.1 | Parameter sensitivity hints (show effect when slider changes) | 📋 |
+| 16.2 | Add guided experiments for remaining presets | 📋 |
+| 16.3 | Experiment journal: save observation notes per run | 📋 |
+| 16.4 | Compare-runs placeholder: side-by-side field snapshots | 📋 |
+
+---
+
 ## Milestones
 
 | Milestone | Epics | Goal |
@@ -292,8 +342,8 @@
 | **v2.3.0** | Epic 11 | Real agent layer: Boids + Ant policies, spatial hashing, field coupling, 2 new presets |
 | **v2.4.0** | Epic 12 | Morphogenesis: skeleton, fractal dim, growth front, 2 new presets (mycelium, river) |
 | **v2.5.0** | Epic 13 | Trace metrics: Moran's I, wavefront speed, cluster lifetimes, entropy tracker, event reconstruction |
-| **v3.0.0** | Epic 10–11 | Initial conditions + real agent layer |
-| **v3.1.0** | Epic 12–13 | Morphogenesis metrics + trace reading metrics |
+| **v2.6.0** | Epic 14 | Interactive Learning Layer: LearningModules, concept library, resource registry, dashboard Learning Mode |
+| **v3.0.0** | Epics 15–16 | Concept browser, parameter sensitivity hints, experiment journal |
 
 ---
 

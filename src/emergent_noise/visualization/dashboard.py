@@ -62,6 +62,9 @@ from emergent_noise.analysis.trace_metrics import (
     MemoryEntropyTracker,
     compute_trace_metrics,
 )
+from emergent_noise.learning.modules import get_learning_module
+from emergent_noise.learning.concepts import concepts_for_preset
+from emergent_noise.learning.resources import RESOURCES
 from emergent_noise.analysis.mutual_information import mi_matrix
 from emergent_noise.analysis.novelty import genome_diversity, genome_entropy
 from emergent_noise.analysis.trace_reading import TraceReport, read_traces
@@ -1104,17 +1107,140 @@ with tab_learn:
 
     st.divider()
 
-    # ── VERTIEFUNGSEBENEN ───────────────────────────────────────────────
-    st.markdown("### 📚 Vertiefungsebenen — wähle deinen Einstieg")
+    # ── LEARNING MODE (Epic 14) ────────────────────────────────────────
+    st.markdown("### 🔬 Learning Mode — Preset erkunden")
 
-    level = st.radio(
-        "Vertiefung",
-        ["🟢 Einstieg", "🟡 Mittelstufe", "🔴 Forschungsfront"],
-        horizontal=True,
-    )
+    _active_pid = st.session_state.get("active_preset_id", "")
+    _lm = get_learning_module(_active_pid) if _active_pid else None
+    _lm_concepts = concepts_for_preset(_active_pid) if _active_pid else []
 
-    if level == "🟢 Einstieg":
-        st.markdown("""
+    _lm_tabs = st.tabs([
+        "� Was sehe ich?",
+        "🔧 Parameter",
+        "📐 Mathematik",
+        "🔬 Guided Experiments",
+        "� Research Trail",
+    ])
+
+    with _lm_tabs[0]:  # Was sehe ich?
+        if _lm:
+            st.markdown(f"#### {_lm.preset_id.replace('_', ' ').title()}")
+            st.info(_lm.intuition)
+            st.markdown("**Lernziele:**")
+            for _goal in _lm.learning_goals:
+                st.markdown(f"- {_goal}")
+            if _lm_concepts:
+                st.markdown("**Verwandte Konzepte:**")
+                for _c in _lm_concepts:
+                    with st.expander(f"**{_c.title}** — {_c.short_explanation}"):
+                        st.markdown(_c.deeper_explanation)
+                        if _c.mathematical_keywords:
+                            st.markdown("*Mathematische Stichworte:* " + ", ".join(f"`{k}`" for k in _c.mathematical_keywords))
+            st.markdown("**Beobachtungsfragen:**")
+            for _q in _lm.observation_questions:
+                st.markdown(f"- {_q}")
+        else:
+            st.info("Wähle ein Preset in der Sidebar, um Learning Mode zu aktivieren.")
+            st.markdown("**Verfügbare Learning Module:** " + ", ".join([
+                f"`{pid}`" for pid in [
+                    "stigmergy_ant_trails", "boids_field_approx", "tree_growth_branching",
+                    "reaction_diffusion_turing", "excitable_media_waves",
+                    "trace_reading_fossil_field", "autopoiesis_membrane", "ecosystem_patch_dynamics",
+                ]
+            ]))
+
+    with _lm_tabs[1]:  # Parameter
+        if _lm and _lm.parameter_notes:
+            st.markdown("Für jeden Parameter: Intuition, mathematische Rolle, Effekte und Mini-Experimente.")
+            for _pn in _lm.parameter_notes:
+                with st.expander(f"`{_pn.parameter}`"):
+                    st.markdown(f"**Intuition:** {_pn.plain_language}")
+                    st.markdown(f"**Mathematische Rolle:** {_pn.mathematical_role}")
+                    if _pn.what_happens_if_increased:
+                        st.markdown(f"**Erhöhen →** {_pn.what_happens_if_increased}")
+                    if _pn.what_happens_if_decreased:
+                        st.markdown(f"**Verringern →** {_pn.what_happens_if_decreased}")
+                    if _pn.suggested_experiments:
+                        st.markdown("**Mini-Experiment:**")
+                        for _se in _pn.suggested_experiments:
+                            st.markdown(f"  - {_se}")
+        else:
+            st.info("Kein aktives Preset mit Parameter-Notizen. Preset in der Sidebar wählen.")
+
+    with _lm_tabs[2]:  # Mathematik
+        if _lm:
+            st.markdown("#### Mathematischer Hintergrund")
+            st.markdown(_lm.mathematical_background)
+            if _lm.next_steps:
+                st.markdown("**Nächste Schritte:**")
+                for _ns in _lm.next_steps:
+                    st.markdown(f"- {_ns}")
+        else:
+            st.info("Preset wählen, um mathematischen Hintergrund zu sehen.")
+
+    with _lm_tabs[3]:  # Guided Experiments
+        if _lm and _lm.guided_experiments:
+            st.markdown("Führe diese Mini-Experimente durch und halte deine Beobachtungen fest.")
+            for _i, _exp in enumerate(_lm.guided_experiments, 1):
+                with st.expander(f"Experiment {_i}: {_exp.title}"):
+                    st.markdown(f"**Setup:** {_exp.setup}")
+                    st.markdown(f"**Frage:** {_exp.question}")
+                    if _exp.hint:
+                        st.markdown(f"*Hinweis: {_exp.hint}*")
+        else:
+            st.info("Preset wählen, um Guided Experiments zu sehen.")
+
+    with _lm_tabs[4]:  # Research Trail
+        _rt_level = st.radio(
+            "Filter nach Level",
+            ["Alle", "beginner", "intermediate", "advanced", "research"],
+            horizontal=True,
+        )
+        _rt_type = st.radio(
+            "Filter nach Typ",
+            ["Alle", "book", "paper", "course", "website", "podcast", "project"],
+            horizontal=True,
+        )
+        if _lm and _lm.resource_ids:
+            _rt_pool = [RESOURCES[rid] for rid in _lm.resource_ids if rid in RESOURCES]
+            st.markdown(f"#### Ressourcen für dieses Preset ({len(_rt_pool)})")
+        else:
+            from emergent_noise.learning.resources import list_resources as _lr
+            _rt_pool = _lr()
+            st.markdown(f"#### Alle kurierten Ressourcen ({len(_rt_pool)})")
+        if _rt_level != "Alle":
+            _rt_pool = [r for r in _rt_pool if r.level == _rt_level]
+        if _rt_type != "Alle":
+            _rt_pool = [r for r in _rt_pool if r.type == _rt_type]
+        _TYPE_ICON = {
+            "book": "📖", "paper": "📄", "course": "🎓", "website": "🌐",
+            "podcast": "🎙️", "project": "🛠️", "video": "🎬", "documentation": "📋",
+        }
+        for _res in _rt_pool:
+            _icon = _TYPE_ICON.get(_res.type, "🔗")
+            _link = f"[{_res.title}]({_res.url})" if _res.url else _res.title
+            _authors = ", ".join(_res.authors) if _res.authors else ""
+            _year = f" ({_res.year})" if _res.year else ""
+            _doi = f" — DOI: `{_res.doi}`" if _res.doi else ""
+            st.markdown(
+                f"{_icon} **{_link}**{_year}  \n"
+                f"*{_authors}*{_doi}  \n"
+                f"{_res.description}"
+            )
+
+    st.divider()
+
+    # ── Vertiefungsebenen (klassisch) als Expander ────────────────────
+    with st.expander("📚 Klassische Vertiefungsebenen (Einstieg / Mittelstufe / Forschungsfront)"):
+        level = st.radio(
+            "Vertiefung",
+            ["🟢 Einstieg", "🟡 Mittelstufe", "🔴 Forschungsfront"],
+            horizontal=True,
+            key="_classic_level",
+        )
+
+        if level == "🟢 Einstieg":
+            st.markdown("""
 #### Was du hier siehst
 
 Diese Simulation ist ein **zellulärer Automat** mit mehreren gekoppelten Feldern.
@@ -1130,9 +1256,9 @@ die sich nach lokalen Regeln von Tick zu Tick verändern.
 
 **Zum Nachlesen:**
 """)
-        col_a, col_b = st.columns(2)
-        with col_a:
-            st.markdown("""
+            col_a, col_b = st.columns(2)
+            with col_a:
+                st.markdown("""
 **Bücher:**
 - 📖 *Complexity: A Guided Tour* — Melanie Mitchell *(der beste Einstieg)*
 - 📖 *Artificial Life: A Report from the Frontier* — Steven Levy
@@ -1145,8 +1271,8 @@ die sich nach lokalen Regeln von Tick zu Tick verändern.
 - 🌐 [Complexity Explorer — ABM-Kurs](https://www.complexityexplorer.org/courses/183-introduction-to-agent-based-modeling)
   *(kostenloser Online-Kurs, Santa Fe Institute)*
 """)
-        with col_b:
-            st.markdown("""
+            with col_b:
+                st.markdown("""
 **Interaktive Demos:**
 - 🎮 [Lenia — kontinuierliche zelluläre Automaten](https://chakazul.github.io/lenia.html)
   *(schöne Visualisierungen)*
@@ -1158,58 +1284,45 @@ die sich nach lokalen Regeln von Tick zu Tick verändern.
   *(Santa Fe Institute, ~30 Min pro Episode)*
 """)
 
-    elif level == "🟡 Mittelstufe":
-        st.markdown("""
+        elif level == "🟡 Mittelstufe":
+            st.markdown("""
 #### Theoretische Grundlagen
 
 **Integrated Information Theory (IIT, Tononi 2004)**
 
 Bewusstsein = das Maß Φ (Phi) an integrierter Information im System.
-Ein System mit Φ > 0 hat irgendeine Form von Erfahrung.
 Das Phi hier ist ein **stark vereinfachter Proxy** — echter Phi ist NP-schwer.
 
 **Free-Energy-Prinzip (Friston 2010)**
 
-Biologische Systeme minimieren "Surprise" — die Abweichung zwischen
-erwartetem und tatsächlichem Sensorinput. Das führt zu aktivem Verhalten
-(Active Inference) und Wahrnehmung. Hier gemessen als Gedächtnis-Energie-Korrelation.
+Biologische Systeme minimieren "Surprise". Hier gemessen als Gedächtnis-Energie-Korrelation.
 
 **Global Workspace Theory (Baars/Dehaene)**
 
-Bewusstsein entsteht, wenn Information aus einem lokalen "Hot Spot" global
-im Gehirn "ausgesendet" wird. Hier gemessen als Gini-Koeffizient der Information
-(Ungleichverteilung = lokale Dominanz = GWT-ähnlich).
+Bewusstsein entsteht, wenn Information global ausgesendet wird. Hier: Gini-Koeffizient.
 
 **Assembly Theory (Walker/Davies)**
 
-Information ist nicht nur passiv gespeichert — sie ist in den Prozessen kodiert,
-die Strukturen aufbauen. Komplexität = Anzahl der benötigten Schritte zum Aufbau.
+Komplexität = Anzahl der benötigten Schritte zum Aufbau einer Struktur.
 """)
-        col_m1, col_m2 = st.columns(2)
-        with col_m1:
-            st.markdown("""
+            col_m1, col_m2 = st.columns(2)
+            with col_m1:
+                st.markdown("""
 **Primärquellen:**
 - 📄 Tononi (2004): *An information integration theory of consciousness*
-  BMC Neuroscience 5, 42
 - 📄 Friston (2010): *The free-energy principle: a unified brain theory?*
-  Nature Reviews Neuroscience 11, 127–138
 - 📄 Walker & Davies (2013): *The algorithmic origins of life*
-  J. Royal Society Interface 10, 20120869
 """)
-        with col_m2:
-            st.markdown("""
+            with col_m2:
+                st.markdown("""
 **Podcasts & Vorträge:**
 - 🎙️ [Sara Walker — Information and the Origin of Life](https://www.preposterousuniverse.com/podcast/2020/01/13/79-sara-imari-walker-on-information-and-the-origin-of-life/)
-  *(Mindscape Podcast, Sean Carroll)*
-- 🎙️ [Sara Walker — Assembling Life in the Universe](https://www.bigbiology.org/episodes/2022/12/1/ep-93-assembling-life-in-the-universe-with-sara-walker)
-  *(Big Biology Podcast)*
-- 🌐 [OpenWorm — digitaler C. elegans Wurm](https://openworm.org/)
-  *(vollständiges Nervensystem simuliert)*
+-  [OpenWorm — digitaler C. elegans Wurm](https://openworm.org/)
 - 🌐 [Framsticks — evolvierte 3D-Kreaturen](https://www.framsticks.com/)
 """)
 
-    else:  # 🔴 Forschungsfront
-        st.markdown("""
+        else:  # 🔴 Forschungsfront
+            st.markdown("""
 #### Forschungsfront — offene Fragen
 
 **Was dieses System erkundet:**
@@ -1217,37 +1330,24 @@ die Strukturen aufbauen. Komplexität = Anzahl der benötigten Schritte zum Aufb
 - Korrelieren Φ-Proxy und Proto-Leben-Score? *(schaue Tab Partikel)*
 - Erzeugt Regel-Evolution (Epic 3) messbar mehr Novelty als statische Regeln?
 - Wann entstehen Graph-Kompartimente unabhängig von der initialen Topologie?
-
-**Aktuelle Forschungsrichtungen:**
 """)
-        col_r1, col_r2 = st.columns(2)
-        with col_r1:
-            st.markdown("""
+            col_r1, col_r2 = st.columns(2)
+            with col_r1:
+                st.markdown("""
 **ALife & Complexity:**
 - 🏛️ [ALIFE — International Conference on Artificial Life](https://alife.org/)
-  *(wichtigste ALife-Konferenz)*
-- 🏛️ Santa Fe Institute — Complexity Science
-- 📄 *Lenia* (Bert Wang-Chak Chan, 2019) — kontinuierliche CA mit reich. Dynamiken
+- 📄 *Lenia* (Bert Wang-Chak Chan, 2019)
 - 📄 *Neural Cellular Automata* (Mordvintsev et al., 2020)
-
-**Bewusstseinsforschung:**
-- IIT 4.0 (Albantakis et al., 2023)
-- Global Neuronal Workspace 2.0
-- Higher-Order Theories of Consciousness (HOT)
-- Quantum Mind Hypothesen (Penrose-Hameroff) *(sehr spekulativ!)*
 """)
-        with col_r2:
-            st.markdown("""
-**Experiment-Ideen mit diesem System:**
+            with col_r2:
+                st.markdown("""
+**Experiment-Ideen:**
 1. Scanne `coupling_gain` × `memory_decay` → Phi-Proxy-Landschaft
-2. Vergleiche Genome-Diversität nach 1000 Ticks mit/ohne Meta-Evolution
-3. Messe Proto-Leben-Score als Funktion der Partikel-Kollisionsrate
-4. Vergleiche emergente Graphdistanz: small-world vs. scale-free Topologie
+2. Messe Proto-Leben-Score als Funktion der Partikel-Kollisionsrate
 
 **Starte einen Sweep:**
 ```bash
 python -m emergent_noise.experiments.runner -e consciousness_marker_scan
-python -m emergent_noise.experiments.runner -e proto_life_parameter_search
 ```
 """)
 
