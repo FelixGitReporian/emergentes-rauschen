@@ -5,6 +5,31 @@ Format: [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.3.0] – 2026-05-08
+
+### Hinzugefügt (Epic 2 – Spurenlese-Engine)
+
+- `analysis/morphology.py`: `compute_morphology` — Randkomplexität, Lochigkeit,
+  Euler-Zahl, Elongation, Compactness für 2-D-Felder.
+- `analysis/mutual_information.py`: `field_mi`, `mi_matrix`, `local_mi` —
+  normalisierte Mutual Information zwischen Feldern (Histogramm-Methode).
+- `analysis/trace_reading.py`: `read_traces` + `TraceReport` — vollständige
+  Spurenlese-Engine, integriert alle Analyse-Module, JSON-exportierbar.
+- `interpretation/regime_classifier.py`: `classify_regime` + `RegimeResult` —
+  8 heuristische Regime-Typen (QUIESCENT, DIFFUSE, CLUSTERED, VORTEX,
+  COHERENT, FILAMENTARY, CRITICAL, COMPLEX) mit Konfidenz-Score.
+- `interpretation/narratives.py`: `build_narrative` + `Narrative` —
+  sprachliche Interpretation: Metaphern, wahrscheinliche Vergangenheit,
+  mögliche Zukunft, wissenschaftlicher Vorsichtshinweis.
+- `tests/test_epic2.py`: 26 neue Tests (78 gesamt, alle grün).
+
+### Wissenschaftliche Vorsicht
+
+Alle Regime-Labels, Interpretationen und Narrative sind Lesarten,
+keine Wahrheitsetiketten. Jedes Ergebnis enthält explizite Vorsichtsformulierungen.
+
+---
+
 ## [0.2.1] – 2026-05-08
 
 ### Geändert / Gefixt

@@ -51,14 +51,14 @@
 
 | # | Aufgabe | Status |
 |---|---------|--------|
-| 2.1 | `analysis/morphology.py` – Randkomplexität, Lochigkeit, Filamente | 📋 |
-| 2.2 | `analysis/clustering.py` – DBSCAN / Connected-Component-Tracking über Zeit | 📋 |
-| 2.3 | `analysis/mutual_information.py` – MI zwischen Feldern und Regionen | 📋 |
-| 2.4 | `analysis/trace_reading.py` – Spurenlese-Engine (JSON-Output) | 📋 |
-| 2.5 | `interpretation/regime_classifier.py` – Regime-Erkennung (Cluster-artig, Wellenartig, ...) | 📋 |
-| 2.6 | `interpretation/narratives.py` – Sprachliche Interpretation von Zustandsregimen | 📋 |
-| 2.7 | Dashboard-Erweiterung: Spurenlesen, Regime-Labels, Konfidenz | 📋 |
-| 2.8 | Tests für alle Analyse-Module | 📋 |
+| 2.1 | `analysis/morphology.py` – Randkomplexität, Lochigkeit, Filamente | ✅ |
+| 2.2 | `analysis/mutual_information.py` – MI zwischen Feldern und Regionen | ✅ |
+| 2.3 | `analysis/trace_reading.py` – Spurenlese-Engine (JSON-Output) | ✅ |
+| 2.4 | `interpretation/regime_classifier.py` – 8 Regime-Typen, Konfidenz | ✅ |
+| 2.5 | `interpretation/narratives.py` – Sprachliche Interpretation, Vergangenheit/Zukunft | ✅ |
+| 2.6 | Dashboard-Erweiterung: Spurenlesen, Regime-Labels, Konfidenz | 📋 |
+| 2.7 | Tests für alle Analyse-Module (26 neue Tests) | ✅ |
+| 2.8 | Connected-Component-Tracking über Zeit | 📋 |
 
 ---
 
