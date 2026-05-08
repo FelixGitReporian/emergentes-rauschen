@@ -60,6 +60,7 @@ from emergent_noise.analysis.mutual_information import mi_matrix
 from emergent_noise.analysis.novelty import genome_diversity, genome_entropy
 from emergent_noise.analysis.trace_reading import TraceReport, read_traces
 from emergent_noise.core.multiscale import MultiscaleController
+from emergent_noise.core.agents import AgentConfig, AgentSystem, step_agents
 from emergent_noise.core.particles import ParticleConfig, ParticleSystem, step_particles
 from emergent_noise.core.state import GridState, SimConfig
 from emergent_noise.core.tick import TickLoop
@@ -264,6 +265,11 @@ def _apply_preset_to_session(preset: ExperimentPreset) -> None:
     st.session_state.consciousness = ConsciousnessAnalyzer()
     st.session_state.last_cmarkers = None
     st.session_state.active_preset_id = preset.id
+    _policy = "ant" if "ant" in preset.id or "stigmergy" in preset.id else "boids"
+    _acfg = AgentConfig(
+        n_agents=60, max_agents=240, policy=_policy, seed=cfg.seed
+    )
+    st.session_state.agents = AgentSystem(_acfg, cfg.height, cfg.width)
 
 
 if _apply_preset and _active_preset is not None:
@@ -285,6 +291,10 @@ if "sim_state" not in st.session_state:
     st.session_state.multiscale = MultiscaleController()
     st.session_state.consciousness = ConsciousnessAnalyzer()
     st.session_state.last_cmarkers = None
+    st.session_state.agents = AgentSystem(
+        AgentConfig(n_agents=60, max_agents=240, policy="boids", seed=cfg.seed),
+        cfg.height, cfg.width,
+    )
 
 
 # ------------------------------------------------------------------
@@ -312,6 +322,11 @@ with col_btn3:
         st.session_state.particles = ParticleSystem(pcfg, cfg.height, cfg.width)
         st.session_state.multiscale = MultiscaleController()
         st.session_state.consciousness = ConsciousnessAnalyzer()
+        _a_policy = st.session_state.get("agent_policy", "boids")
+        st.session_state.agents = AgentSystem(
+            AgentConfig(n_agents=60, max_agents=240, policy=_a_policy, seed=cfg.seed),
+            cfg.height, cfg.width,
+        )
         st.session_state.last_cmarkers = None
 with col_btn4:
     if st.button("⏭ +1 Tick"):
@@ -325,6 +340,7 @@ state: GridState = st.session_state.sim_state
 loop: TickLoop = st.session_state.loop
 
 particles: ParticleSystem = st.session_state.particles
+agents: AgentSystem = st.session_state.agents
 
 multiscale_ctrl: MultiscaleController = st.session_state.multiscale
 consciousness_analyzer: ConsciousnessAnalyzer = st.session_state.consciousness
@@ -334,6 +350,7 @@ if st.session_state.running:
         loop.step(state)
         if particles_enabled:
             step_particles(particles, state, do_collisions=True)
+        step_agents(agents, state)
     multiscale_ctrl.update(state)
     st.session_state.last_cmarkers = consciousness_analyzer.analyze(state)
 
@@ -788,6 +805,67 @@ with tab_particles:
             "⚠️ Partikel-Dynamik ist eine vereinfachte Abstraktion (kein Impulserhält, "
             "keine korrekte Physik). Proto-Leben-Scores sind strukturelle Proxies, "
             "kein Nachweis von Lebensprozessen."
+        )
+
+        # ── Agent System (Epic 11) ────────────────────────────────
+        st.divider()
+        st.subheader("🐜 Agent System (Epic 11)")
+        st.caption(
+            "Echte Agenten mit Heading, Geschwindigkeit und Verhaltenspolitik. "
+            "Boids: Separation + Alignment + Kohäsion. Ant: Pheromon-Gradienten-Folgen."
+        )
+
+        _astats = agents.stats()
+        ac1, ac2, ac3, ac4 = st.columns(4)
+        ac1.metric("🐞 Aktive Agenten", _astats["n_active"])
+        ac2.metric("💨 Ø Speed",           f"{_astats['mean_speed']:.3f}")
+        ac3.metric("🧲 Kohärenz",          f"{_astats['velocity_coherence']:.3f}")
+        ac4.metric("🕧 Ø Alter (Ticks)",    f"{_astats['mean_age']:.0f}")
+
+        _aidx = agents._idx()
+        if len(_aidx) > 0:
+            _a_pos = agents.positions[_aidx]
+            _a_col1, _a_col2 = st.columns(2)
+
+            with _a_col1:
+                fig_ag, ax_ag = plt.subplots(figsize=(4, 4))
+                ax_ag.imshow(
+                    state.energy, cmap="viridis", origin="upper",
+                    interpolation="nearest", alpha=0.6,
+                )
+                _speeds = np.sqrt(
+                    agents.velocities[_aidx, 0] ** 2 + agents.velocities[_aidx, 1] ** 2
+                )
+                sc = ax_ag.scatter(
+                    _a_pos[:, 1], _a_pos[:, 0],
+                    c=_speeds, cmap="hot", s=12,
+                    vmin=0, vmax=agents.config.max_speed,
+                )
+                plt.colorbar(sc, ax=ax_ag, fraction=0.046, label="Speed")
+                ax_ag.set_title(
+                    f"Agenten ({agents.config.policy}) auf Energiefeld",
+                    fontsize=8,
+                )
+                ax_ag.axis("off")
+                st.pyplot(fig_ag, use_container_width=True)
+                plt.close(fig_ag)
+
+            with _a_col2:
+                fig_hd, ax_hd = plt.subplots(figsize=(4, 4), subplot_kw=dict(polar=True))
+                ax_hd.hist(
+                    agents.heading[_aidx], bins=36,
+                    range=(-3.14159, 3.14159), color="steelblue", alpha=0.8,
+                )
+                ax_hd.set_title("Heading-Verteilung", fontsize=8, pad=15)
+                st.pyplot(fig_hd, use_container_width=True)
+                plt.close(fig_hd)
+        else:
+            st.info("Keine aktiven Agenten.")
+
+        st.caption(
+            "⚠️ Boids implementiert die drei Reynolds-Regeln (1987). "
+            "AntPolicy nutzt das abstrakte Memory-Feld als Pheromon. "
+            "Kein Nachweis echter Schwarm- oder Ameisen-Intelligenz."
         )
 
 

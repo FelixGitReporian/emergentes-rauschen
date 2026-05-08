@@ -4,7 +4,7 @@
 > Each epic corresponds to a phase of the simulation architecture (workbook sections 10–16).  
 > Status: ✅ Done · 🔄 In Progress · 📋 Planned · 💡 Research
 >
-> **Current: v2.2.0 — Epics 9–10 complete — 236 tests, all passing.**
+> **Current: v2.3.0 — Epics 9–11 complete — 266 tests, all passing.**
 
 ---
 
@@ -208,23 +208,29 @@
 
 ---
 
-## Epic 11 – Real Agent Layer 📋
+## Epic 11 – Real Agent Layer ✅
 
 **Goal:** True agent-based dynamics: heading, velocity, neighbour interaction, pheromone deposition.
 
 | # | Task | Status |
 |---|------|--------|
-| 11.1 | `AgentState` with position, velocity, heading and memory | 📋 |
-| 11.2 | Spatial hashing / grid binning for O(N) neighbour search | 📋 |
-| 11.3 | Field sampling for agents | 📋 |
-| 11.4 | Field deposition for agents (pheromone model) | 📋 |
-| 11.5 | Boids separation rule | 📋 |
-| 11.6 | Boids alignment rule | 📋 |
-| 11.7 | Boids cohesion rule | 📋 |
-| 11.8 | Pheromone-following agent policy | 📋 |
-| 11.9 | Nest and food source abstraction | 📋 |
-| 11.10 | Real Ant Trail experiment | 📋 |
-| 11.11 | Real Boids experiment | 📋 |
+| 11.1 | `AgentConfig` dataclass with full parameter set | ✅ |
+| 11.2 | `AgentSystem` — vectorized NumPy arrays: positions, heading, velocities, energy, age | ✅ |
+| 11.3 | Spatial hashing bin map for O(N·k) neighbour search | ✅ |
+| 11.4 | Toroidal distance neighbour search (radius + self-exclusion) | ✅ |
+| 11.5 | `BoidsPolicy` — separation + alignment + cohesion (Reynolds 1987) | ✅ |
+| 11.6 | `AntPolicy` — memory gradient following + random exploration + pheromone deposition | ✅ |
+| 11.7 | Bilinear field sampling at continuous positions | ✅ |
+| 11.8 | Field deposition (deposit\_to\_field, atomic add + clip) | ✅ |
+| 11.9 | Field → agent coupling: flow drag | ✅ |
+| 11.10 | Speed clamping + heading sync with velocity direction | ✅ |
+| 11.11 | `stats()` dict: coherence, mean speed, heading std, mean age | ✅ |
+| 11.12 | `step_agents()` public API matching `step_particles` pattern | ✅ |
+| 11.13 | Session state integration in dashboard (init + reset + apply preset) | ✅ |
+| 11.14 | Agent panel in Partikel tab: scatter + polar heading histogram | ✅ |
+| 11.15 | New preset: `boids_agents` (Collective Behavior) | ✅ |
+| 11.16 | New preset: `ant_trails_agents` (Collective Behavior) | ✅ |
+| 11.17 | `tests/test_agents.py` — 30 tests | ✅ |
 
 ---
 
@@ -278,6 +284,7 @@
 | **v2.0.0** | Epic 7–8 | Experiment framework, consciousness markers, learning dashboard |
 | **v2.1.0** | Epic 9 | Simulation gallery, 8 presets, dashboard gallery, CLI runner |
 | **v2.2.0** | Epic 10 | Initial conditions: 10 condition types, preset integration, dashboard selector |
+| **v2.3.0** | Epic 11 | Real agent layer: Boids + Ant policies, spatial hashing, field coupling, 2 new presets |
 | **v3.0.0** | Epic 10–11 | Initial conditions + real agent layer |
 | **v3.1.0** | Epic 12–13 | Morphogenesis metrics + trace reading metrics |
 

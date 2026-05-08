@@ -598,6 +598,111 @@ ECOSYSTEM_PATCH_DYNAMICS = ExperimentPreset(
 )
 
 
+BOIDS_AGENTS = ExperimentPreset(
+    id="boids_agents",
+    title="Boids — Real Agent Flock",
+    category="Collective Behavior",
+    description=(
+        "Reynolds (1987) Boids with explicit heading, separation, alignment and cohesion. "
+        "Agents are layered on top of the field simulation — they both follow and perturb "
+        "the energy field."
+    ),
+    inspiration=(
+        "Craig Reynolds (1987) introduced three local rules — separation, alignment, cohesion — "
+        "that generate realistic flock behaviour. This is a faithful implementation of those "
+        "rules in a continuous toroidal space, coupled to the abstract energy field."
+    ),
+    config=SimConfig(
+        height=64, width=64, seed=11,
+        noise_amplitude=0.03,
+        diffusion_energy=0.12,
+        flow_gradient_strength=0.06,
+        coupling_gain=0.06,
+        memory_decay=0.92,
+    ),
+    expected_patterns=[
+        "local flocking groups converging toward alignment",
+        "velocity coherence rising over 50+ ticks",
+        "agents clustering near high-energy field zones",
+        "heading histogram narrowing (flock direction selection)",
+    ],
+    key_parameters=[
+        "flow_gradient_strength",
+        "diffusion_energy",
+        "coupling_gain",
+        "memory_decay",
+        "noise_amplitude",
+    ],
+    limitations=[
+        "No nest or food sources — agents have no goal beyond flocking.",
+        "No obstacle avoidance.",
+        "Field coupling is one-directional (field → agents via flow drag); "
+        "agents deposit minimal energy only.",
+    ],
+    suggested_metrics=[
+        "velocity coherence over time",
+        "heading std (decreases as flock forms)",
+        "mean speed",
+        "spatial clustering of agent positions",
+    ],
+    tags=["boids", "flocking", "collective-behavior", "agents", "reynolds"],
+    initial_condition=RandomClusteredSeed(n_clusters=4, cluster_radius=5.0, energy_value=0.85, seed=11),
+)
+
+
+ANT_TRAILS_AGENTS = ExperimentPreset(
+    id="ant_trails_agents",
+    title="Ant Trails — Pheromone Agents",
+    category="Collective Behavior",
+    description=(
+        "Real agents following memory-field pheromone gradients with random exploration. "
+        "Agents deposit into the memory field, creating positive feedback that reinforces "
+        "existing trails — emergent path formation without central coordination."
+    ),
+    inspiration=(
+        "Deneubourg et al. (1990) showed that simple local pheromone rules produce complex "
+        "colony-level path selection and shortest-path behaviour. "
+        "This preset uses the abstract memory field as the pheromone substrate. "
+        "No nest, food, or task assignment is modelled."
+    ),
+    config=SimConfig(
+        height=64, width=64, seed=7,
+        noise_amplitude=0.02,
+        memory_decay=0.997,
+        memory_imprint_strength=0.45,
+        diffusion_information=0.03,
+        coupling_gain=0.04,
+        flow_gradient_strength=0.05,
+    ),
+    expected_patterns=[
+        "trail-like memory structures forming and stabilising",
+        "positive feedback loop: agents reinforce their own trails",
+        "path convergence over 200+ ticks",
+        "memory field branching network patterns",
+    ],
+    key_parameters=[
+        "memory_decay",
+        "memory_imprint_strength",
+        "diffusion_information",
+        "flow_gradient_strength",
+        "coupling_gain",
+    ],
+    limitations=[
+        "No nest or food source — agents have no destination.",
+        "No shortest-path selection without source/sink geometry.",
+        "Pheromone evaporation is approximated by memory_decay only.",
+    ],
+    suggested_metrics=[
+        "memory field mean over time (trail accumulation rate)",
+        "memory entropy (trail structure complexity)",
+        "agent spatial clustering (trail following)",
+        "path persistence",
+    ],
+    tags=["ants", "pheromones", "stigmergy", "trail-formation", "agents", "self-organization"],
+    initial_condition=RandomClusteredSeed(n_clusters=3, cluster_radius=4.0, energy_value=0.8, seed=7),
+)
+
+
 # ──────────────────────────────────────────────────────────────────
 # Registry
 # ──────────────────────────────────────────────────────────────────
@@ -613,6 +718,8 @@ PRESETS: Dict[str, ExperimentPreset] = {
         TRACE_READING_FOSSIL_FIELD,
         AUTOPOIESIS_MEMBRANE,
         ECOSYSTEM_PATCH_DYNAMICS,
+        BOIDS_AGENTS,
+        ANT_TRAILS_AGENTS,
     ]
 }
 
