@@ -5,6 +5,11 @@ Ein ``GridState`` repräsentiert den vollständigen Momentanzustand eines
 2-D-Gitters. Jedes der acht Felder ist ein float32-Array der Form (height, width).
 Alle Werte liegen per Konvention im Intervall [0, 1].
 
+Seit v0.4.0 (Epic 3) enthält GridState zwei zusätzliche Meta-Regel-Felder:
+- ``genome_strength``   – lokale Reaktionsstärke (evolviert durch Meta-Regeln)
+- ``genome_threshold``  – lokaler Energie-Schwellwert (evolviert durch Meta-Regeln)
+Diese bilden das dezentrale Regelgenom des Systems (Arbeitsmappe Kap. 9).
+
 ``SimConfig`` ist das zentrale Konfigurationsobjekt. Alle Parameter der
 Simulation werden hier definiert – keine magischen Zahlen in anderen Modulen.
 """
@@ -118,6 +123,28 @@ class SimConfig(BaseModel):
         0.03, ge=0.0, le=1.0, description="Stärke des kopplungsgetriebenen Wirbelantriebs"
     )
 
+    # --- Meta-Regeln (Epic 3) ---
+    meta_mutation_rate: float = Field(
+        0.01, ge=0.0, le=1.0,
+        description="Wahrscheinlichkeit pro Zelle+Tick einer Regelgenome-Mutation"
+    )
+    meta_mutation_strength: float = Field(
+        0.05, ge=0.0, le=0.5,
+        description="Maximale Änderung eines Regelparameters durch eine Mutation (uniform ±)"
+    )
+    meta_selection_rate: float = Field(
+        0.1, ge=0.0, le=1.0,
+        description="Anteil der Zellen, die pro Tick durch Selektion aktualisiert werden"
+    )
+    meta_retention_threshold: float = Field(
+        0.7, ge=0.0, le=1.0,
+        description="Fitness-Schwelle, ab der ein Regelprofil ins Gedächtnis geschrieben wird"
+    )
+    meta_enabled: bool = Field(
+        True,
+        description="Schalter: Meta-Regel-Evolution aktiv oder deaktiviert"
+    )
+
     # --- Initialisierung ---
     init_energy_mean: float = Field(0.4, ge=0.0, le=1.0)
     init_energy_std: float = Field(0.15, ge=0.0)
@@ -162,6 +189,9 @@ class GridState:
     coherence: np.ndarray
     flow_x: np.ndarray
     flow_y: np.ndarray
+    # Meta-Regel-Felder (Epic 3): lokales Regelgenom
+    genome_strength: np.ndarray   # lokale reaction_strength pro Zelle
+    genome_threshold: np.ndarray  # lokaler reaction_energy_threshold pro Zelle
     tick: int = 0
 
     # ------------------------------------------------------------------
@@ -195,6 +225,15 @@ class GridState:
             coherence=_uniform_field() * 0.3,
             flow_x=np.zeros((H, W), dtype=np.float32),
             flow_y=np.zeros((H, W), dtype=np.float32),
+            # Genome initialisieren: leichte Variation um den globalen Startwert
+            genome_strength=np.clip(
+                rng.normal(config.reaction_strength, 0.02, (H, W)).astype(np.float32),
+                0.0, 1.0,
+            ),
+            genome_threshold=np.clip(
+                rng.normal(config.reaction_energy_threshold, 0.05, (H, W)).astype(np.float32),
+                0.0, 1.0,
+            ),
             tick=0,
         )
 
@@ -203,7 +242,12 @@ class GridState:
     # ------------------------------------------------------------------
 
     def as_dict(self) -> Dict[str, np.ndarray]:
-        """Gibt alle Felder als Dictionary zurück (ohne tick)."""
+        """Gibt alle Zustandsfelder als Dictionary zurück (ohne tick, ohne Genome).
+
+        Die Genome-Felder werden bewusst ausgelassen, da sie keine Primärfelder
+        der Simulation sind und z.B. für Entropie-/Persistenz-Analysen nicht
+        direkt verglichen werden sollen.
+        """
         return {
             "energy": self.energy,
             "matter": self.matter,
@@ -216,6 +260,13 @@ class GridState:
             "flow_y": self.flow_y,
         }
 
+    def genome_dict(self) -> Dict[str, np.ndarray]:
+        """Gibt die Regelgenom-Felder als Dictionary zurück."""
+        return {
+            "genome_strength": self.genome_strength,
+            "genome_threshold": self.genome_threshold,
+        }
+
     def shape(self) -> tuple[int, int]:
         """Gibt (height, width) zurück."""
         return self.energy.shape  # type: ignore[return-value]
@@ -225,6 +276,9 @@ class GridState:
 
         Wird am Ende jedes Ticks aufgerufen, damit kein Feld seinen Wertebereich
         verlässt. Verhindert kumulative Drift durch wiederholte Additionen.
+        Genome werden ebenfalls geclippt, da ihre Werte dieselben Grenzen haben.
         """
         for arr in self.as_dict().values():
             np.clip(arr, 0.0, 1.0, out=arr)
+        np.clip(self.genome_strength,  0.0, 1.0, out=self.genome_strength)
+        np.clip(self.genome_threshold, 0.0, 1.0, out=self.genome_threshold)

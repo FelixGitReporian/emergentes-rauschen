@@ -69,14 +69,14 @@
 
 | # | Aufgabe | Status |
 |---|---------|--------|
-| 3.1 | `rules/meta_rules.py` – lokales Regelprofil pro Zelle (Rule-Genome) | 📋 |
-| 3.2 | Mutation: zufällige Regelparameter-Variation mit konfigurierbarer Rate | 📋 |
-| 3.3 | Selektion: Persistenz + Kohärenz als Fitness-Proxy | 📋 |
-| 3.4 | Retention: erfolgreiche Regelprofile im Gedächtnisfeld sichern | 📋 |
-| 3.5 | Parameter-Kandidaten-Tracking: abgeleitete Parameter beobachten | 📋 |
-| 3.6 | `analysis/novelty.py` – Neuheitsmetrik (Behavioral Diversity) | 📋 |
-| 3.7 | Tests + Experiment-Runner für Regel-Evolution | 📋 |
-| 3.8 | ADR-0003: Regel-Evolution Design | 📋 |
+| 3.1 | `rules/meta_rules.py` – lokales Regelprofil pro Zelle (Rule-Genome) | ✅ |
+| 3.2 | Mutation: Regelparameter-Variation mit konfigurierbarer Rate | ✅ |
+| 3.3 | Selektion: Kohärenz × (1 - lokale Energievarianz) als Fitness-Proxy | ✅ |
+| 3.4 | Retention: erfolgreiche Regelprofile im Gedächtnisfeld sichern | ✅ |
+| 3.5 | Parameter-Kandidaten-Tracking via `analysis/novelty.py` | ✅ |
+| 3.6 | `analysis/novelty.py` – BehaviorVector, NoveltyTracker, genome_diversity | ✅ |
+| 3.7 | Tests für alle Epic-3-Module (32 Tests, 110 gesamt) | ✅ |
+| 3.8 | ADR-0003: Meta-Regel-Evolution Design | ✅ |
 
 ---
 

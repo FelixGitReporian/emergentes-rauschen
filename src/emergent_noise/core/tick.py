@@ -7,12 +7,13 @@ bewusst gewählt und dokumentiert:
 
     1. Strukturiertes Rauschen addieren        (Symmetriebrechung)
     2. Diffusion                                (Transport)
-    3. Reaktion                                 (lokale Transformation)
+    3. Reaktion (nutzt lokale Genome)           (lokale Transformation)
     4. Kopplung + Kohärenz-Synchronisation      (Netzwerkbildung)
     5. Fluss + advektiver Transport             (Vektordynamik, Wirbel)
     6. Gedächtnis aktualisieren                 (Hysterese / Spur)
-    7. Alle Felder auf [0, 1] clippen           (Wertebereichserhalt)
-    8. tick-Zähler erhöhen
+    7. Meta-Regeln (Mutation/Selektion/Retention)(Regelgenom-Evolution)
+    8. Alle Felder auf [0, 1] clippen           (Wertebereichserhalt)
+    9. tick-Zähler erhöhen
 
 Warum diese Reihenfolge?
     Rauschen zuerst stellt sicher, dass kleine Störungen in jeden
@@ -36,6 +37,7 @@ from emergent_noise.rules.coupling import apply_coupling
 from emergent_noise.rules.diffusion import apply_diffusion
 from emergent_noise.rules.flow import apply_flow
 from emergent_noise.rules.memory import apply_memory
+from emergent_noise.rules.meta_rules import apply_meta_rules
 from emergent_noise.rules.reaction import apply_reaction
 
 
@@ -105,10 +107,13 @@ class TickLoop:
         # 6. Gedächtnis
         apply_memory(state, cfg)
 
-        # 7. Wertebereiche sichern
+        # 7. Meta-Regeln: Regelgenom-Evolution (Mutation, Selektion, Retention)
+        apply_meta_rules(state, cfg)
+
+        # 8. Wertebereiche sichern
         state.clip_all()
 
-        # 8. Tick erhöhen
+        # 9. Tick erhöhen
         state.tick += 1
 
         # Callbacks (z. B. Visualisierung, Logging)

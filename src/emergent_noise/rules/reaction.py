@@ -16,6 +16,12 @@ Implementierte Regeln:
 5. Materie-Ablagerung: Niedrige Energie + hohe Kopplung lagert Materie ab
    (Sedimentationsanalogon, Substratbildung).
 
+Seit v0.4.0 (Epic 3):
+    Regel 1 nutzt die lokalen Regelgenom-Felder ``genome_strength`` und
+    ``genome_threshold`` aus dem GridState statt globaler Config-Konstanten.
+    Dadurch reagiert jede Zelle nach ihrer eigenen evolvierten Reaktionsstärke
+    und ihrem eigenen Schwellwert — das Verhalten ist räumlich heterogen.
+
 Wissenschaftliche Vorsicht:
     Diese Regeln sind heuristische Abstraktionen, keine exakten chemischen
     Gleichungen. Sie illustrieren, wie Reaktivität als lokaler Katalysator
@@ -56,15 +62,17 @@ def apply_reaction(state: GridState, config: SimConfig) -> None:
         Wo Fluss niedrig UND Kopplung hoch, lagert sich Materie ab.
         matter += deposition_rate * coupling * (1 - |flow|)
     """
-    thr = config.reaction_energy_threshold
-    s = config.reaction_strength
+    s = config.reaction_strength  # globaler Fallback (Zerfall + Erosion)
 
-    # Regel 1: Aktivierungsreaktion
-    mask_activate = (state.energy > thr) & (state.reactivity > 0.5)
-    state.energy[mask_activate] -= s
-    state.coherence[mask_activate] += s * 0.8
-    state.information[mask_activate] += s * 0.5
-    state.reactivity[mask_activate] -= s * 0.6
+    # Regel 1: Aktivierungsreaktion – nutzt lokales Regelgenom (Epic 3)
+    # Jede Zelle hat ihren eigenen Schwellwert (genome_threshold) und
+    # ihre eigene Reaktionsstärke (genome_strength) aus dem evolvierten Genome.
+    mask_activate = (state.energy > state.genome_threshold) & (state.reactivity > 0.5)
+    local_s = state.genome_strength  # Array: Stärke pro Zelle
+    state.energy[mask_activate] -= local_s[mask_activate]
+    state.coherence[mask_activate] += local_s[mask_activate] * 0.8
+    state.information[mask_activate] += local_s[mask_activate] * 0.5
+    state.reactivity[mask_activate] -= local_s[mask_activate] * 0.6
 
     # Regel 2: Zerfall
     mask_decay = (state.energy < 0.2) & (state.coherence < 0.2)

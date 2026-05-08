@@ -5,6 +5,44 @@ Format: [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.4.0] – 2026-05-08
+
+### Hinzugefügt (Epic 3 – Meta-Regeln + Regel-Evolution)
+
+- `core/state.py`: Zwei neue Genome-Felder in `GridState`:
+  - `genome_strength`   – lokale Reaktionsstärke pro Zelle (float32 Array)
+  - `genome_threshold`  – lokaler Energie-Schwellwert pro Zelle (float32 Array)
+  - Initialisierung mit leichter Variation um globale Config-Werte.
+  - `genome_dict()` Hilfsmethode. `clip_all()` clippt jetzt auch Genome.
+- `core/state.py`: `SimConfig` erhält fünf neue Meta-Regel-Parameter:
+  `meta_mutation_rate`, `meta_mutation_strength`, `meta_selection_rate`,
+  `meta_retention_threshold`, `meta_enabled`.
+- `rules/meta_rules.py`: `apply_meta_rules` mit drei Schritten pro Tick:
+  - **Mutation**: zufällige Genome-Variation mit konfigurierbarer Rate/Stärke.
+  - **Selektion**: lokale 3×3-Nachbarschaftsselektion (fittere Profile breiten sich aus).
+  - **Retention**: Gedächtnisfeld-Verstärkung durch erfolgreiche Profile.
+  - Fitness = `coherence × (1 - lokale_energievarianz)` (heuristischer Proxy).
+- `rules/reaction.py`: Regel 1 nutzt jetzt `genome_threshold` und
+  `genome_strength` statt globaler Config-Konstanten → räumlich heterogenes
+  Reaktionsverhalten.
+- `core/tick.py`: Meta-Regeln als Schritt 7 im Tick-Loop integriert.
+- `analysis/novelty.py`:
+  - `BehaviorVector` – komprimierter Zustandsvektor für Novelty-Vergleiche.
+  - `NoveltyTracker` – Archiv-basierte k-NN Novelty-Metrik.
+  - `genome_diversity` – räumliche Diversität der Genome-Verteilung.
+  - `genome_entropy` – Shannon-Entropie der Genome-Wert-Verteilung.
+- `docs/design-decisions/ADR-0003-meta-rule-evolution.md`: Architektur-
+  Entscheidung mit Begründung, Alternativen und wissenschaftlichem Vorbehalt.
+- `tests/test_epic3.py`: 32 neue Tests (110 gesamt, alle grün).
+
+### Wissenschaftliche Vorsicht
+
+Regelgenom-Evolution ist eine abstrakte Abstraktion, kein Modell realer
+Genetik. Fitness-Proxies sind heuristisch. Emergente Differenzierung ist
+ein Explorationsphänomen, keine biologische Aussage.
+
+---
+
 ## [0.3.1] – 2026-05-08
 
 ### Geändert – Dashboard (Epic 2.6)
