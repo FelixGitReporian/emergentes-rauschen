@@ -40,6 +40,12 @@ from emergent_noise.analysis.attractors import (
 )
 from emergent_noise.analysis.morphology import MorphologyResult, compute_morphology
 from emergent_noise.analysis.mutual_information import mi_matrix
+from emergent_noise.analysis.trace_metrics import (
+    TraceMetricsSnapshot,
+    compute_trace_metrics,
+    MemoryEntropyTracker,
+    ClusterLifetimeTracker,
+)
 from emergent_noise.interpretation.narratives import Narrative, build_narrative
 from emergent_noise.interpretation.regime_classifier import RegimeResult, classify_regime
 
@@ -62,6 +68,7 @@ class TraceReport:
     phase: Dict[str, Any]                # PhaseIndicator
     regime: Dict[str, Any]               # RegimeResult
     narrative: Dict[str, Any]            # Narrative
+    trace_metrics: Dict[str, Any] = field(default_factory=dict)  # Epic 13
 
     def to_dict(self) -> dict:
         """Exportiere als vollständig JSON-fähiges Dictionary."""
@@ -81,6 +88,7 @@ class TraceReport:
                 ],
             },
             "narrative": self.narrative,
+            "trace_metrics": self.trace_metrics,
         }
 
     def to_json(self, indent: int = 2) -> str:
@@ -92,6 +100,10 @@ def read_traces(
     tick: int,
     fields: Dict[str, np.ndarray],
     persistence_tracker: PersistenceTracker | None = None,
+    prev_memory: np.ndarray | None = None,
+    prev_energy: np.ndarray | None = None,
+    entropy_tracker: MemoryEntropyTracker | None = None,
+    lifetime_tracker: ClusterLifetimeTracker | None = None,
 ) -> TraceReport:
     """Führe vollständige Spurenanalyse für den aktuellen Zustand durch.
 
@@ -201,6 +213,17 @@ def read_traces(
         "scientific_caveat": narrative.scientific_caveat,
     }
 
+    # 9. Epic 13 trace metrics
+    tm_snap = compute_trace_metrics(
+        tick=tick,
+        fields=fields,
+        prev_memory=prev_memory,
+        prev_energy=prev_energy,
+        entropy_tracker=entropy_tracker,
+        lifetime_tracker=lifetime_tracker,
+    )
+    tm_dict = tm_snap.to_dict()
+
     return TraceReport(
         tick=tick,
         field_summaries=summaries,
@@ -210,4 +233,5 @@ def read_traces(
         phase=phase_dict,
         regime=regime_dict,
         narrative=narrative_dict,
+        trace_metrics=tm_dict,
     )

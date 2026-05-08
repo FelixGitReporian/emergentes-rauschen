@@ -57,6 +57,11 @@ from emergent_noise.analysis.entropy import state_entropy_summary
 from emergent_noise.analysis.compartments import detect_compartments, particle_compartments
 from emergent_noise.analysis.morphogenesis import analyse_morphogenesis
 from emergent_noise.analysis.morphology import compute_morphology
+from emergent_noise.analysis.trace_metrics import (
+    ClusterLifetimeTracker,
+    MemoryEntropyTracker,
+    compute_trace_metrics,
+)
 from emergent_noise.analysis.mutual_information import mi_matrix
 from emergent_noise.analysis.novelty import genome_diversity, genome_entropy
 from emergent_noise.analysis.trace_reading import TraceReport, read_traces
@@ -271,6 +276,10 @@ def _apply_preset_to_session(preset: ExperimentPreset) -> None:
         n_agents=60, max_agents=240, policy=_policy, seed=cfg.seed
     )
     st.session_state.agents = AgentSystem(_acfg, cfg.height, cfg.width)
+    st.session_state.entropy_tracker = MemoryEntropyTracker(window=40)
+    st.session_state.lifetime_tracker = ClusterLifetimeTracker()
+    st.session_state.prev_memory = None
+    st.session_state.prev_energy = None
 
 
 if _apply_preset and _active_preset is not None:
@@ -296,6 +305,10 @@ if "sim_state" not in st.session_state:
         AgentConfig(n_agents=60, max_agents=240, policy="boids", seed=cfg.seed),
         cfg.height, cfg.width,
     )
+    st.session_state.entropy_tracker = MemoryEntropyTracker(window=40)
+    st.session_state.lifetime_tracker = ClusterLifetimeTracker()
+    st.session_state.prev_memory = None
+    st.session_state.prev_energy = None
 
 
 # ------------------------------------------------------------------
@@ -329,6 +342,10 @@ with col_btn3:
             cfg.height, cfg.width,
         )
         st.session_state.last_cmarkers = None
+        st.session_state.entropy_tracker = MemoryEntropyTracker(window=40)
+        st.session_state.lifetime_tracker = ClusterLifetimeTracker()
+        st.session_state.prev_memory = None
+        st.session_state.prev_energy = None
 with col_btn4:
     if st.button("⏭ +1 Tick"):
         st.session_state.loop.step(st.session_state.sim_state)
@@ -374,8 +391,14 @@ if st.session_state.last_trace is None or ticks_since_last >= trace_interval:
         tick=state.tick,
         fields=fields_dict,
         persistence_tracker=st.session_state.tracker,
+        prev_memory=st.session_state.get("prev_memory"),
+        prev_energy=st.session_state.get("prev_energy"),
+        entropy_tracker=st.session_state.get("entropy_tracker"),
+        lifetime_tracker=st.session_state.get("lifetime_tracker"),
     )
     st.session_state.last_trace_tick = state.tick
+st.session_state.prev_memory = fields_dict.get("memory")
+st.session_state.prev_energy = fields_dict.get("energy")
 
 trace: TraceReport | None = st.session_state.last_trace
 
@@ -658,6 +681,63 @@ with tab_trace:
         phase_cols[2].metric(
             "Status",
             "⚠️ Nahe Übergang" if ph.get("near_transition") else "✅ Stabil",
+        )
+
+        # ── Trace Metrics (Epic 13) ───────────────────────────────
+        st.divider()
+        st.subheader("📡 Spur-Metriken (Epic 13)")
+        st.caption(
+            "Quantitative Spurenanalyse: Persistenz, räumliche Autokorrelation, "
+            "Direktionalität, Entropie-Trend, Cluster-Lebenszeiten, Ereignisrekonstruktion, Wellenfront-Geschwindigkeit."
+        )
+
+        _tm = trace.trace_metrics if trace and trace.trace_metrics else {}
+        if _tm:
+            _tmc1, _tmc2, _tmc3, _tmc4 = st.columns(4)
+            _tmc1.metric("🧲 Memory-Persistenz",    f"{_tm.get('memory_persistence', 0):.3f}")
+            _tmc2.metric("🌐 Autokorr. Energy",      f"{_tm.get('spatial_autocorrelation_energy', 0):.3f}")
+            _tmc3.metric("🌐 Autokorr. Memory",      f"{_tm.get('spatial_autocorrelation_memory', 0):.3f}")
+            _tmc4.metric("💨 Wellenfront-Speed",      f"{_tm.get('wavefront_speed', 0):.3f}")
+
+            _tmc5, _tmc6, _tmc7, _tmc8 = st.columns(4)
+            _dir_data = _tm.get("directionality", {})
+            _tmc5.metric("🧭 Direktionalität",       f"{_dir_data.get('anisotropy', 0):.3f}")
+            _tmc6.metric("📐 Flow-Winkel (°)",        f"{_dir_data.get('mean_angle_deg', 0):.1f}")
+            _tmc7.metric("🌀 Memory-Entropie",        f"{_tm.get('memory_entropy', 0):.3f}")
+            _tm_trend = _tm.get("memory_entropy_trend", 0)
+            _tmc8.metric(
+                "📈 Entropie-Trend",
+                f"{_tm_trend:+.5f}",
+                delta=f"{'↑' if _tm_trend > 0 else '↓'} {'steigend' if _tm_trend > 0 else 'fallend'}",
+            )
+
+            _cl = _tm.get("cluster_lifetimes", {})
+            _cla, _clb, _clc, _cld = st.columns(4)
+            _cla.metric("🔢 Cluster verfolgt",        _cl.get("n_tracked", 0))
+            _clb.metric("⏳ Ø Lebensdauer",            f"{_cl.get('mean_lifetime', 0):.1f}")
+            _clc.metric("🏆 Max Lebensdauer",          _cl.get("max_lifetime", 0))
+            _cld.metric("⚡ Neue Ereignisse",           _tm.get("n_events", 0))
+
+            # Memory entropy time series (from tracker)
+            _et = st.session_state.get("entropy_tracker")
+            if _et and len(_et.history) > 1:
+                _tick_arr, _ent_arr = _et.to_arrays()
+                fig_et, ax_et = plt.subplots(figsize=(6, 2.2))
+                ax_et.plot(_tick_arr, _ent_arr, lw=1.2, color="orchid")
+                ax_et.set_xlabel("Tick", fontsize=8)
+                ax_et.set_ylabel("Entropie (bits)", fontsize=8)
+                ax_et.set_title("Memory-Feld Entropie über Zeit", fontsize=8)
+                ax_et.tick_params(labelsize=7)
+                fig_et.tight_layout()
+                st.pyplot(fig_et, use_container_width=True)
+                plt.close(fig_et)
+        else:
+            st.info("Noch keine Trace-Metriken. Simulation starten oder +1 Tick klicken.")
+
+        st.caption(
+            "⚠️ Moran's I ist ein asymptotischer Schätzer. "
+            "Wellenfront-Speed ist eine Näherung via Schwerpunkt-Verschiebung. "
+            "Cluster-Lebensdauer nutzt Nächster-Schwerpunkt-Matching (Heuristik)."
         )
 
         # ── Morphogenese (Epic 12) ────────────────────────────────

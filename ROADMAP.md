@@ -4,7 +4,7 @@
 > Each epic corresponds to a phase of the simulation architecture (workbook sections 10–16).  
 > Status: ✅ Done · 🔄 In Progress · 📋 Planned · 💡 Research
 >
-> **Current: v2.4.0 — Epics 9–12 complete — 304 tests, all passing.**
+> **Current: v2.5.0 — Epics 9–13 complete — 354 tests, all passing.**
 
 ---
 
@@ -255,20 +255,24 @@
 
 ---
 
-## Epic 13 – Trace Reading Metrics 📋
+## Epic 13 – Trace Reading Metrics ✅
 
 **Goal:** Quantitative trace inference: persistence, directionality, autocorrelation, event reconstruction.
 
 | # | Task | Status |
 |---|------|--------|
-| 13.1 | Memory persistence metric | 📋 |
-| 13.2 | Spatial autocorrelation metric | 📋 |
-| 13.3 | Directionality metric | 📋 |
-| 13.4 | Entropy over time (memory field specific) | 📋 |
-| 13.5 | Cluster lifetime tracking | 📋 |
-| 13.6 | Event reconstruction placeholder | 📋 |
-| 13.7 | Trace-reading report panel in dashboard | 📋 |
-| 13.8 | Wavefront speed metric (for excitable media) | 📋 |
+| 13.1 | `memory_persistence` — Jaccard similarity of active region | ✅ |
+| 13.2 | `spatial_autocorrelation` — Moran's I (convolution approximation) | ✅ |
+| 13.3 | `flow_directionality` — anisotropy index + mean flow angle | ✅ |
+| 13.4 | `MemoryEntropyTracker` — entropy time series + trend slope | ✅ |
+| 13.5 | `ClusterLifetimeTracker` — birth/death tracking via centroid proximity | ✅ |
+| 13.6 | `reconstruct_events` — detect newly activated regions per tick | ✅ |
+| 13.7 | `wavefront_speed` — centroid displacement of excitable front | ✅ |
+| 13.8 | `TraceMetricsSnapshot` + `compute_trace_metrics` composite entry-point | ✅ |
+| 13.9 | `TraceReport.trace_metrics` field + `read_traces` wired with prev fields | ✅ |
+| 13.10 | Dashboard: Spur-Metriken panel in Spurenlesen tab (12 live metrics + entropy chart) | ✅ |
+| 13.11 | Session state: entropy/lifetime trackers + prev field storage | ✅ |
+| 13.12 | `tests/test_trace_metrics.py` — 50 tests | ✅ |
 
 ---
 
@@ -287,6 +291,7 @@
 | **v2.2.0** | Epic 10 | Initial conditions: 10 condition types, preset integration, dashboard selector |
 | **v2.3.0** | Epic 11 | Real agent layer: Boids + Ant policies, spatial hashing, field coupling, 2 new presets |
 | **v2.4.0** | Epic 12 | Morphogenesis: skeleton, fractal dim, growth front, 2 new presets (mycelium, river) |
+| **v2.5.0** | Epic 13 | Trace metrics: Moran's I, wavefront speed, cluster lifetimes, entropy tracker, event reconstruction |
 | **v3.0.0** | Epic 10–11 | Initial conditions + real agent layer |
 | **v3.1.0** | Epic 12–13 | Morphogenesis metrics + trace reading metrics |
 

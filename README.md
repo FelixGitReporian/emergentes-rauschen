@@ -7,7 +7,7 @@
 [![CI](https://github.com/FelixGitReporian/emergentes-rauschen/actions/workflows/ci.yml/badge.svg)](https://github.com/FelixGitReporian/emergentes-rauschen/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-304%20passing-brightgreen.svg)](#tests)
+[![Tests](https://img.shields.io/badge/tests-354%20passing-brightgreen.svg)](#tests)
 [![Version](https://img.shields.io/badge/version-v2.0.0-blue.svg)](CHANGELOG.md)
 
 ---
