@@ -4,7 +4,7 @@
 > and information flow generate emergent regimes — readable as traces, proto-life markers,
 > adaptive structures and relational geometries.
 
-[![CI](https://github.com/FelixGitReporian/ermergentes-rauschen/actions/workflows/ci.yml/badge.svg)](https://github.com/FelixGitReporian/ermergentes-rauschen/actions)
+[![CI](https://github.com/FelixGitReporian/emergentes-rauschen/actions/workflows/ci.yml/badge.svg)](https://github.com/FelixGitReporian/emergentes-rauschen/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-172%20passing-brightgreen.svg)](#tests)
@@ -52,10 +52,8 @@ IIT / Active Inference / GWT (als Proxy-Metriken), Causal Sets (konzeptuell).
 ## Schnellstart
 
 ```bash
-# ⚠️  Hinweis: Repository-Umbenennug von 'ermergentes-rauschen' → 'emergentes-rauschen'
-#     ist geplant (Issue #1). Bis dahin lautet die URL noch mit 'erm-'.
-git clone https://github.com/FelixGitReporian/ermergentes-rauschen.git
-cd ermergentes-rauschen
+git clone https://github.com/FelixGitReporian/emergentes-rauschen.git
+cd emergentes-rauschen
 pip install -e ".[dev]"
 
 # Live-Dashboard
