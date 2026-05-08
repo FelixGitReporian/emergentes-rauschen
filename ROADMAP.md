@@ -87,12 +87,12 @@
 
 | # | Aufgabe | Status |
 |---|---------|--------|
-| 4.1 | `core/particles.py` – Partikel-Klasse mit Position, Geschwindigkeit, Zustand | 📋 |
-| 4.2 | Feld-zu-Partikel-Kopplung: Felder beeinflussen Partikel | 📋 |
-| 4.3 | Partikel-zu-Feld-Kopplung: Partikel verändern Felder (Quellen/Senken) | 📋 |
-| 4.4 | Kollision + Aggregation | 📋 |
-| 4.5 | Proto-Kompartiment-Erkennung | 📋 |
-| 4.6 | Visualisierung: Partikel über Feld-Heatmap | 📋 |
+| 4.1 | `core/particles.py` – ParticleSystem (vektorisiert, NumPy-Arrays) | ✅ |
+| 4.2 | Feld-zu-Partikel-Kopplung: Gradient, Fluss-Drag, Reaktivitäts-Boost | ✅ |
+| 4.3 | Partikel-zu-Feld-Kopplung: Energie, Materie, Kopplung, Information | ✅ |
+| 4.4 | Kollision + Aggregation (O(N²), Masse-gewichtet) | ✅ |
+| 4.5 | `analysis/compartments.py` – Feld- + Partikel-Kompartimente, Proto-Leben-Score | ✅ |
+| 4.6 | Dashboard Tab 3: Partikel-Heatmap, Dichtekarte, Kompartiment-Tabelle, Genome | ✅ |
 
 ---
 

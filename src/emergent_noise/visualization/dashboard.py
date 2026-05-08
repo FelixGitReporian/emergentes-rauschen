@@ -1,8 +1,8 @@
 """
-visualization/dashboard.py – Streamlit Live-Dashboard (v0.3.0).
+visualization/dashboard.py – Streamlit Live-Dashboard (v0.5.0).
 
 Startet eine interaktive Echtzeit-Visualisierung der Simulation mit
-vollständiger Spurenlese-Integration (Epic 2).
+vollständiger Spurenlese-Integration (Epic 2) und Partikel-System (Epic 4).
 
 Verwendung:
     streamlit run src/emergent_noise/visualization/dashboard.py
@@ -13,6 +13,8 @@ Tabs:
     2. 🧭 Spurenlesen – Regime-Klassifikation, Narrativ (Vergangenheit /
                         Zukunft / Metaphern), Morphologie, MI-Matrix,
                         vollständiger JSON-TraceReport.
+    3. ⚗️ Partikel    – Partikel-System (Epic 4): Positionen, Aggregate,
+                        Proto-Kompartimente, Dichtekarte, Statistiken.
 
 Architektur:
     - Alle Parameter sind über die linke Sidebar live konfigurierbar.
@@ -42,9 +44,12 @@ from emergent_noise.analysis.attractors import (
     find_clusters,
 )
 from emergent_noise.analysis.entropy import state_entropy_summary
+from emergent_noise.analysis.compartments import detect_compartments, particle_compartments
 from emergent_noise.analysis.morphology import compute_morphology
 from emergent_noise.analysis.mutual_information import mi_matrix
+from emergent_noise.analysis.novelty import genome_diversity, genome_entropy
 from emergent_noise.analysis.trace_reading import TraceReport, read_traces
+from emergent_noise.core.particles import ParticleConfig, ParticleSystem, step_particles
 from emergent_noise.core.state import GridState, SimConfig
 from emergent_noise.core.tick import TickLoop
 from emergent_noise.interpretation.regime_classifier import RegimeType
@@ -127,6 +132,14 @@ with st.sidebar:
     show_mi_heatmap = st.checkbox("MI-Matrix anzeigen", value=True)
     show_morphology = st.checkbox("Morphologie anzeigen", value=True)
 
+    st.subheader("⚗️ Partikel (Epic 4)")
+    particles_enabled = st.checkbox("Partikel-System aktiv", value=True)
+    n_particles = st.slider("Anzahl Partikel", 5, 200, 50, step=5)
+    p_field_attr = st.slider("Feld-Attraktion", 0.0, 0.2, 0.05, step=0.005)
+    p_flow_drag  = st.slider("Fluss-Drag", 0.0, 1.0, 0.3, step=0.05)
+    p_damping    = st.slider("Geschw.-Dämpfung", 0.5, 1.0, 0.92, step=0.01)
+    p_coll_radius = st.slider("Kollisionsradius", 0.5, 5.0, 1.5, step=0.5)
+
 
 # ------------------------------------------------------------------
 # Session State initialisieren
@@ -147,8 +160,22 @@ def _build_config() -> SimConfig:
     )
 
 
+def _build_particle_config() -> ParticleConfig:
+    """Erstelle ParticleConfig aus aktuellen Sidebar-Werten."""
+    return ParticleConfig(
+        n_particles=n_particles,
+        max_particles=max(n_particles * 4, 200),
+        field_attraction=p_field_attr,
+        flow_drag=p_flow_drag,
+        velocity_damping=p_damping,
+        collision_radius=p_coll_radius,
+        seed=int(seed),
+    )
+
+
 if "sim_state" not in st.session_state:
     cfg = _build_config()
+    pcfg = _build_particle_config()
     st.session_state.sim_state = GridState.initialize(cfg)
     st.session_state.sim_config = cfg
     st.session_state.loop = TickLoop(cfg)
@@ -157,6 +184,7 @@ if "sim_state" not in st.session_state:
     st.session_state.tracker = PersistenceTracker(window=20)
     st.session_state.last_trace: TraceReport | None = None
     st.session_state.last_trace_tick: int = -1
+    st.session_state.particles = ParticleSystem(pcfg, cfg.height, cfg.width)
 
 
 # ------------------------------------------------------------------
@@ -172,6 +200,7 @@ with col_btn2:
 with col_btn3:
     if st.button("🔄 Reset"):
         cfg = _build_config()
+        pcfg = _build_particle_config()
         st.session_state.sim_state = GridState.initialize(cfg)
         st.session_state.sim_config = cfg
         st.session_state.loop = TickLoop(cfg)
@@ -180,6 +209,7 @@ with col_btn3:
         st.session_state.tracker = PersistenceTracker(window=20)
         st.session_state.last_trace = None
         st.session_state.last_trace_tick = -1
+        st.session_state.particles = ParticleSystem(pcfg, cfg.height, cfg.width)
 with col_btn4:
     if st.button("⏭ +1 Tick"):
         st.session_state.loop.step(st.session_state.sim_state)
@@ -191,9 +221,13 @@ with col_btn4:
 state: GridState = st.session_state.sim_state
 loop: TickLoop = st.session_state.loop
 
+particles: ParticleSystem = st.session_state.particles
+
 if st.session_state.running:
     for _ in range(steps_per_frame):
         loop.step(state)
+        if particles_enabled:
+            step_particles(particles, state, do_collisions=True)
 
 # ------------------------------------------------------------------
 # Metriken berechnen
@@ -251,7 +285,7 @@ if trace is not None:
 # ------------------------------------------------------------------
 # Tabs: Simulation | Spurenlesen
 # ------------------------------------------------------------------
-tab_sim, tab_trace = st.tabs(["🔬 Simulation", "🧭 Spurenlesen"])
+tab_sim, tab_trace, tab_particles = st.tabs(["🔬 Simulation", "🧭 Spurenlesen", "\u2697\ufe0f Partikel"])
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -498,6 +532,149 @@ with tab_trace:
         st.subheader("📄 Vollständiger TraceReport (JSON)")
         with st.expander("JSON anzeigen / kopieren"):
             st.code(trace.to_json(), language="json")
+
+
+# ══════════════════════════════════════════════════════════════
+# TAB 3: Partikel
+# ══════════════════════════════════════════════════════════════
+with tab_particles:
+    if not particles_enabled:
+        st.info("⚗️ Partikel-System ist deaktiviert. Aktiviere es in der Sidebar.")
+    else:
+        p_sum = particles.summary()
+
+        # ── Schnellübersicht ─────────────────────────────────────────
+        st.subheader("⚗️ Partikel-System")
+        pc1, pc2, pc3, pc4, pc5 = st.columns(5)
+        pc1.metric("Aktive Partikel",    p_sum["n_active"])
+        pc2.metric("Ø Masse",            f"{p_sum['mean_mass']:.2f}")
+        pc3.metric("Max. Masse",         f"{p_sum['max_mass']:.2f}")
+        pc4.metric("Ø Geschwindigkeit",  f"{p_sum['mean_speed']:.4f}")
+        pc5.metric("Proto-Kompartimente",p_sum["n_compartments"])
+
+        # ── Visualisierung: Partikel über Energie-Heatmap ───────────
+        st.subheader("📍 Partikel-Positionen")
+        col_pv1, col_pv2 = st.columns(2)
+
+        with col_pv1:
+            fig_p, ax_p = plt.subplots(figsize=(5, 5))
+            ax_p.imshow(
+                state.energy, cmap="inferno", vmin=0, vmax=1,
+                origin="upper", interpolation="nearest",
+            )
+            pos = particles.active_positions()
+            masses_arr = particles.active_masses()
+            if len(pos) > 0:
+                # Größe des Punktes proportional zur Masse, Farbe zur Energie
+                sizes = np.clip(masses_arr * 15, 5, 200)
+                energies_p = particles.active_energies()
+                ax_p.scatter(
+                    pos[:, 1], pos[:, 0],  # x=col, y=row
+                    c=energies_p, cmap="cool", s=sizes,
+                    alpha=0.8, edgecolors="white", linewidths=0.5,
+                    vmin=0.0, vmax=1.0,
+                )
+            ax_p.set_title(
+                f"Partikel (• = Energie, Größe ∝ Masse)  |  {len(pos)} aktiv",
+                fontsize=8,
+            )
+            ax_p.axis("off")
+            st.pyplot(fig_p, use_container_width=True)
+            plt.close(fig_p)
+
+        with col_pv2:
+            # Partikel-Dichtekarte
+            if len(pos) > 0:
+                pc_result = particle_compartments(
+                    pos, masses_arr,
+                    particles.height, particles.width,
+                    min_mass=3.0,
+                )
+                fig_dens, ax_dens = plt.subplots(figsize=(5, 5))
+                im_dens = ax_dens.imshow(
+                    pc_result["density_map"], cmap="plasma",
+                    origin="upper", interpolation="nearest",
+                )
+                plt.colorbar(im_dens, ax=ax_dens, fraction=0.046)
+                # Kompartiment-Positionen markieren
+                comp_pos = pc_result["compartment_positions"]
+                if len(comp_pos) > 0:
+                    ax_dens.scatter(
+                        comp_pos[:, 1], comp_pos[:, 0],
+                        marker="*", c="yellow", s=80,
+                        label=f"Aggregate (m≥3): {pc_result['n_heavy_particles']}",
+                        edgecolors="black", linewidths=0.5,
+                    )
+                    ax_dens.legend(fontsize=7, loc="upper right")
+                ax_dens.set_title("Partikel-Dichtekarte (geglättet)", fontsize=8)
+                ax_dens.axis("off")
+                st.pyplot(fig_dens, use_container_width=True)
+                plt.close(fig_dens)
+            else:
+                st.info("Keine aktiven Partikel.")
+
+        # ── Feldbasierte Kompartiment-Erkennung ───────────────────
+        st.subheader("🧱 Proto-Kompartimente (Feldbasis)")
+        comp_result = detect_compartments(
+            state, energy_threshold=0.5, coupling_threshold=0.3, min_area=4
+        )
+        cc1, cc2, cc3 = st.columns(3)
+        cc1.metric("Anzahl Kompartimente",    comp_result.n_compartments)
+        cc2.metric("Ø Proto-Leben-Score",      f"{comp_result.mean_proto_life_score:.2f}")
+        cc3.metric("Max Proto-Leben-Score",    f"{comp_result.max_proto_life_score:.2f}")
+
+        if comp_result.compartments:
+            st.caption(
+                "Proto-Leben-Score = Energie > 0.4 + Kopplung > 0.3 + "
+                "Fläche ≥ 4 + Compactness > 0.3 (je 0.25 Punkte)."
+            )
+            rows_table = []
+            for c in comp_result.compartments[:10]:  # max 10 anzeigen
+                rows_table.append({
+                    "ID": c.id,
+                    "Fläche": c.area,
+                    "Ø Energie": f"{c.mean_energy:.3f}",
+                    "Ø Kopplung": f"{c.mean_coupling:.3f}",
+                    "Compactness": f"{c.compactness:.3f}",
+                    "PL-Score": f"{c.proto_life_score:.2f}",
+                })
+            st.table(rows_table)
+
+        # ── Regelgenom-Diversität (Epic 3 + 4 Verbindung) ───────
+        st.subheader("🧬 Regelgenom-Diversität")
+        gdiv = genome_diversity(state)
+        gent = genome_entropy(state)
+        gcols = st.columns(4)
+        gcols[0].metric("strength std",    f"{gdiv['strength_std']:.4f}")
+        gcols[1].metric("threshold std",   f"{gdiv['threshold_std']:.4f}")
+        gcols[2].metric("joint entropy",   f"{gdiv['joint_entropy']:.3f}")
+        gcols[3].metric("strength entropy",f"{gent:.3f}")
+
+        # Genome-Heatmap
+        fig_g, axes_g = plt.subplots(1, 2, figsize=(8, 3))
+        im_gs = axes_g[0].imshow(
+            state.genome_strength, cmap="RdYlGn", vmin=0, vmax=0.3,
+            origin="upper", interpolation="nearest",
+        )
+        axes_g[0].set_title("genome_strength (Reaktionsstärke)", fontsize=8)
+        axes_g[0].axis("off")
+        plt.colorbar(im_gs, ax=axes_g[0], fraction=0.046)
+        im_gt = axes_g[1].imshow(
+            state.genome_threshold, cmap="RdYlGn", vmin=0.4, vmax=1.0,
+            origin="upper", interpolation="nearest",
+        )
+        axes_g[1].set_title("genome_threshold (Aktivierungsschwelle)", fontsize=8)
+        axes_g[1].axis("off")
+        plt.colorbar(im_gt, ax=axes_g[1], fraction=0.046)
+        fig_g.tight_layout()
+        st.pyplot(fig_g, use_container_width=True)
+        plt.close(fig_g)
+
+        st.caption(
+            "⚠️ Partikel-Dynamik ist eine vereinfachte Abstraktion (kein Impulserhält, "
+            "keine korrekte Physik). Proto-Leben-Scores sind strukturelle Proxies, "
+            "kein Nachweis von Lebensprozessen."
+        )
 
 
 # ------------------------------------------------------------------

@@ -5,6 +5,43 @@ Format: [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.5.0] – 2026-05-08
+
+### Hinzugefügt (Epic 4 – Partikel-Feld-Hybrid)
+
+- `core/particles.py`: `ParticleConfig` + `ParticleSystem` (vektorisiert):
+  - Partikel als NumPy-Arrays `(N, 2)` / `(N,)` (positions, velocities,
+    energy, mass, active, age).
+  - `apply_field_to_particles`: Gradient-Attraktion, Fluss-Drag, Energie-
+    Absorption, Reaktivitäts-Boost via bilinearer Interpolation.
+  - `apply_particles_to_field`: Energie, Materie, Kopplung, Information
+    Deposition via `np.add.at`.
+  - `apply_collisions`: O(N²) Aggregations-Fusion mit Masse-gewichteter
+    Position, Impuls und Energie.
+  - `step_particles`: vollständiger Partikel-Tick.
+  - `summary`: kompakte Statistik inkl. Proto-Kompartiment-Zählung.
+- `analysis/compartments.py`:
+  - `detect_compartments`: feldbasierte Kompartiment-Erkennung (SciPy
+    `label` + Compactness + heuristischer Proto-Leben-Score).
+  - `particle_compartments`: partikelbasierte Dichtekarte + Aggregat-Marker.
+  - `CompartmentResult` / `Compartment` Dataclasses.
+- Dashboard `visualization/dashboard.py` v0.5.0:
+  - Tab 3 ⚗️ Partikel: Live-Scatter über Energie-Heatmap, Dichtekarte mit
+    Aggregat-Markern (★), Kompartiment-Tabelle, Regelgenom-Heatmap.
+  - Sidebar: Partikel-Konfiguration (Anzahl, Attraktion, Drag, Dämpfung,
+    Kollisionsradius, Ein/Aus-Toggle).
+  - Partikel-Tick in Simulations-Loop integriert.
+- `docs/design-decisions/ADR-0004-particle-field-hybrid.md`.
+- `tests/test_epic4.py`: 27 Tests (137 gesamt, alle grün).
+
+### Wissenschaftliche Vorsicht
+
+Partikel-Dynamik ist eine vereinfachte Abstraktion ohne Impuls-/Energie-
+erhaltung. Proto-Leben-Scores sind strukturelle Proxies, kein Nachweis
+biologischer Prozesse. Emergente Aggregate sind Explorations-Phänomene.
+
+---
+
 ## [0.4.0] – 2026-05-08
 
 ### Hinzugefügt (Epic 3 – Meta-Regeln + Regel-Evolution)
