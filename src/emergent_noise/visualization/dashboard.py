@@ -49,9 +49,11 @@ from emergent_noise.analysis.morphology import compute_morphology
 from emergent_noise.analysis.mutual_information import mi_matrix
 from emergent_noise.analysis.novelty import genome_diversity, genome_entropy
 from emergent_noise.analysis.trace_reading import TraceReport, read_traces
+from emergent_noise.core.multiscale import MultiscaleController
 from emergent_noise.core.particles import ParticleConfig, ParticleSystem, step_particles
 from emergent_noise.core.state import GridState, SimConfig
 from emergent_noise.core.tick import TickLoop
+from emergent_noise.interpretation.consciousness import ConsciousnessAnalyzer
 from emergent_noise.interpretation.regime_classifier import RegimeType
 
 
@@ -185,6 +187,9 @@ if "sim_state" not in st.session_state:
     st.session_state.last_trace: TraceReport | None = None
     st.session_state.last_trace_tick: int = -1
     st.session_state.particles = ParticleSystem(pcfg, cfg.height, cfg.width)
+    st.session_state.multiscale = MultiscaleController()
+    st.session_state.consciousness = ConsciousnessAnalyzer()
+    st.session_state.last_cmarkers = None
 
 
 # ------------------------------------------------------------------
@@ -210,6 +215,9 @@ with col_btn3:
         st.session_state.last_trace = None
         st.session_state.last_trace_tick = -1
         st.session_state.particles = ParticleSystem(pcfg, cfg.height, cfg.width)
+        st.session_state.multiscale = MultiscaleController()
+        st.session_state.consciousness = ConsciousnessAnalyzer()
+        st.session_state.last_cmarkers = None
 with col_btn4:
     if st.button("⏭ +1 Tick"):
         st.session_state.loop.step(st.session_state.sim_state)
@@ -223,11 +231,16 @@ loop: TickLoop = st.session_state.loop
 
 particles: ParticleSystem = st.session_state.particles
 
+multiscale_ctrl: MultiscaleController = st.session_state.multiscale
+consciousness_analyzer: ConsciousnessAnalyzer = st.session_state.consciousness
+
 if st.session_state.running:
     for _ in range(steps_per_frame):
         loop.step(state)
         if particles_enabled:
             step_particles(particles, state, do_collisions=True)
+    multiscale_ctrl.update(state)
+    st.session_state.last_cmarkers = consciousness_analyzer.analyze(state)
 
 # ------------------------------------------------------------------
 # Metriken berechnen
@@ -285,7 +298,13 @@ if trace is not None:
 # ------------------------------------------------------------------
 # Tabs: Simulation | Spurenlesen
 # ------------------------------------------------------------------
-tab_sim, tab_trace, tab_particles = st.tabs(["🔬 Simulation", "🧭 Spurenlesen", "\u2697\ufe0f Partikel"])
+tab_sim, tab_trace, tab_particles, tab_learn, tab_graph = st.tabs([
+    "\U0001f52c Simulation",
+    "\U0001f9ed Spurenlesen",
+    "\u2697\ufe0f Partikel",
+    "\U0001f393 Lernen & Theorie",
+    "\U0001f578\ufe0f Graph-Modus",
+])
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -675,6 +694,398 @@ with tab_particles:
             "keine korrekte Physik). Proto-Leben-Scores sind strukturelle Proxies, "
             "kein Nachweis von Lebensprozessen."
         )
+
+
+# ══════════════════════════════════════════════════════════════════════
+# TAB 4: LERNEN & THEORIE
+# ══════════════════════════════════════════════════════════════════════
+with tab_learn:
+    st.subheader("🎓 Complex Systems Science & Artificial Life — Live-Lernumgebung")
+    st.caption(
+        "Alle angezeigten Metriken sind direkt mit wissenschaftlichen Konzepten verknüpft. "
+        "Starte die Simulation und beobachte, wie sich Kennzahlen verändern — dann lies tiefer."
+    )
+
+    # ── Aktuelle Bewusstseins-Marker live ──────────────────────────────
+    st.markdown("### 🧠 Live: Bewusstseins- & Proto-Leben-Marker")
+    cmark = st.session_state.last_cmarkers
+    if cmark is None:
+        cmark = consciousness_analyzer.analyze(state)
+
+    lc1, lc2, lc3, lc4, lc5 = st.columns(5)
+    lc1.metric("Φ-Proxy (IIT)", f"{cmark.phi_proxy:.3f}",
+               help="Integrated Information Theory (Tononi). Misst, wie viel Information "
+                    "das System als Ganzes integriert. 0=fragmentiert, 1=maximal integriert.")
+    lc2.metric("Active Inference", f"{cmark.active_inference_score:.3f}",
+               help="Free-Energy-Prinzip (Friston). Misst Korrelation zwischen Gedächtnis "
+                    "und Energiefeld — Proxy für internes Vorhersagemodell.")
+    lc3.metric("Proto-Leben", f"{cmark.proto_life_score:.3f}",
+               help="6 Kriterien: Grenzen, Energiefluss, Selbsterhaltung, Adaptation, "
+                    "Gedächtnis, Variation (je 0.167 Punkte).")
+    lc4.metric("Global Workspace", f"{cmark.global_workspace_score:.3f}",
+               help="Global Workspace Theory (Baars/Dehaene). Gini-Koeffizient der "
+                    "Information: hoher Score = dominante Informationsquelle = GWT-ähnlich.")
+    lc5.metric("Integriert", f"{cmark.integrated_score:.3f}",
+               help="Gewichteter Gesamt-Score: 0.3×Φ + 0.2×AI + 0.3×PL + 0.2×GW.")
+
+    st.warning(
+        "⚠️ **Wissenschaftliche Vorsicht:** Alle Marker sind heuristische Proxies, "
+        "kein Nachweis von Bewusstsein oder Leben. Hohe Scores = strukturell interessant, "
+        "nicht = bewusst."
+    )
+
+    st.divider()
+
+    # ── VERTIEFUNGSEBENEN ───────────────────────────────────────────────
+    st.markdown("### 📚 Vertiefungsebenen — wähle deinen Einstieg")
+
+    level = st.radio(
+        "Vertiefung",
+        ["🟢 Einstieg", "🟡 Mittelstufe", "🔴 Forschungsfront"],
+        horizontal=True,
+    )
+
+    if level == "🟢 Einstieg":
+        st.markdown("""
+#### Was du hier siehst
+
+Diese Simulation ist ein **zellulärer Automat** mit mehreren gekoppelten Feldern.
+Jede Zelle hat Zustände (Energie, Materie, Information, Kopplung, …),
+die sich nach lokalen Regeln von Tick zu Tick verändern.
+
+**Schlüsselkonzepte:**
+- **Emergenz**: Komplexe globale Muster entstehen aus einfachen lokalen Regeln.
+- **Zellulärer Automat**: Gitter, auf dem Zustandsregeln parallel angewendet werden.
+  Conway's Game of Life ist das bekannteste Beispiel.
+- **Attraktor**: Zustand, zu dem das System immer wieder zurückkehrt (stables Muster).
+- **Regime**: Wiederkehrender Zustandstyp (hier: 8 Regime, z. B. COHERENT, CRITICAL).
+
+**Zum Nachlesen:**
+""")
+        col_a, col_b = st.columns(2)
+        with col_a:
+            st.markdown("""
+**Bücher:**
+- 📖 *Complexity: A Guided Tour* — Melanie Mitchell *(der beste Einstieg)*
+- 📖 *Artificial Life: A Report from the Frontier* — Steven Levy
+
+**Online:**
+- 🌐 [The Nature of Code — Cellular Automata](https://natureofcode.com/cellular-automata/)
+  *(interaktive visuelle Einführung)*
+- 🌐 [Wolfram NKS — A New Kind of Science](https://www.wolframscience.com/nks/pix--preface/)
+  *(Wolfram's Hauptwerk, gratis online)*
+- 🌐 [Complexity Explorer — ABM-Kurs](https://www.complexityexplorer.org/courses/183-introduction-to-agent-based-modeling)
+  *(kostenloser Online-Kurs, Santa Fe Institute)*
+""")
+        with col_b:
+            st.markdown("""
+**Interaktive Demos:**
+- 🎮 [Lenia — kontinuierliche zelluläre Automaten](https://chakazul.github.io/lenia.html)
+  *(schöne Visualisierungen)*
+- 🎮 [Avida — digitale Evolution](https://avida.devosoft.org/)
+  *(selbstreplizierende Programme, die evolvieren)*
+
+**Podcasts:**
+- 🎙️ [Complexity Podcast (SFI)](https://www.iheart.com/podcast/269-complexity-51009523/)
+  *(Santa Fe Institute, ~30 Min pro Episode)*
+""")
+
+    elif level == "🟡 Mittelstufe":
+        st.markdown("""
+#### Theoretische Grundlagen
+
+**Integrated Information Theory (IIT, Tononi 2004)**
+
+Bewusstsein = das Maß Φ (Phi) an integrierter Information im System.
+Ein System mit Φ > 0 hat irgendeine Form von Erfahrung.
+Das Phi hier ist ein **stark vereinfachter Proxy** — echter Phi ist NP-schwer.
+
+**Free-Energy-Prinzip (Friston 2010)**
+
+Biologische Systeme minimieren "Surprise" — die Abweichung zwischen
+erwartetem und tatsächlichem Sensorinput. Das führt zu aktivem Verhalten
+(Active Inference) und Wahrnehmung. Hier gemessen als Gedächtnis-Energie-Korrelation.
+
+**Global Workspace Theory (Baars/Dehaene)**
+
+Bewusstsein entsteht, wenn Information aus einem lokalen "Hot Spot" global
+im Gehirn "ausgesendet" wird. Hier gemessen als Gini-Koeffizient der Information
+(Ungleichverteilung = lokale Dominanz = GWT-ähnlich).
+
+**Assembly Theory (Walker/Davies)**
+
+Information ist nicht nur passiv gespeichert — sie ist in den Prozessen kodiert,
+die Strukturen aufbauen. Komplexität = Anzahl der benötigten Schritte zum Aufbau.
+""")
+        col_m1, col_m2 = st.columns(2)
+        with col_m1:
+            st.markdown("""
+**Primärquellen:**
+- 📄 Tononi (2004): *An information integration theory of consciousness*
+  BMC Neuroscience 5, 42
+- 📄 Friston (2010): *The free-energy principle: a unified brain theory?*
+  Nature Reviews Neuroscience 11, 127–138
+- 📄 Walker & Davies (2013): *The algorithmic origins of life*
+  J. Royal Society Interface 10, 20120869
+""")
+        with col_m2:
+            st.markdown("""
+**Podcasts & Vorträge:**
+- 🎙️ [Sara Walker — Information and the Origin of Life](https://www.preposterousuniverse.com/podcast/2020/01/13/79-sara-imari-walker-on-information-and-the-origin-of-life/)
+  *(Mindscape Podcast, Sean Carroll)*
+- 🎙️ [Sara Walker — Assembling Life in the Universe](https://www.bigbiology.org/episodes/2022/12/1/ep-93-assembling-life-in-the-universe-with-sara-walker)
+  *(Big Biology Podcast)*
+- 🌐 [OpenWorm — digitaler C. elegans Wurm](https://openworm.org/)
+  *(vollständiges Nervensystem simuliert)*
+- 🌐 [Framsticks — evolvierte 3D-Kreaturen](https://www.framsticks.com/)
+""")
+
+    else:  # 🔴 Forschungsfront
+        st.markdown("""
+#### Forschungsfront — offene Fragen
+
+**Was dieses System erkundet:**
+- Unter welchen Parametern entstehen proto-zelluläre Strukturen mit Grenzen?
+- Korrelieren Φ-Proxy und Proto-Leben-Score? *(schaue Tab Partikel)*
+- Erzeugt Regel-Evolution (Epic 3) messbar mehr Novelty als statische Regeln?
+- Wann entstehen Graph-Kompartimente unabhängig von der initialen Topologie?
+
+**Aktuelle Forschungsrichtungen:**
+""")
+        col_r1, col_r2 = st.columns(2)
+        with col_r1:
+            st.markdown("""
+**ALife & Complexity:**
+- 🏛️ [ALIFE — International Conference on Artificial Life](https://alife.org/)
+  *(wichtigste ALife-Konferenz)*
+- 🏛️ Santa Fe Institute — Complexity Science
+- 📄 *Lenia* (Bert Wang-Chak Chan, 2019) — kontinuierliche CA mit reich. Dynamiken
+- 📄 *Neural Cellular Automata* (Mordvintsev et al., 2020)
+
+**Bewusstseinsforschung:**
+- IIT 4.0 (Albantakis et al., 2023)
+- Global Neuronal Workspace 2.0
+- Higher-Order Theories of Consciousness (HOT)
+- Quantum Mind Hypothesen (Penrose-Hameroff) *(sehr spekulativ!)*
+""")
+        with col_r2:
+            st.markdown("""
+**Experiment-Ideen mit diesem System:**
+1. Scanne `coupling_gain` × `memory_decay` → Phi-Proxy-Landschaft
+2. Vergleiche Genome-Diversität nach 1000 Ticks mit/ohne Meta-Evolution
+3. Messe Proto-Leben-Score als Funktion der Partikel-Kollisionsrate
+4. Vergleiche emergente Graphdistanz: small-world vs. scale-free Topologie
+
+**Starte einen Sweep:**
+```bash
+python -m emergent_noise.experiments.runner -e consciousness_marker_scan
+python -m emergent_noise.experiments.runner -e proto_life_parameter_search
+```
+""")
+
+    st.divider()
+
+    # ── Mehrskalenmodell live ──────────────────────────────────────────
+    st.markdown("### 🔭 Live: Mehrskalenmodell (Mikro / Meso / Makro)")
+    ms_result = multiscale_ctrl.update(state)
+
+    ms_c1, ms_c2, ms_c3, ms_c4 = st.columns(4)
+    ms_c1.metric("Meso-Entitäten",  ms_result["meso"]["n_entities"],
+                 help="Verbundene aktive Regionen (Meso-Ebene): Cluster mit Eigendynamik.")
+    ms_c2.metric("Gesamtfläche",    ms_result["meso"]["total_area"],
+                 help="Summe aller Meso-Cluster-Flächen in Gitterzellen.")
+    ms_c3.metric("Ø Meso-Geschw.", f"{ms_result['meso']['mean_velocity']:.5f}",
+                 help="Mittlere Bewegungsgeschwindigkeit der Meso-Entitäten (Cluster-Drift).")
+    ms_c4.metric("Makro-Übergänge", ms_result["macro"]["n_transitions"],
+                 help="Erkannte Phasenübergänge in der Attraktor-Trajektorie (Δ > 0.05).")
+
+    # Attraktor-Trajektorie
+    traj = multiscale_ctrl.macro.trajectory_array()
+    if len(traj) >= 3:
+        fig_traj, ax_traj = plt.subplots(figsize=(5, 3))
+        ax_traj.plot(traj[:, 0], traj[:, 1], "o-", markersize=2,
+                     alpha=0.7, color="cyan", linewidth=0.8)
+        ax_traj.scatter([traj[-1, 0]], [traj[-1, 1]],
+                        c="red", s=40, zorder=5, label="Aktuell")
+        ax_traj.set_xlabel("Energie (Mittel)", fontsize=8)
+        ax_traj.set_ylabel("Kohärenz (Mittel)", fontsize=8)
+        ax_traj.set_title("Makro-Attraktor-Trajektorie (Energie × Kohärenz)", fontsize=9)
+        ax_traj.legend(fontsize=7)
+        ax_traj.grid(True, alpha=0.3)
+        st.pyplot(fig_traj, use_container_width=True)
+        plt.close(fig_traj)
+        st.caption(
+            "Jeder Punkt = ein Tick. Die Trajektorie zeigt, wohin das System im "
+            "Phasenraum driftet. Spiral- oder Kreisbahn → Attraktor. "
+            "Plötzlicher Sprung → Phasenübergang."
+        )
+
+    st.divider()
+
+    # ── Glossar ────────────────────────────────────────────────────────
+    with st.expander("📖 Begriffe-Glossar (Klick zum Öffnen)"):
+        st.markdown("""
+| Begriff | Bedeutung |
+|---------|-----------|
+| **Emergenz** | Makroskopische Eigenschaften, die aus mikroskopischen Regeln entstehen und auf Mikro-Ebene nicht vorhersagbar sind |
+| **Attraktor** | Stabiler Zustand, zu dem ein dynamisches System immer wieder zurückkehrt |
+| **Bifurkation** | Punkt, an dem ein kleiner Parameterunterschied zu qualitativ verschiedenem Verhalten führt |
+| **Zellulärer Automat (CA)** | Gitter aus Zellen, deren Zustände nach lokalen Regeln aktualisiert werden (Conway, Wolfram) |
+| **Integrated Information (Φ)** | Tononi's Maß für Bewusstsein: wie viel mehr Information das System als Ganzes hat vs. seine Teile |
+| **Free-Energy-Prinzip** | Friston: Systeme minimieren Vorhersage-Fehler durch Wahrnehmung + Handlung (Active Inference) |
+| **Global Workspace** | Baars/Dehaene: Bewusstsein = globale Übertragung lokaler Information im Gehirn |
+| **Proto-Kompartiment** | Abgegrenzte aktive Region mit innerer Kohärenz — Vorläufer zellulärer Strukturen |
+| **Meso-Ebene** | Zwischen Mikro (Zellen) und Makro (Gesamtsystem): Cluster, Membranen, Wellen als Einheiten |
+| **Phasenübergang** | Sprunghafte Änderung des Systemverhaltens beim Überschreiten eines Parameterschwellwerts |
+| **Small-World-Netzwerk** | Wenige lange Verbindungen + viele lokale Cluster (Watts-Strogatz): effiziente Information-Ausbreitung |
+| **Scale-Free-Netzwerk** | Wenige stark vernetzte Hubs + viele schwach vernetzte Knoten (Barabási-Albert): Internetstruktur |
+| **Hypergraph-Rewriting** | Wolfram Physics: Raum und Zeit entstehen aus dem Umschreiben von Relationen (Kanten) |
+| **Assembly Theory** | Walker/Davies: Komplexität = Anzahl Schritte zur Konstruktion einer Struktur |
+""")
+
+
+# ══════════════════════════════════════════════════════════════════════
+# TAB 5: GRAPH-MODUS (Epic 5)
+# ══════════════════════════════════════════════════════════════════════
+with tab_graph:
+    st.subheader("🕸️ Graph-Modus — Relationale Simulation (Epic 5)")
+    st.caption(
+        "Raum entsteht hier aus Relationen (Kanten) zwischen Knoten, nicht aus einem "
+        "vordefinierten Gitter. Inspiriert von Wolfram Physics und Netzwerk-Wissenschaft."
+    )
+
+    try:
+        from emergent_noise.core.graph_state import GraphConfig, GraphState as GState
+        HAS_GS = True
+    except ImportError:
+        HAS_GS = False
+
+    if not HAS_GS:
+        st.error("networkx nicht installiert. `pip install networkx`")
+    else:
+        # Graph-Konfig via Sidebar-ähnliche Spalte
+        g_col1, g_col2 = st.columns([1, 2])
+        with g_col1:
+            g_topo   = st.selectbox("Topologie", ["small_world", "scale_free", "random", "grid"])
+            g_nodes  = st.slider("Knoten", 16, 128, 48, step=8)
+            g_ticks  = st.slider("Simulations-Ticks", 1, 100, 20)
+            g_seed   = st.number_input("Seed (Graph)", value=42, min_value=0, step=1)
+            run_graph = st.button("▶ Graph-Simulation starten")
+
+        with g_col2:
+            if "graph_state" not in st.session_state or run_graph:
+                gcfg = GraphConfig(
+                    n_nodes=g_nodes, initial_topology=g_topo, seed=int(g_seed),
+                    rewriting_rate=0.1,
+                )
+                gs = GState(gcfg)
+                for _ in range(g_ticks):
+                    gs.step()
+                st.session_state.graph_state = gs
+
+            gs = st.session_state.graph_state
+            gsummary = gs.graph_summary()
+
+            # Metriken
+            gm1, gm2, gm3, gm4 = st.columns(4)
+            gm1.metric("Knoten",         gsummary["n_nodes"])
+            gm2.metric("Kanten",         gsummary["n_edges"])
+            gm3.metric("Ø Clustering",   f"{gsummary['avg_clustering']:.3f}",
+                       help="Mittlerer Clustering-Koeffizient: wie stark sind Nachbarn untereinander vernetzt?")
+            gm4.metric("Verbunden",      "✅ Ja" if gsummary["is_connected"] else f"❌ {gsummary['n_components']} Komp.")
+
+            gm5, gm6, gm7 = st.columns(3)
+            gm5.metric("Dichte",         f"{gsummary['density']:.4f}")
+            gm6.metric("Ø Energie",      f"{gsummary['mean_energy']:.3f}")
+            gm7.metric("Ø Information",  f"{gsummary['mean_information']:.3f}")
+
+        # Graph-Visualisierung
+        import networkx as nx
+        G = gs.graph
+        fig_g, axes_g_tab = plt.subplots(1, 2, figsize=(12, 5))
+
+        # Links: Netzwerk-Layout
+        ax_net = axes_g_tab[0]
+        try:
+            pos = nx.spring_layout(G, seed=42, k=2.0/max(len(G.nodes())**0.5, 1))
+        except Exception:
+            pos = nx.random_layout(G, seed=42)
+
+        energies_g = [G.nodes[n].get("energy", 0.5) for n in G.nodes()]
+        weights_g  = [G[u][v].get("weight", 0.5) for u, v in G.edges()]
+        degrees    = dict(G.degree())
+        node_sizes = [20 + degrees[n] * 8 for n in G.nodes()]
+
+        nx.draw_networkx_nodes(
+            G, pos, ax=ax_net,
+            node_color=energies_g, cmap="inferno",
+            node_size=node_sizes, vmin=0, vmax=1, alpha=0.9,
+        )
+        nx.draw_networkx_edges(
+            G, pos, ax=ax_net,
+            width=[w * 1.5 for w in weights_g],
+            alpha=0.4, edge_color="white",
+        )
+        ax_net.set_facecolor("#0e1117")
+        ax_net.set_title(
+            f"Netzwerk nach {g_ticks} Ticks\n"
+            f"Knotengröße ∝ Grad | Farbe = Energie | Linienstärke ∝ Kantengewicht",
+            fontsize=8, color="white"
+        )
+        ax_net.axis("off")
+
+        # Rechts: Emergente Distanzmatrix
+        ax_dist = axes_g_tab[1]
+        n_sample = min(20, g_nodes)
+        dist_mat = gs.emergent_distance_matrix(n_sample=n_sample)
+        dist_finite = np.where(np.isinf(dist_mat), dist_mat[~np.isinf(dist_mat)].max() * 1.5 if np.any(~np.isinf(dist_mat)) else 0, dist_mat)
+        im_d = ax_dist.imshow(dist_finite, cmap="viridis", interpolation="nearest")
+        plt.colorbar(im_d, ax=ax_dist, fraction=0.046)
+        ax_dist.set_title(
+            f"Emergente Distanzmatrix ({n_sample} Knoten)\n"
+            "1/Kantengewicht = effektive Distanz\n(hell = weit, dunkel = nah)",
+            fontsize=8,
+        )
+        ax_dist.set_xlabel("Knoten-Index", fontsize=7)
+        ax_dist.set_ylabel("Knoten-Index", fontsize=7)
+
+        fig_g.tight_layout()
+        st.pyplot(fig_g, use_container_width=True)
+        plt.close(fig_g)
+
+        # Energie-Histogramm
+        energies_arr = gs.node_array("energy")
+        fig_eh, ax_eh = plt.subplots(figsize=(6, 2.5))
+        ax_eh.hist(energies_arr, bins=20, color="orange", alpha=0.8, edgecolor="white")
+        ax_eh.set_xlabel("Knotenenergie", fontsize=8)
+        ax_eh.set_ylabel("Anzahl Knoten", fontsize=8)
+        ax_eh.set_title("Energieverteilung nach Rewriting", fontsize=9)
+        st.pyplot(fig_eh, use_container_width=True)
+        plt.close(fig_eh)
+
+        with st.expander("📖 Was passiert hier? — Wolfram Physics & Netzwerk-Wissenschaft"):
+            st.markdown("""
+**Wolfram Physics (vereinfacht):**
+Wolfram schlägt vor, dass Raum, Zeit und physikalische Gesetze aus dem
+Umschreiben einfacher Hypergraph-Relationen entstehen. Jeder "Schritt"
+ist ein Rewriting-Ereignis. Hier: aktive Knoten knüpfen neue Verbindungen.
+
+**Emergente Distanz:**
+Im Gegensatz zu einem euklidischen Gitter ist die Distanz zwischen Knoten
+hier die *kürzeste gewichtete Pfadlänge*. Starke Kanten = kurze Distanz.
+Die Distanzmatrix zeigt, wie "nah" Knoten funktional verbunden sind.
+
+**Clustering-Koeffizient:**
+Misst, ob Nachbarn eines Knotens auch untereinander verbunden sind.
+- Small-World-Netze: hoch (wie soziale Netzwerke, Gehirn)
+- Random-Netze: niedrig
+- Scale-Free-Netze: variable (viele schwach vernetzte Knoten, wenige Hubs)
+
+**Weiterführend:**
+- 📖 *Network Science* — Barabási (frei online: networksciencebook.com)
+- 📄 Watts & Strogatz (1998): *Collective dynamics of 'small-world' networks*, Nature
+- 📄 Barabási & Albert (1999): *Emergence of scaling in random networks*, Science
+""")
 
 
 # ------------------------------------------------------------------

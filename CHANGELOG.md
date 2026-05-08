@@ -5,6 +5,64 @@ Format: [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [2.0.0] – 2026-05-08
+
+### Hinzugefügt (Epic 7–8 – Experiment-Framework + Bewusstseins-Forschungsstrang)
+
+- `experiments/__init__.py`, `experiments/configs.py`, `experiments/runner.py`:
+  - 7 vordefinierte Experimente: STABILITY_SWEEP, REACTION_SWEEP, META_EVOLUTION,
+    MEMORY_EFFECT, COUPLING_STUDY, PROTO_LIFE_SEARCH, CONSCIOUSNESS_SCAN.
+  - Kartesischer Produkt-Sweep über beliebige SimConfig-Parameter.
+  - Git-Commit-Hash + vollständige Metadaten in `experiment_meta.json`.
+  - CSV-Output mit Entropie, Persistenz, Kompartimenten, Regime, Φ-Proxy.
+  - CLI: `python -m emergent_noise.experiments.runner -e <name>`.
+- `interpretation/consciousness.py` – `ConsciousnessAnalyzer`:
+  - Φ-Proxy (vereinfachte IIT-Näherung): globale Kohärenz × (1 − lokale Varianz).
+  - Active-Inference-Marker (Friston Free-Energy Proxy): memory-energy Korrelation.
+  - Proto-Leben-Score (6 Kriterien: Grenzen, Energiefluss, Selbsterhaltung,
+    Adaptation, Gedächtnis, Variation).
+  - Global-Workspace-Proxy (Baars/Dehaene): Gini-Koeffizient der Information.
+  - Integrierter Score: 0.3×Φ + 0.2×AI + 0.3×PL + 0.2×GW.
+- Dashboard `visualization/dashboard.py` v2.0.0:
+  - **Tab 4 🎓 Lernen & Theorie** mit 3 Vertiefungsebenen (Einstieg / Mittelstufe /
+    Forschungsfront), Live-Bewusstseins-Marker, Mehrskalenmodell-Visualisierung,
+    Attraktor-Trajektorie, Begriffe-Glossar.
+  - Integrierte Quellen: Mitchell, Levy, natureofcode.com, Wolfram NKS, SFI Explorer,
+    Lenia, Avida, OpenWorm, Framsticks, ALIFE, Tononi/Friston/Walker Primärquellen,
+    Sara Walker Podcasts.
+
+### Wissenschaftliche Vorsicht
+
+Φ-Proxy, Active-Inference-Score und Proto-Leben-Score sind heuristische Proxies.
+Sie sind KEIN Nachweis von Bewusstsein, Leben oder Erfahrung. Hohe Scores bedeuten
+"strukturell interessant" — nicht mehr und nicht weniger.
+
+---
+
+## [1.0.0] – 2026-05-08
+
+### Hinzugefügt (Epic 5–6 – Graph-Modus + Mehrskalenmodell)
+
+- `core/graph_state.py` – `GraphState` + `GraphConfig`:
+  - 4 Topologien: small_world (Watts-Strogatz), scale_free (Barabási-Albert),
+    random (Erdős-Rényi), grid.
+  - Energie-Diffusion (gewichtet), lokale Reaktion, Kanten-Zerfall.
+  - Hypergraph-Rewriting: aktive Knoten knüpfen neue Kanten.
+  - Emergente Distanzmatrix (Dijkstra, 1/weight).
+  - `graph_summary`: Dichte, Clustering, Verbundenheit, Komponenten.
+- `core/multiscale.py` – `MesoLayer`, `AttractorLandscape`, `MultiscaleController`:
+  - MesoLayer: verbundene Cluster als eigenständige Entitäten mit Tracking.
+  - AttractorLandscape: Phasenraum-Trajektorie (Energie × Kohärenz), Übergangserkennung.
+  - MultiscaleController: Mikro + Meso + Makro in einem Update.
+- Dashboard `visualization/dashboard.py`:
+  - **Tab 5 🕸️ Graph-Modus**: NetworkX-Visualisierung, Distanzmatrix,
+    Energie-Histogramm, Topologie-Vergleich, Wolfram Physics Erklärung.
+  - Tab 4 Lern-Tab: Live-Meso/Makro-Metriken + Attraktor-Trajektorie.
+- `networkx` als neue optionale Abhängigkeit.
+- `tests/test_epics5to8.py`: 35 Tests (172 gesamt, alle grün).
+
+---
+
 ## [0.5.0] – 2026-05-08
 
 ### Hinzugefügt (Epic 4 – Partikel-Feld-Hybrid)

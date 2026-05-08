@@ -103,11 +103,11 @@
 
 | # | Aufgabe | Status |
 |---|---------|--------|
-| 5.1 | `core/graph_state.py` – GraphState mit NetworkX | 📋 |
-| 5.2 | Hypergraph-Rewriting-Engine | 📋 |
-| 5.3 | Metrik: emergente Distanz aus Graphrelationen | 📋 |
-| 5.4 | Vergleich Grid-Modell vs. Graphmodell für gleiche Anfangsbedingungen | 📋 |
-| 5.5 | ADR-0004: Relationale Geometrie | 📋 |
+| 5.1 | `core/graph_state.py` – GraphState mit NetworkX (small_world/scale_free/random/grid) | ✅ |
+| 5.2 | Hypergraph-Rewriting-Engine (aktive Knoten knüpfen neue Kanten) | ✅ |
+| 5.3 | Emergente Distanz-Metrik (gewichtete Pfadlänge, Dijkstra) | ✅ |
+| 5.4 | Dashboard Tab 5: Graph-Visualisierung + Distanzmatrix + Topologie-Vergleich | ✅ |
+| 5.5 | ADR-0005: Relationale Geometrie | ✅ |
 
 ---
 
@@ -118,10 +118,10 @@
 
 | # | Aufgabe | Status |
 |---|---------|--------|
-| 6.1 | Taichi-Backend für Grid-Simulation (Opt-in) | 📋 |
-| 6.2 | JAX-Backend für vektorisierte Simulationen | 📋 |
-| 6.3 | Meso-Layer: Cluster-Dynamiken als eigenständige Entitäten | 📋 |
-| 6.4 | Makro-Layer: Attraktoren, Regime-Übergänge, Landschaften | 📋 |
+| 6.1 | Taichi/JAX-Backend | 📋 (zurückgestellt – Fokus auf Funktionalität) |
+| 6.2 | `core/multiscale.py` – MesoLayer (Cluster-Entitäten + Tracker) | ✅ |
+| 6.3 | `core/multiscale.py` – MacroLayer (Attraktor-Trajektorie, Übergänge) | ✅ |
+| 6.4 | MultiscaleController + Dashboard-Integration (Tab 4) | ✅ |
 | 6.5 | Benchmark-Suite | 📋 |
 
 ---
@@ -133,13 +133,13 @@
 
 | # | Aufgabe | Status |
 |---|---------|--------|
-| 7.1 | `experiments/runner.py` – Experiment-Runner mit Config-Sweep | 📋 |
-| 7.2 | `experiments/configs.py` – Vordefinierte Experiment-Configs | 📋 |
-| 7.3 | MLflow- oder W&B-Integration | 📋 |
-| 7.4 | DVC für Datenversionierung | 📋 |
-| 7.5 | Git-Commit-Hash in Experiment-Output | 📋 |
-| 7.6 | FastAPI-Endpunkte für Fernsteuerung von Läufen | 📋 |
-| 7.7 | Notebook-Templates für Analyse | 📋 |
+| 7.1 | `experiments/runner.py` – Experiment-Runner (Config-Sweep, CSV-Output) | ✅ |
+| 7.2 | `experiments/configs.py` – 7 vordefinierte Experiment-Configs | ✅ |
+| 7.3 | Git-Commit-Hash in Experiment-Output | ✅ |
+| 7.4 | MLflow/W&B-Integration | 📋 |
+| 7.5 | DVC für Datenversionierung | 📋 |
+| 7.6 | FastAPI-Endpunkte | 📋 |
+| 7.7 | Notebook-Templates | 📋 |
 
 ---
 
@@ -150,11 +150,11 @@
 
 | # | Aufgabe | Status |
 |---|---------|--------|
-| 8.1 | Proto-Leben-Detektor: Grenz- + Kompartiment-Erkennung | 💡 |
-| 8.2 | Integrated-Information-Näherung (Φ-Proxy) | 💡 |
-| 8.3 | Active-Inference-Marker: prädiktive Schleifen messen | 💡 |
-| 8.4 | Selbstmodellierungs-Indikator | 💡 |
-| 8.5 | Ethik-Protokoll: Monitoring, Abschaltbarkeit, Sprach-Leitfaden | 💡 |
+| 8.1 | `interpretation/consciousness.py` – Φ-Proxy (IIT), Active Inference, Proto-Leben (6 Kriterien), Global Workspace | ✅ |
+| 8.2 | `ConsciousnessAnalyzer` – Live-Marker-Berechnung + History | ✅ |
+| 8.3 | Dashboard Tab 4: Live-Marker + 3 Vertiefungsebenen + Glossar | ✅ |
+| 8.4 | 7 Lernquellen (Bücher, Links, Podcasts, Demos) pro Vertiefungsebene | ✅ |
+| 8.5 | Ethik-Vorsicht: Wissenschaftliche Disclaimers in allen Modulen | ✅ |
 
 ---
 
@@ -167,8 +167,8 @@
 | **v0.3.0** | Epic 2 | Spurenlese-Engine, Regime-Klassifikation |
 | **v0.4.0** | Epic 3 | Regel-Evolution, Meta-Regeln |
 | **v0.5.0** | Epic 4 | Partikel-Feld-Hybrid |
-| **v1.0.0** | Epic 5–6 | Graph-Modus, Performance, Mehrskaligkeit |
-| **v2.0.0** | Epic 7–8 | Vollständiges Forschungs-Framework |
+| **v1.0.0** | Epic 5–6 | Graph-Modus, Mehrskaligkeit (Meso/Makro) |
+| **v2.0.0** | Epic 7–8 | Experiment-Framework, Bewusstseins-Marker, Lern-Dashboard |
 
 ---
 
