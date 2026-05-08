@@ -38,6 +38,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
 
+from emergent_noise.experiments.presets import (
+    ExperimentPreset,
+    list_categories,
+    list_presets_by_category,
+    get_preset,
+)
 from emergent_noise.analysis.attractors import (
     PersistenceTracker,
     compute_phase_indicator,
@@ -76,6 +82,43 @@ st.caption("Offene Simulations- und Interpretationsmaschine für emergente Zusta
 # ------------------------------------------------------------------
 with st.sidebar:
     st.header("⚙️ Simulation Config")
+
+    # ── Simulation Gallery ──────────────────────────────────────────
+    st.subheader("🧪 Simulation Gallery")
+    _categories = ["— manual —"] + list_categories()
+    _sel_category = st.selectbox("Preset Category", _categories, key="preset_category")
+
+    _active_preset: ExperimentPreset | None = None
+    if _sel_category != "— manual —":
+        _cat_presets = list_presets_by_category(_sel_category)
+        _sel_preset = st.selectbox(
+            "Preset",
+            _cat_presets,
+            format_func=lambda p: p.title,
+            key="preset_choice",
+        )
+        if _sel_preset is not None:
+            _active_preset = _sel_preset
+            if _sel_preset.experimental:
+                st.warning("⚠️ Experimental preset — interpret results carefully.")
+            with st.expander("📋 Preset info", expanded=False):
+                st.markdown(f"**{_sel_preset.title}**")
+                st.caption(_sel_preset.description)
+                st.markdown("**Expected patterns:**")
+                for _pat in _sel_preset.expected_patterns:
+                    st.markdown(f"- {_pat}")
+                st.markdown("**Key parameters:**")
+                st.markdown(", ".join(f"`{k}`" for k in _sel_preset.key_parameters))
+                st.markdown("**Limitations:**")
+                for _lim in _sel_preset.limitations:
+                    st.markdown(f"- {_lim}")
+            _apply_preset = st.button("▶ Apply Preset & Reset", key="apply_preset_btn")
+        else:
+            _apply_preset = False
+    else:
+        _apply_preset = False
+
+    st.divider()
 
     seed = st.number_input("Seed", value=42, min_value=0, step=1)
     height = st.slider("Grid Höhe", 16, 256, 64, step=16)
@@ -174,6 +217,39 @@ def _build_particle_config() -> ParticleConfig:
         seed=int(seed),
     )
 
+
+def _apply_preset_to_session(preset: ExperimentPreset) -> None:
+    """Reset simulation using the preset config and particle settings."""
+    cfg = preset.config
+    ps = preset.particle_settings
+    pcfg = ParticleConfig(
+        n_particles=ps.count,
+        max_particles=max(ps.count * 4, 200),
+        field_attraction=ps.field_attraction,
+        flow_drag=ps.flow_drag,
+        velocity_damping=ps.velocity_damping,
+        collision_radius=ps.collision_radius,
+        min_mass_for_compartment=ps.min_mass_for_compartment,
+        seed=cfg.seed,
+    )
+    st.session_state.sim_state = GridState.initialize(cfg)
+    st.session_state.sim_config = cfg
+    st.session_state.loop = TickLoop(cfg)
+    st.session_state.running = False
+    st.session_state.entropy_history = deque(maxlen=200)
+    st.session_state.tracker = PersistenceTracker(window=20)
+    st.session_state.last_trace = None
+    st.session_state.last_trace_tick = -1
+    st.session_state.particles = ParticleSystem(pcfg, cfg.height, cfg.width)
+    st.session_state.multiscale = MultiscaleController()
+    st.session_state.consciousness = ConsciousnessAnalyzer()
+    st.session_state.last_cmarkers = None
+    st.session_state.active_preset_id = preset.id
+
+
+if _apply_preset and _active_preset is not None:
+    _apply_preset_to_session(_active_preset)
+    st.success(f"✅ Preset '{_active_preset.title}' applied — press ▶ Start to run.")
 
 if "sim_state" not in st.session_state:
     cfg = _build_config()
@@ -705,6 +781,54 @@ with tab_learn:
         "Alle angezeigten Metriken sind direkt mit wissenschaftlichen Konzepten verknüpft. "
         "Starte die Simulation und beobachte, wie sich Kennzahlen verändern — dann lies tiefer."
     )
+
+    # ── Simulation Gallery ──────────────────────────────────────────────
+    st.markdown("### 🧪 Simulation Gallery")
+    st.caption(
+        "These presets are not exact biological, physical or cognitive simulations. "
+        "They are reproducible field experiments designed to explore emergent analogues. "
+        "Select a preset in the sidebar to apply it."
+    )
+
+    _gallery_cats = list_categories()
+    _gallery_tab_labels = _gallery_cats
+    _gallery_tabs = st.tabs(_gallery_tab_labels)
+
+    from emergent_noise.experiments.presets import list_presets_by_category as _lpbc
+
+    for _gtab, _gcat in zip(_gallery_tabs, _gallery_cats):
+        with _gtab:
+            _gpresets = _lpbc(_gcat)
+            for _gp in _gpresets:
+                with st.expander(
+                    f"{'⚠️ ' if _gp.experimental else ''}{_gp.title}",
+                    expanded=False,
+                ):
+                    st.markdown(f"**Description:** {_gp.description}")
+                    st.markdown(f"*Inspiration: {_gp.inspiration}*")
+                    col_g1, col_g2 = st.columns(2)
+                    with col_g1:
+                        st.markdown("**Expected patterns:**")
+                        for _ep in _gp.expected_patterns:
+                            st.markdown(f"- {_ep}")
+                        st.markdown("**Key parameters:**")
+                        st.markdown(", ".join(f"`{k}`" for k in _gp.key_parameters))
+                        st.markdown("**Suggested metrics:**")
+                        for _sm in _gp.suggested_metrics:
+                            st.markdown(f"- {_sm}")
+                    with col_g2:
+                        st.markdown("**Limitations:**")
+                        for _lm in _gp.limitations:
+                            st.markdown(f"- {_lm}")
+                        st.markdown("**Tags:** " + " · ".join(f"`{t}`" for t in _gp.tags))
+                        if _gp.experimental:
+                            st.warning("⚠️ Experimental preset — results are exploratory.")
+                    st.info(
+                        f"To run: select **{_gp.category}** → **{_gp.title}** "
+                        f"in the sidebar, then click **▶ Apply Preset & Reset**."
+                    )
+
+    st.divider()
 
     # ── Aktuelle Bewusstseins-Marker live ──────────────────────────────
     st.markdown("### 🧠 Live: Bewusstseins- & Proto-Leben-Marker")

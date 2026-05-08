@@ -7,7 +7,7 @@
 [![CI](https://github.com/FelixGitReporian/emergentes-rauschen/actions/workflows/ci.yml/badge.svg)](https://github.com/FelixGitReporian/emergentes-rauschen/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-172%20passing-brightgreen.svg)](#tests)
+[![Tests](https://img.shields.io/badge/tests-199%20passing-brightgreen.svg)](#tests)
 [![Version](https://img.shields.io/badge/version-v2.0.0-blue.svg)](CHANGELOG.md)
 
 ---
@@ -88,6 +88,43 @@ python -m emergent_noise.experiments.runner -e stability_sweep
 - **⚗️ Partikel** — Partikel-Scatter, Dichtekarte, Proto-Kompartimente, Genome
 - **🎓 Lernen & Theorie** — Live-Bewusstseins-Marker, 3 Vertiefungsebenen (Einstieg → Forschungsfront), Attraktor-Trajektorie, Glossar, 15+ Lernquellen
 - **🕸️ Graph-Modus** — NetworkX-Simulation (4 Topologien), emergente Distanzmatrix, Wolfram-Rewriting
+
+---
+
+## Experiment Gallery
+
+The project includes a growing collection of **reproducible simulation presets** — each a small
+research object with config, inspiration, expected patterns, limitations and suggested metrics.
+
+| Preset | Category | Description |
+|--------|----------|-------------|
+| Stigmergy / Ant Trails | Collective Behavior | Indirect coordination through persistent memory traces |
+| Boids Field Approximation ⚠️ | Collective Behavior | Flock-like movement via field coupling and flow |
+| Tree Growth / Branching Morphogenesis | Morphogenesis | Branch-like structures via memory stabilisation |
+| Reaction-Diffusion / Turing-like Patterns | Pattern Formation | Spots, stripes and reaction fronts |
+| Excitable Media / Wave Propagation | Bio-inspired Dynamics | Threshold-driven activity waves |
+| Trace Reading / Fossil Field | Trace Reading | Long-lived memory accumulation and trace inference |
+| Autopoiesis / Membrane Formation | Artificial Life | Boundary formation and self-maintenance |
+| Ecosystem Patch Dynamics | Ecology | Resource patches, succession, disturbance |
+
+> These presets are not claims of exact biological or physical realism.
+> They are exploratory field experiments for studying **emergent analogues**.
+
+**Browse the gallery:** Open the **🎓 Lernen & Theorie** tab in the dashboard.
+
+**Apply a preset:**
+```bash
+python -m streamlit run src/emergent_noise/visualization/dashboard.py
+# → sidebar: select Preset Category → Preset → ▶ Apply Preset & Reset
+```
+
+**Run from CLI:**
+```bash
+python examples/run_preset.py --list
+python examples/run_preset.py --preset stigmergy_ant_trails --steps 500
+```
+
+**Full documentation:** [`docs/experiments/`](docs/experiments/index.md)
 
 ---
 

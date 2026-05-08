@@ -4,7 +4,7 @@
 > Each epic corresponds to a phase of the simulation architecture (workbook sections 10–16).  
 > Status: ✅ Done · 🔄 In Progress · 📋 Planned · 💡 Research
 >
-> **Current: v2.0.0 — all 8 epics complete — 172 tests, all passing.**
+> **Current: v2.1.0 — Epic 9 complete — 199 tests, all passing.**
 
 ---
 
@@ -160,6 +160,105 @@
 
 ---
 
+## Epic 9 – Experiment Presets & Simulation Gallery ✅
+
+**Goal:** Clickable, reproducible simulation presets with rich metadata, dashboard gallery and CLI runner.
+
+| # | Task | Status |
+|---|------|--------|
+| 9.1 | `ExperimentPreset` and `ParticleSettings` dataclasses | ✅ |
+| 9.2 | Preset registry (`PRESETS` dict) with helpers | ✅ |
+| 9.3 | Stigmergy / Ant Trails preset | ✅ |
+| 9.4 | Boids Field Approximation preset (experimental) | ✅ |
+| 9.5 | Tree Growth / Branching Morphogenesis preset | ✅ |
+| 9.6 | Reaction-Diffusion / Turing-like Patterns preset | ✅ |
+| 9.7 | Excitable Media / Wave Propagation preset | ✅ |
+| 9.8 | Trace Reading / Fossil Field preset | ✅ |
+| 9.9 | Autopoiesis / Membrane Formation preset | ✅ |
+| 9.10 | Ecosystem Patch Dynamics preset | ✅ |
+| 9.11 | Dashboard preset selector (sidebar + gallery in Lernen tab) | ✅ |
+| 9.12 | `examples/run_preset.py` CLI runner | ✅ |
+| 9.13 | `docs/experiments/` documentation (index + 8 preset docs) | ✅ |
+| 9.14 | `tests/test_presets.py` — 27 tests (registry, validity, determinism) | ✅ |
+
+---
+
+## Epic 10 – Initial Conditions & Pattern Seeds 📋
+
+**Goal:** Let presets define starting conditions (seed points, gradients, bursts) for reproducible pattern types.
+
+| # | Task | Status |
+|---|------|--------|
+| 10.1 | `InitialCondition` abstraction | 📋 |
+| 10.2 | Centered seed (single-point excitation) | 📋 |
+| 10.3 | Bottom seed for tree/root growth | 📋 |
+| 10.4 | Top-down energy gradient (light model) | 📋 |
+| 10.5 | Radial burst event | 📋 |
+| 10.6 | Moving disturbance event | 📋 |
+| 10.7 | Line/path seed | 📋 |
+| 10.8 | Random clustered seed | 📋 |
+| 10.9 | Allow presets to define `initial_condition` | 📋 |
+| 10.10 | Tests for deterministic initialization | 📋 |
+
+---
+
+## Epic 11 – Real Agent Layer 📋
+
+**Goal:** True agent-based dynamics: heading, velocity, neighbour interaction, pheromone deposition.
+
+| # | Task | Status |
+|---|------|--------|
+| 11.1 | `AgentState` with position, velocity, heading and memory | 📋 |
+| 11.2 | Spatial hashing / grid binning for O(N) neighbour search | 📋 |
+| 11.3 | Field sampling for agents | 📋 |
+| 11.4 | Field deposition for agents (pheromone model) | 📋 |
+| 11.5 | Boids separation rule | 📋 |
+| 11.6 | Boids alignment rule | 📋 |
+| 11.7 | Boids cohesion rule | 📋 |
+| 11.8 | Pheromone-following agent policy | 📋 |
+| 11.9 | Nest and food source abstraction | 📋 |
+| 11.10 | Real Ant Trail experiment | 📋 |
+| 11.11 | Real Boids experiment | 📋 |
+
+---
+
+## Epic 12 – Morphogenesis & Growth Systems 📋
+
+**Goal:** Branching, skeleton extraction, fractal metrics, growth front analysis.
+
+| # | Task | Status |
+|---|------|--------|
+| 12.1 | `GrowthFront` abstraction | 📋 |
+| 12.2 | Branching probability rule | 📋 |
+| 12.3 | Resource gradient following | 📋 |
+| 12.4 | Memory stabilisation for grown structures | 📋 |
+| 12.5 | Pruning / decay dynamics | 📋 |
+| 12.6 | Branch skeleton extraction | 📋 |
+| 12.7 | Branch count metric | 📋 |
+| 12.8 | Fractal dimension estimate | 📋 |
+| 12.9 | Tree-growth-specific visualization | 📋 |
+| 12.10 | Mycelium-like preset | 📋 |
+| 12.11 | River-network-like preset | 📋 |
+
+---
+
+## Epic 13 – Trace Reading Metrics 📋
+
+**Goal:** Quantitative trace inference: persistence, directionality, autocorrelation, event reconstruction.
+
+| # | Task | Status |
+|---|------|--------|
+| 13.1 | Memory persistence metric | 📋 |
+| 13.2 | Spatial autocorrelation metric | 📋 |
+| 13.3 | Directionality metric | 📋 |
+| 13.4 | Entropy over time (memory field specific) | 📋 |
+| 13.5 | Cluster lifetime tracking | 📋 |
+| 13.6 | Event reconstruction placeholder | 📋 |
+| 13.7 | Trace-reading report panel in dashboard | 📋 |
+| 13.8 | Wavefront speed metric (for excitable media) | 📋 |
+
+---
+
 ## Milestones
 
 | Milestone | Epics | Goal |
@@ -171,6 +270,9 @@
 | **v0.5.0** | Epic 4 | Particle-field hybrid |
 | **v1.0.0** | Epic 5–6 | Graph mode, multiscale model (meso/macro) |
 | **v2.0.0** | Epic 7–8 | Experiment framework, consciousness markers, learning dashboard |
+| **v2.1.0** | Epic 9 | Simulation gallery, 8 presets, dashboard gallery, CLI runner |
+| **v3.0.0** | Epic 10–11 | Initial conditions + real agent layer |
+| **v3.1.0** | Epic 12–13 | Morphogenesis metrics + trace reading metrics |
 
 ---
 
