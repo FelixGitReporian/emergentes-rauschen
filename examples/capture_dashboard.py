@@ -24,13 +24,15 @@ from pathlib import Path
 
 def capture(port: int = 8501, wait: int = 10) -> None:
     try:
-        from playwright.sync_api import sync_playwright
+        from playwright.sync_api import sync_playwright  # noqa: F401
     except ImportError:
         print(
-            "Playwright nicht installiert.\n"
-            "Führe aus: pip install playwright && playwright install chromium"
+            "Playwright not installed.\n"
+            "Run:  python -m pip install playwright\n"
+            "Then: python -m playwright install chromium"
         )
         sys.exit(1)
+    from playwright.sync_api import sync_playwright
 
     out_dir = Path("docs") / "screenshots"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -48,29 +50,27 @@ def capture(port: int = 8501, wait: int = 10) -> None:
     time.sleep(wait)
 
     url = f"http://localhost:{port}"
-    tabs = [
-        ("simulation",  None),
-        ("spurenlesen",  "text=🧭 Spurenlesen"),
-        ("partikel",    "text=⚗️ Partikel"),
-        ("lernen",      "text=🎓 Lernen"),
-        ("graph",       "text=🕸️ Graph"),
-    ]
+    tab_names = ["simulation", "spurenlesen", "partikel", "lernen", "graph"]  # defined before try for finally scope
 
     try:
         with sync_playwright() as pw:
             browser = pw.chromium.launch(headless=True)
             page = browser.new_page(viewport={"width": 1400, "height": 900})
             page.goto(url, timeout=30_000)
-            page.wait_for_load_state("networkidle", timeout=30_000)
+            page.wait_for_load_state("networkidle", timeout=60_000)
+            page.wait_for_timeout(3_000)
 
-            for tab_name, tab_selector in tabs:
-                if tab_selector:
+            tab_buttons = page.locator('[data-baseweb="tab"]').all()
+
+            for idx, tab_name in enumerate(tab_names):
+                if idx < len(tab_buttons):
                     try:
-                        page.click(tab_selector, timeout=5_000)
-                        page.wait_for_timeout(2_000)
-                    except Exception:
-                        print(f"  ⚠️  Tab '{tab_name}' nicht gefunden, überspringe.")
-                        continue
+                        tab_buttons[idx].click(timeout=5_000)
+                        page.wait_for_timeout(2_500)
+                    except Exception as e:
+                        print(f"  ⚠️  Tab {idx} ('{tab_name}') konnte nicht geklickt werden: {e}")
+                else:
+                    print(f"  ⚠️  Tab {idx} ('{tab_name}') nicht vorhanden.")
 
                 path = out_dir / f"dashboard_{tab_name}.png"
                 page.screenshot(path=str(path), full_page=False)
@@ -81,7 +81,7 @@ def capture(port: int = 8501, wait: int = 10) -> None:
         proc.terminate()
         print(f"\n✅ Screenshots gespeichert in: {out_dir.resolve()}")
         print("   README.md einbinden mit:")
-        for tab_name, _ in tabs:
+        for tab_name in tab_names:
             print(f"   ![{tab_name}](docs/screenshots/dashboard_{tab_name}.png)")
 
 

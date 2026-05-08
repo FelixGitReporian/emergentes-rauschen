@@ -17,7 +17,7 @@ For the dashboard:
 
 ```bash
 pip install -e ".[dashboard]"
-streamlit run src/emergent_noise/visualization/dashboard.py
+python -m streamlit run src/emergent_noise/visualization/dashboard.py
 ```
 
 ---

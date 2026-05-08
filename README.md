@@ -58,7 +58,7 @@ pip install -e ".[dev]"
 
 # Live-Dashboard
 pip install -e ".[dashboard]"
-streamlit run src/emergent_noise/visualization/dashboard.py
+python -m streamlit run src/emergent_noise/visualization/dashboard.py
 
 # Reproduzierbares Experiment (CSV-Output)
 python -m emergent_noise.experiments.runner -e stability_sweep
@@ -75,12 +75,12 @@ python -m emergent_noise.experiments.runner -e stability_sweep
 |:---:|:---:|
 | ![simulation](docs/screenshots/dashboard_simulation.png) | ![lernen](docs/screenshots/dashboard_lernen.png) |
 
-| Graph-Modus | Partikel |
+| Graph-Modus | Spurenlesen |
 |:---:|:---:|
-| ![graph](docs/screenshots/dashboard_graph.png) | ![partikel](docs/screenshots/dashboard_partikel.png) |
+| ![graph](docs/screenshots/dashboard_graph.png) | ![spurenlesen](docs/screenshots/dashboard_spurenlesen.png) |
 
-> Screenshots erzeugen: `pip install playwright && playwright install chromium`
-> dann `python examples/capture_dashboard.py`
+> Regenerate screenshots: `python -m pip install playwright` then `python -m playwright install chromium`
+> then `python examples/capture_dashboard.py`
 
 5 Tabs:
 - **🔬 Simulation** — Live-Heatmap, RGB-Composite, Entropie-Zeitreihe, Regime-Klassifikation
