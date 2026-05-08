@@ -3,6 +3,8 @@
 > Basiert auf der [Professionellen Arbeitsmappe](emergentes-rauschen-professionelle-arbeitsmappe.md) (v2.0).  
 > Jedes Epic entspricht einer Phase der Simulationsarchitektur (Abschnitte 10–16 der Arbeitsmappe).  
 > Status: ✅ Done · 🔄 In Progress · 📋 Planned · 💡 Research
+>
+> **Aktuell: v2.0.0 — alle 8 Epics abgeschlossen — 172 Tests, alle grün.**
 
 ---
 

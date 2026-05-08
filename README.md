@@ -1,57 +1,83 @@
 # Emergentes Rauschen
 
-> **Eine offene Simulations- und Interpretationsmaschine für emergente Zustandsfelder.**
+> A research sandbox for studying how structured noise, local rules, memory, coupling
+> and information flow generate emergent regimes — readable as traces, proto-life markers,
+> adaptive structures and relational geometries.
 
 [![CI](https://github.com/FelixGitReporian/ermergentes-rauschen/actions/workflows/ci.yml/badge.svg)](https://github.com/FelixGitReporian/ermergentes-rauschen/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-172%20passing-brightgreen.svg)](#tests)
+[![Version](https://img.shields.io/badge/version-v2.0.0-blue.svg)](CHANGELOG.md)
 
 ---
 
 ## Was ist Emergentes Rauschen?
 
-Dieses Projekt entwickelt kein klassisches Simulationsspiel und keine gewöhnliche Physik-Engine.
-Es entwirft eine **offene Emergenzmaschine**: ein dynamisches, mehrschichtiges Zustandsfeld aus
-acht Grundparametern:
+Ein **offenes Forschungswerkzeug** für die Frage:
+*Wie entstehen aus einfachen lokalen Regeln emergente Regime — Muster, Grenzen, Gedächtnis,
+adaptive Strukturen?*
 
-| Parameter | Bedeutung |
-|---|---|
-| `energy` | Aktivierungspotenzial, Reaktionsfähigkeit |
-| `matter` | Lokale Dichte, Trägheit, Substrat |
+Das Kernsystem ist ein 2D-Zustandsfeld aus **8 gekoppelten Feldern**, die sich nach deterministischen
+Regeln bei jedem Tick aktualisieren:
+
+| Feld | Rolle |
+|------|-------|
+| `energy` | Aktivierungspotenzial, treibende Kraft |
+| `matter` | Lokale Dichte, Substrat, Trägheit |
 | `information` | Komprimierbare Ordnung, lokaler Mustergehalt |
 | `coupling` | Stärke der Nachbarschaftsverbindungen |
 | `reactivity` | Wahrscheinlichkeit lokaler Transformationen |
-| `memory` | Sedimentierte Vergangenheit, lokale Hysterese |
+| `memory` | Sedimentierte Vergangenheit, Hysterese |
 | `coherence` | Lokale Synchronität, Musterstabilität |
-| `flow` | Gerichteter Fluss, Vektordynamik, Wirbel |
+| `flow` | Gerichteter Fluss, Vektordynamik, Advektion |
 
-Aus **lokalen Regeln, strukturiertem Rauschen, Diffusion, Reaktion, Kopplung und Gedächtnis**
-entstehen komplexe Muster. Ein Analyse-Layer liest diese Muster wie Spuren:
-*Was war vorher? Was könnte als Nächstes passieren? Welche Attraktoren, Cluster, Wirbel oder
-proto-lebensähnlichen Formen entstehen?*
+Ein **Analyse-Layer** liest die entstehenden Muster: Attraktoren, Regime-Typen, Cluster, Spuren,
+proto-kompartimentelle Strukturen. Ein **Lern-Dashboard** verbindet die Live-Simulation direkt
+mit wissenschaftlichen Theorien (IIT, Free-Energy, GWT, ALife).
 
-> **Wissenschaftliche Vorsicht:** Alle Interpretationen sind Hypothesen und Modelle.
-> Wir beweisen keine Theorie von allem. Wir bauen ein offenes Forschungsinstrument.
+> **Wissenschaftlicher Rahmen:** Dieses System beweist keine Theorie. Es erzeugt Strukturen,
+> die mit Metriken aus Complex-Systems-Forschung und ALife analysiert werden. Alle Marker
+> (Φ-Proxy, Proto-Leben-Score, etc.) sind heuristische Proxies — nützlich zum Explorieren,
+> kein Nachweis von Bewusstsein oder Leben.
+>
+> Weiterführende Abgrenzung: [docs/scientific-scope.md](docs/scientific-scope.md)
 
-Inspiriert von: Complex Systems, Artificial Life, Reaktions-Diffusion, Lenia, Flow-Lenia,
-Informationsphysik, Emergenter Raumzeit, Causal Sets, Wolfram-Hypergraphen, Aktiver Inferenz.
+**Inspirationsquellen** (kein Anspruch auf Äquivalenz):
+Lenia / Flow-Lenia, Reaktions-Diffusion-Systeme, Wolfram-Hypergraphen (strukturell),
+IIT / Active Inference / GWT (als Proxy-Metriken), Causal Sets (konzeptuell).
 
 ---
 
 ## Schnellstart
 
 ```bash
+# ⚠️  Hinweis: Repository-Umbenennug von 'ermergentes-rauschen' → 'emergentes-rauschen'
+#     ist geplant (Issue #1). Bis dahin lautet die URL noch mit 'erm-'.
 git clone https://github.com/FelixGitReporian/ermergentes-rauschen.git
 cd ermergentes-rauschen
 pip install -e ".[dev]"
 
-# 500 Ticks simulieren, PNGs + Entropie-CSV ausgeben
-python examples/run_500.py
-
-# Live-Dashboard (benötigt streamlit)
+# Live-Dashboard
 pip install -e ".[dashboard]"
 streamlit run src/emergent_noise/visualization/dashboard.py
+
+# Reproduzierbares Experiment (CSV-Output)
+python -m emergent_noise.experiments.runner -e stability_sweep
 ```
+
+---
+
+## Dashboard
+
+> *Screenshot / GIF folgt — Issue #6*
+
+5 Tabs:
+- **🔬 Simulation** — Live-Heatmap, RGB-Composite, Entropie-Zeitreihe, Regime-Klassifikation
+- **🧭 Spurenlesen** — Attraktoren, MI-Matrix, Morphologie, Narrativ-Text
+- **⚗️ Partikel** — Partikel-Scatter, Dichtekarte, Proto-Kompartimente, Genome
+- **🎓 Lernen & Theorie** — Live-Bewusstseins-Marker, 3 Vertiefungsebenen (Einstieg → Forschungsfront), Attraktor-Trajektorie, Glossar, 15+ Lernquellen
+- **🕸️ Graph-Modus** — NetworkX-Simulation (4 Topologien), emergente Distanzmatrix, Wolfram-Rewriting
 
 ---
 
@@ -62,7 +88,9 @@ python -m pytest          # alle Tests
 python -m pytest -v       # mit Details
 ```
 
-Aktuell: **48 Tests**, alle grün.
+**Aktuell: 172 Tests, alle grün** — abgedeckt: Regeln, Entropie, Attraktoren, Spurenlesen,
+Meta-Evolution, Partikel, Kompartimente, Graph-Modus, Mehrskaligkeit, Bewusstseins-Marker,
+Experiment-Runner.
 
 ---
 
@@ -71,31 +99,25 @@ Aktuell: **48 Tests**, alle grün.
 ```
 src/emergent_noise/
   core/
-    state.py          SimConfig (Pydantic) + GridState (dataclass)
-    tick.py           Deterministischer Tick-Loop (8 Schritte)
-  rules/
-    diffusion.py      5-Punkt-Laplace, Numba-JIT optional
-    reaction.py       Aktivierungs- + Zerfallsregel
-    memory.py         EMA-Gedächtnis (Zerfall + Imprint)
-    coupling.py       Bindung, Zerfall, Kohärenz-Synchronisation
-    flow.py           Gradienten-Fluss, Curl-Wirbel, Advektion
-  noise/
-    structured_noise.py  Sinus-Superposition, deterministisch per Seed+Tick
-  analysis/
-    entropy.py        Normalisierte Shannon-Entropie
-    attractors.py     Persistenz, Cluster, Phasenübergangs-Indikator
-  visualization/
-    render.py         Panel-PNG (9 Felder) + RGB-Composite
-    dashboard.py      Streamlit Live-Dashboard
+    state.py            SimConfig (Pydantic v2) + GridState
+    tick.py             Tick-Loop: noise→diffusion→reaction→coupling→flow→memory→meta_rules→clip
+    particles.py        Partikel-System (NumPy-vektorisiert)
+    graph_state.py      GraphState (NetworkX): 4 Topologien, Rewriting, Distanzmatrix
+    multiscale.py       MesoLayer + AttractorLandscape + MultiscaleController
+  rules/                diffusion, reaction (Genome), coupling, flow, memory, meta_rules
+  noise/                structured_noise (deterministisch, Seed+Tick)
+  analysis/             entropy, attractors, morphology, mutual_information,
+                        trace_reading, novelty, compartments
+  interpretation/       regime_classifier (8 Typen), narratives, consciousness
+  experiments/          configs (7 Experimente), runner (Config-Sweep, CSV, Git-Hash)
+  visualization/        render, dashboard (5 Tabs)
 
-examples/
-  run_500.py          CLI: 500 Ticks, PNG-Output, Entropie-CSV
-
-tests/                48 pytest-Tests
+tests/                  172 pytest-Tests
 docs/
-  design-decisions/   ADR-0001, ADR-0002, ...
-outputs/              Simulationsergebnisse (gitignore)
-.github/              CI, Issue-Templates, PR-Template
+  design-decisions/     ADR-0001 … ADR-0007
+  scientific-scope.md   Was das Projekt kann und was nicht
+  research-context.md   Einordnung: ALife, Wolfram, IIT, Free-Energy
+outputs/                Simulationsergebnisse (gitignore)
 ```
 
 ---
@@ -160,34 +182,21 @@ print(f"Phasenübergang nahe: {phase.near_transition}")
 
 ---
 
-## Live-Dashboard
+## Current Status
 
-```bash
-streamlit run src/emergent_noise/visualization/dashboard.py
-```
+| Version | Epic | Ziel | Status |
+|---------|------|------|--------|
+| v0.1.0 | Epic 0 | Grid, Regeln, Tests | ✅ |
+| v0.2.0 | Epic 1 | 8 Parameter, Dashboard, Attraktoren | ✅ |
+| v0.3.0 | Epic 2 | Spurenlese-Engine, Regime-Klassifikation | ✅ |
+| v0.4.0 | Epic 3 | Meta-Regel-Evolution, Genome-Diversität | ✅ |
+| v0.5.0 | Epic 4 | Partikel-Feld-Hybrid, Proto-Kompartimente | ✅ |
+| v1.0.0 | Epic 5–6 | Graph-Modus (NetworkX), Mehrskalenmodell (Meso/Makro) | ✅ |
+| v2.0.0 | Epic 7–8 | Experiment-Framework, Bewusstseins-Marker, Lern-Dashboard | ✅ |
 
-Features:
-- Alle Config-Parameter per Sidebar live anpassbar
-- Heatmap des gewählten Feldes
-- RGB-Composite (energy / information / coherence)
-- Entropie-Zeitreihe
-- Persistenz + Cluster-Statistiken
-- Phasenübergangs-Indikator
+**Tests: 172 passing** · **Python 3.11+** · **Alle Epics abgeschlossen**
 
----
-
-## Roadmap
-
-Siehe [ROADMAP.md](ROADMAP.md) für alle 8 Epics:
-
-| Version | Epic | Ziel |
-|---|---|---|
-| ✅ v0.1.0 | Epic 0 | Fundament: Grid, Regeln, Tests |
-| 🔄 v0.2.0 | Epic 1 | Alle 8 Parameter aktiv, Dashboard |
-| 📋 v0.3.0 | Epic 2 | Spurenlese-Engine |
-| 📋 v0.4.0 | Epic 3 | Regel-Evolution |
-| 📋 v0.5.0 | Epic 4 | Partikel-Feld-Hybrid |
-| 📋 v1.0.0 | Epic 5–6 | Graph-Modus, Performance |
+Vollständige Roadmap: [ROADMAP.md](ROADMAP.md)
 
 ---
 
@@ -216,9 +225,9 @@ MIT — siehe [LICENSE](LICENSE).
 
 ## Wissenschaftliche Abgrenzung
 
-> Dieses Projekt ist ein experimentelles Forschungsinstrument.
-> Es kann generative Selbstorganisations-Experimente durchführen,
-> Muster analysieren und Hypothesen entwickeln.
-> Es beweist keine Theorie von allem, kein Bewusstsein,
-> keine echte Physik und kein echtes Leben.
-> Alle Interpretationen sind vorsichtig formulierte Modelle.
+Dieses Projekt ist ein **experimentelles Forschungsinstrument**, kein Nachweis einer Theorie.
+Es generiert Selbstorganisations-Experimente, analysiert Muster und entwickelt Hypothesen.
+
+- Was es kann und was es nicht behauptet: [docs/scientific-scope.md](docs/scientific-scope.md)
+- Wissenschaftlicher Kontext (ALife, Wolfram, IIT, Free-Energy): [docs/research-context.md](docs/research-context.md)
+- Architekturentscheidungen: [docs/design-decisions/](docs/design-decisions/)
