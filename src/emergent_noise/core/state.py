@@ -73,12 +73,32 @@ class SimConfig(BaseModel):
         8.0, gt=0.0, description="Räumliche Skalierung des Perlin-ähnlichen Rauschens (Zellen)"
     )
 
+    # --- Reaktivität ---
+    reactivity_recovery: float = Field(
+        0.98, ge=0.0, le=1.0,
+        description="EMA-Rate für Reaktivitätserholung zum Ruhezustand (1=keine Erholung)"
+    )
+    reactivity_rest: float = Field(
+        0.5, ge=0.0, le=1.0,
+        description="Gleichgewichts-Ruhezustand der Reaktivität"
+    )
+
+    # --- Materie ---
+    matter_erosion_rate: float = Field(
+        0.02, ge=0.0, le=1.0,
+        description="Rate, mit der Fluss Materie erodiert"
+    )
+    matter_deposition_rate: float = Field(
+        0.005, ge=0.0, le=1.0,
+        description="Rate, mit der Materie in ruhigen gekoppelten Regionen abgelagert wird"
+    )
+
     # --- Kopplung ---
     coupling_gain: float = Field(
-        0.01, ge=0.0, le=1.0, description="Wachstumsrate der Kopplung bei ähnlicher Kohärenz"
+        0.005, ge=0.0, le=1.0, description="Wachstumsrate der Kopplung bei ähnlicher Kohärenz"
     )
     coupling_loss: float = Field(
-        0.05, ge=0.0, le=1.0, description="Zerfallsrate der Kopplung bei lokaler Energievarianz"
+        0.08, ge=0.0, le=1.0, description="Zerfallsrate der Kopplung bei lokaler Energievarianz"
     )
     coupling_sync_rate: float = Field(
         0.05, ge=0.0, le=1.0, description="Rate, mit der Kohärenz durch Kopplung synchronisiert wird"

@@ -5,6 +5,35 @@ Format: [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.2.1] – 2026-05-08
+
+### Geändert / Gefixt
+
+- `rules/reaction.py`: `reactivity`-Dynamik (EMA-Erholung + Verbrauch bei Aktivierung) und
+  `matter`-Dynamik (Erosion durch Fluss, Ablagerung in ruhigen Regionen) implementiert.
+  Alle 8 Grundparameter der Arbeitsmappe sind jetzt **vollständig dynamisch**.
+- `rules/coupling.py`: Basalzerfall-Term ergänzt, verhindert Sättigung bei homogenen Feldern.
+- `rules/reaction.py`: Ablagerungsformel auf `deposition * coupling * (1 - matter)` geändert,
+  verhindert Sättigung von `matter` bei 1.0.
+- `core/state.py`: Neue Default-Parameter `reactivity_recovery=0.98`, `reactivity_rest=0.5`,
+  `matter_erosion_rate=0.02`, `matter_deposition_rate=0.005`.
+- `examples/run_analysis.py`: Neues Analyse-Skript mit Persistenz-, Cluster-, Phasen-
+  und Feld-Summary-Output (5 CSVs + PNGs).
+
+### Tests
+
+- 4 neue Tests: `test_reactivity_recovers_toward_rest`, `test_reactivity_consumed_by_activation`,
+  `test_matter_erodes_with_flow`, `test_matter_deposits_in_calm_regions` (52 gesamt).
+
+### Gleichgewichtswerte (Seed 42, 300 Ticks, 64×64)
+
+```
+energy=0.398  matter=0.563  information=0.199  coupling=0.480
+reactivity=0.500  memory=0.119  coherence=0.150  flow≈0.003
+```
+
+---
+
 ## [0.2.0] – 2026-05-08
 
 ### Hinzugefügt

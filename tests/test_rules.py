@@ -103,6 +103,60 @@ def test_memory_imprint_with_energy(flat_config: SimConfig) -> None:
     assert state.memory.mean() > 0.0
 
 
+def test_reactivity_recovers_toward_rest() -> None:
+    """Reaktivität soll sich zum Ruhezustand hin erholen."""
+    config = SimConfig(height=16, width=16, seed=0, reactivity_recovery=0.9, reactivity_rest=0.5)
+    state = GridState.initialize(config)
+    state.reactivity[:] = 0.0  # weit unter Ruhezustand
+    state.energy[:] = 0.0      # keine Aktivierungsreaktion
+    apply_reaction(state, config)
+    assert state.reactivity.mean() > 0.0
+
+
+def test_reactivity_consumed_by_activation() -> None:
+    """Reaktivität wird bei Aktivierungsreaktionen verbraucht."""
+    config = SimConfig(height=16, width=16, seed=0, reaction_strength=0.2,
+                       reactivity_recovery=0.0, reactivity_rest=0.5)
+    state = GridState.initialize(config)
+    state.energy[:] = 0.9       # über Schwellwert
+    state.reactivity[:] = 0.8   # über 0.5 → Aktivierung
+    before = state.reactivity.copy()
+    apply_reaction(state, config)
+    # Aktivierungsmaske greift → reactivity sinkt (vor Erholung) in consumed region
+    # Nach EMA-Erholung (rate=0): reactivity = 0 * before + (1-0) * 0.5 = 0.5 ≠ before
+    assert not np.array_equal(state.reactivity, before)
+
+
+def test_matter_erodes_with_flow() -> None:
+    """Materie soll durch hohe Flussgeschwindigkeit erodiert werden."""
+    config = SimConfig(height=16, width=16, seed=0, matter_erosion_rate=0.5)
+    state = GridState.initialize(config)
+    state.matter[:] = 0.8
+    state.flow_x[:] = 1.0   # hohe Flussgeschwindigkeit
+    state.flow_y[:] = 0.0
+    state.energy[:] = 0.0   # keine Aktivierungsreaktion
+    state.reactivity[:] = 0.0
+    matter_before = state.matter.mean()
+    apply_reaction(state, config)
+    assert state.matter.mean() < matter_before
+
+
+def test_matter_deposits_in_calm_regions() -> None:
+    """Materie soll in ruhigen, gekoppelten Regionen abgelagert werden."""
+    config = SimConfig(height=16, width=16, seed=0,
+                       matter_deposition_rate=0.5, matter_erosion_rate=0.0)
+    state = GridState.initialize(config)
+    state.matter[:] = 0.2
+    state.flow_x[:] = 0.0   # kein Fluss → Ablagerung
+    state.flow_y[:] = 0.0
+    state.coupling[:] = 0.9
+    state.energy[:] = 0.0
+    state.reactivity[:] = 0.0
+    matter_before = state.matter.mean()
+    apply_reaction(state, config)
+    assert state.matter.mean() > matter_before
+
+
 def test_memory_decay_factor(flat_config: SimConfig) -> None:
     """Gedächtnis muss nach einem Tick mit decay-Faktor multipliziert worden sein."""
     cfg = SimConfig(height=8, width=8, seed=0, memory_decay=0.9, memory_imprint_strength=0.0)

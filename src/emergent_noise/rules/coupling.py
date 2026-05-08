@@ -66,9 +66,10 @@ def apply_coupling(state: GridState, config: SimConfig) -> None:
     # Regel 1: Bindung – ähnliche Kohärenz stärkt Kopplung
     state.coupling += gain * coh_similarity
 
-    # Regel 2: Zerfall – lokale Energievarianz schwächt Kopplung
+    # Regel 2: Zerfall – lokale Energievarianz + globaler Basalzerfall
+    # Der Basalzerfall (gain * 0.5) verhindert Sättigung bei homogenen Feldern.
     energy_var = _local_variance(state.energy)
-    state.coupling -= loss * energy_var
+    state.coupling -= loss * energy_var + gain * 2.0 * state.coupling
 
     # Regel 3: Synchronisation – hohe Kopplung gleicht Kohärenz an
     state.coherence += sync * state.coupling * (mean_coh - state.coherence)
