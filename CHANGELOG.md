@@ -1,167 +1,173 @@
 # Changelog
 
-Alle wichtigen Änderungen werden hier dokumentiert.
+All notable changes are documented here.
 Format: [Semantic Versioning](https://semver.org/).
 
 ---
 
 ## [2.0.0] – 2026-05-08
 
-### Hinzugefügt (Epic 7–8 – Experiment-Framework + Bewusstseins-Forschungsstrang)
+### Added (Epic 7–8 – Experiment Framework + Consciousness Research)
 
 - `experiments/__init__.py`, `experiments/configs.py`, `experiments/runner.py`:
-  - 7 vordefinierte Experimente: STABILITY_SWEEP, REACTION_SWEEP, META_EVOLUTION,
-    MEMORY_EFFECT, COUPLING_STUDY, PROTO_LIFE_SEARCH, CONSCIOUSNESS_SCAN.
-  - Kartesischer Produkt-Sweep über beliebige SimConfig-Parameter.
-  - Git-Commit-Hash + vollständige Metadaten in `experiment_meta.json`.
-  - CSV-Output mit Entropie, Persistenz, Kompartimenten, Regime, Φ-Proxy.
+  - 8 predefined experiments: STABILITY_SWEEP, REACTION_SWEEP, META_EVOLUTION,
+    MEMORY_EFFECT, COUPLING_STUDY, PROTO_LIFE_SEARCH, REACTION_DIFFUSION_MEMORY,
+    CONSCIOUSNESS_SCAN.
+  - Cartesian product sweep over arbitrary `SimConfig` parameters.
+  - Git commit hash + full metadata saved to `experiment_meta.json`.
+  - CSV output with entropy, persistence, compartments, regime, Φ-proxy.
   - CLI: `python -m emergent_noise.experiments.runner -e <name>`.
 - `interpretation/consciousness.py` – `ConsciousnessAnalyzer`:
-  - Φ-Proxy (vereinfachte IIT-Näherung): globale Kohärenz × (1 − lokale Varianz).
-  - Active-Inference-Marker (Friston Free-Energy Proxy): memory-energy Korrelation.
-  - Proto-Leben-Score (6 Kriterien: Grenzen, Energiefluss, Selbsterhaltung,
-    Adaptation, Gedächtnis, Variation).
-  - Global-Workspace-Proxy (Baars/Dehaene): Gini-Koeffizient der Information.
-  - Integrierter Score: 0.3×Φ + 0.2×AI + 0.3×PL + 0.2×GW.
+  - Φ-Proxy (simplified IIT approximation): global coherence × (1 − local variance).
+  - Active-Inference marker (Friston Free-Energy proxy): memory–energy correlation.
+  - Proto-Life score (6 criteria: boundaries, energy flow, self-maintenance,
+    adaptation, memory, variation).
+  - Global-Workspace proxy (Baars / Dehaene): Gini coefficient of information field.
+  - Integrated score: 0.3×Φ + 0.2×AI + 0.3×PL + 0.2×GW.
 - Dashboard `visualization/dashboard.py` v2.0.0:
-  - **Tab 4 🎓 Lernen & Theorie** mit 3 Vertiefungsebenen (Einstieg / Mittelstufe /
-    Forschungsfront), Live-Bewusstseins-Marker, Mehrskalenmodell-Visualisierung,
-    Attraktor-Trajektorie, Begriffe-Glossar.
-  - Integrierte Quellen: Mitchell, Levy, natureofcode.com, Wolfram NKS, SFI Explorer,
-    Lenia, Avida, OpenWorm, Framsticks, ALIFE, Tononi/Friston/Walker Primärquellen,
-    Sara Walker Podcasts.
+  - **Tab 4 🎓 Learning & Theory** with 3 depth levels (Entry / Intermediate /
+    Research Front), live consciousness markers, multiscale model visualisation,
+    attractor trajectory, concept glossary.
+  - Integrated sources: Mitchell, Levy, natureofcode.com, Wolfram NKS, SFI Explorer,
+    Lenia, Avida, OpenWorm, Framsticks, ALIFE, Tononi / Friston / Walker primary
+    sources, Sara Walker podcasts.
+- `examples/benchmark_10k.py`: 10k-tick stability sweep across 6 noise levels,
+  metric snapshots every 500 ticks, timing CSV + results CSV.
+- `examples/capture_dashboard.py`: Playwright-based screenshot capturer for all
+  5 dashboard tabs.
+- `docs/scientific-scope.md`: explicit claims and non-claims of the project.
+- `docs/research-context.md`: relationship to CA, ALife, Wolfram, IIT, Free-Energy.
 
-### Wissenschaftliche Vorsicht
+### Scientific Caution
 
-Φ-Proxy, Active-Inference-Score und Proto-Leben-Score sind heuristische Proxies.
-Sie sind KEIN Nachweis von Bewusstsein, Leben oder Erfahrung. Hohe Scores bedeuten
-"strukturell interessant" — nicht mehr und nicht weniger.
+Φ-Proxy, Active-Inference score and Proto-Life score are heuristic proxies.
+They are NOT evidence of consciousness, life or experience. High scores mean
+"structurally interesting" — nothing more.
 
 ---
 
 ## [1.0.0] – 2026-05-08
 
-### Hinzugefügt (Epic 5–6 – Graph-Modus + Mehrskalenmodell)
+### Added (Epic 5–6 – Graph Mode + Multiscale Model)
 
 - `core/graph_state.py` – `GraphState` + `GraphConfig`:
-  - 4 Topologien: small_world (Watts-Strogatz), scale_free (Barabási-Albert),
-    random (Erdős-Rényi), grid.
-  - Energie-Diffusion (gewichtet), lokale Reaktion, Kanten-Zerfall.
-  - Hypergraph-Rewriting: aktive Knoten knüpfen neue Kanten.
-  - Emergente Distanzmatrix (Dijkstra, 1/weight).
-  - `graph_summary`: Dichte, Clustering, Verbundenheit, Komponenten.
+  - 4 topologies: small_world (Watts–Strogatz), scale_free (Barabási–Albert),
+    random (Erdős–Rényi), grid.
+  - Weighted energy diffusion, local reaction, edge decay.
+  - Hypergraph rewriting: active nodes form new edges each tick.
+  - Emergent distance matrix (Dijkstra, 1/weight).
+  - `graph_summary`: density, clustering, connectedness, components.
 - `core/multiscale.py` – `MesoLayer`, `AttractorLandscape`, `MultiscaleController`:
-  - MesoLayer: verbundene Cluster als eigenständige Entitäten mit Tracking.
-  - AttractorLandscape: Phasenraum-Trajektorie (Energie × Kohärenz), Übergangserkennung.
-  - MultiscaleController: Mikro + Meso + Makro in einem Update.
+  - MesoLayer: connected clusters as trackable entities with centroid velocity.
+  - AttractorLandscape: phase-space trajectory (energy × coherence), transition detection.
+  - MultiscaleController: micro + meso + macro in one update call.
 - Dashboard `visualization/dashboard.py`:
-  - **Tab 5 🕸️ Graph-Modus**: NetworkX-Visualisierung, Distanzmatrix,
-    Energie-Histogramm, Topologie-Vergleich, Wolfram Physics Erklärung.
-  - Tab 4 Lern-Tab: Live-Meso/Makro-Metriken + Attraktor-Trajektorie.
-- `networkx` als neue optionale Abhängigkeit.
-- `tests/test_epics5to8.py`: 35 Tests (172 gesamt, alle grün).
+  - **Tab 5 🕸️ Graph Mode**: NetworkX visualisation, distance matrix,
+    energy histogram, topology comparison, Wolfram Physics explanation.
+  - Tab 4 Learn tab: live meso/macro metrics + attractor trajectory.
+- `networkx` as new optional dependency.
+- `tests/test_epics5to8.py`: 35 tests (172 total, all passing).
 
 ---
 
 ## [0.5.0] – 2026-05-08
 
-### Hinzugefügt (Epic 4 – Partikel-Feld-Hybrid)
+### Added (Epic 4 – Particle-Field Hybrid)
 
-- `core/particles.py`: `ParticleConfig` + `ParticleSystem` (vektorisiert):
-  - Partikel als NumPy-Arrays `(N, 2)` / `(N,)` (positions, velocities,
+- `core/particles.py`: `ParticleConfig` + `ParticleSystem` (vectorised):
+  - Particles as NumPy arrays `(N, 2)` / `(N,)` (positions, velocities,
     energy, mass, active, age).
-  - `apply_field_to_particles`: Gradient-Attraktion, Fluss-Drag, Energie-
-    Absorption, Reaktivitäts-Boost via bilinearer Interpolation.
-  - `apply_particles_to_field`: Energie, Materie, Kopplung, Information
-    Deposition via `np.add.at`.
-  - `apply_collisions`: O(N²) Aggregations-Fusion mit Masse-gewichteter
-    Position, Impuls und Energie.
-  - `step_particles`: vollständiger Partikel-Tick.
-  - `summary`: kompakte Statistik inkl. Proto-Kompartiment-Zählung.
+  - `apply_field_to_particles`: gradient attraction, flow drag, energy
+    absorption, reactivity boost via bilinear interpolation.
+  - `apply_particles_to_field`: energy, matter, coupling, information
+    deposition via `np.add.at`.
+  - `apply_collisions`: O(N²) aggregation fusion with mass-weighted
+    position, momentum and energy.
+  - `step_particles`: complete particle tick.
+  - `summary`: compact statistics including proto-compartment count.
 - `analysis/compartments.py`:
-  - `detect_compartments`: feldbasierte Kompartiment-Erkennung (SciPy
-    `label` + Compactness + heuristischer Proto-Leben-Score).
-  - `particle_compartments`: partikelbasierte Dichtekarte + Aggregat-Marker.
-  - `CompartmentResult` / `Compartment` Dataclasses.
+  - `detect_compartments`: field-based compartment detection (SciPy
+    `label` + compactness + heuristic proto-life score).
+  - `particle_compartments`: particle-based density map + aggregate markers.
+  - `CompartmentResult` / `Compartment` dataclasses.
 - Dashboard `visualization/dashboard.py` v0.5.0:
-  - Tab 3 ⚗️ Partikel: Live-Scatter über Energie-Heatmap, Dichtekarte mit
-    Aggregat-Markern (★), Kompartiment-Tabelle, Regelgenom-Heatmap.
-  - Sidebar: Partikel-Konfiguration (Anzahl, Attraktion, Drag, Dämpfung,
-    Kollisionsradius, Ein/Aus-Toggle).
-  - Partikel-Tick in Simulations-Loop integriert.
+  - Tab 3 ⚗️ Particles: live scatter over energy heatmap, density map with
+    aggregate markers (★), compartment table, rule-genome heatmap.
+  - Sidebar: particle configuration (count, attraction, drag, damping,
+    collision radius, on/off toggle).
+  - Particle tick integrated into simulation loop.
 - `docs/design-decisions/ADR-0004-particle-field-hybrid.md`.
-- `tests/test_epic4.py`: 27 Tests (137 gesamt, alle grün).
+- `tests/test_epic4.py`: 27 tests (137 total, all passing).
 
-### Wissenschaftliche Vorsicht
+### Scientific Caution
 
-Partikel-Dynamik ist eine vereinfachte Abstraktion ohne Impuls-/Energie-
-erhaltung. Proto-Leben-Scores sind strukturelle Proxies, kein Nachweis
-biologischer Prozesse. Emergente Aggregate sind Explorations-Phänomene.
+Particle dynamics is a simplified abstraction without momentum or energy
+conservation. Proto-life scores are structural proxies, not evidence of
+biological processes. Emergent aggregates are exploratory phenomena.
 
 ---
 
 ## [0.4.0] – 2026-05-08
 
-### Hinzugefügt (Epic 3 – Meta-Regeln + Regel-Evolution)
+### Added (Epic 3 – Meta-Rules + Rule Evolution)
 
-- `core/state.py`: Zwei neue Genome-Felder in `GridState`:
-  - `genome_strength`   – lokale Reaktionsstärke pro Zelle (float32 Array)
-  - `genome_threshold`  – lokaler Energie-Schwellwert pro Zelle (float32 Array)
-  - Initialisierung mit leichter Variation um globale Config-Werte.
-  - `genome_dict()` Hilfsmethode. `clip_all()` clippt jetzt auch Genome.
-- `core/state.py`: `SimConfig` erhält fünf neue Meta-Regel-Parameter:
+- `core/state.py`: two new genome fields in `GridState`:
+  - `genome_strength`   – local reaction strength per cell (float32 array)
+  - `genome_threshold`  – local energy threshold per cell (float32 array)
+  - Initialised with slight variation around global config values.
+  - `genome_dict()` helper. `clip_all()` now also clips genome arrays.
+- `core/state.py`: `SimConfig` gains five new meta-rule parameters:
   `meta_mutation_rate`, `meta_mutation_strength`, `meta_selection_rate`,
   `meta_retention_threshold`, `meta_enabled`.
-- `rules/meta_rules.py`: `apply_meta_rules` mit drei Schritten pro Tick:
-  - **Mutation**: zufällige Genome-Variation mit konfigurierbarer Rate/Stärke.
-  - **Selektion**: lokale 3×3-Nachbarschaftsselektion (fittere Profile breiten sich aus).
-  - **Retention**: Gedächtnisfeld-Verstärkung durch erfolgreiche Profile.
-  - Fitness = `coherence × (1 - lokale_energievarianz)` (heuristischer Proxy).
-- `rules/reaction.py`: Regel 1 nutzt jetzt `genome_threshold` und
-  `genome_strength` statt globaler Config-Konstanten → räumlich heterogenes
-  Reaktionsverhalten.
-- `core/tick.py`: Meta-Regeln als Schritt 7 im Tick-Loop integriert.
+- `rules/meta_rules.py`: `apply_meta_rules` with three steps per tick:
+  - **Mutation**: random genome variation with configurable rate / strength.
+  - **Selection**: local 3×3 neighbourhood selection (fitter profiles spread).
+  - **Retention**: memory field reinforcement by successful profiles.
+  - Fitness = `coherence × (1 − local_energy_variance)` (heuristic proxy).
+- `rules/reaction.py`: rule 1 now uses `genome_threshold` and
+  `genome_strength` instead of global config constants → spatially
+  heterogeneous reaction behaviour.
+- `core/tick.py`: meta-rules integrated as step 7 in the tick loop.
 - `analysis/novelty.py`:
-  - `BehaviorVector` – komprimierter Zustandsvektor für Novelty-Vergleiche.
-  - `NoveltyTracker` – Archiv-basierte k-NN Novelty-Metrik.
-  - `genome_diversity` – räumliche Diversität der Genome-Verteilung.
-  - `genome_entropy` – Shannon-Entropie der Genome-Wert-Verteilung.
-- `docs/design-decisions/ADR-0003-meta-rule-evolution.md`: Architektur-
-  Entscheidung mit Begründung, Alternativen und wissenschaftlichem Vorbehalt.
-- `tests/test_epic3.py`: 32 neue Tests (110 gesamt, alle grün).
+  - `BehaviorVector` – compressed state vector for novelty comparison.
+  - `NoveltyTracker` – archive-based k-NN novelty metric.
+  - `genome_diversity` – spatial diversity of genome distributions.
+  - `genome_entropy` – Shannon entropy of genome value distributions.
+- `docs/design-decisions/ADR-0003-meta-rule-evolution.md`.
+- `tests/test_epic3.py`: 32 new tests (110 total, all passing).
 
-### Wissenschaftliche Vorsicht
+### Scientific Caution
 
-Regelgenom-Evolution ist eine abstrakte Abstraktion, kein Modell realer
-Genetik. Fitness-Proxies sind heuristisch. Emergente Differenzierung ist
-ein Explorationsphänomen, keine biologische Aussage.
+Rule-genome evolution is an abstract model, not a model of real genetics.
+Fitness proxies are heuristic. Emergent differentiation is an exploratory
+phenomenon, not a biological claim.
 
 ---
 
 ## [0.3.1] – 2026-05-08
 
-### Geändert – Dashboard (Epic 2.6)
+### Changed – Dashboard (Epic 2.6)
 
-- `visualization/dashboard.py` komplett erweitert auf **v0.3.1**:
-  - **Tab 1 🔬 Simulation**: Live-Heatmap (mit mean/std im Titel), RGB-Composite,
-    Entropie-Zeitreihe, Persistenz-Balken, Cluster-Statistiken, Phasenindikator.
-  - **Tab 2 🧭 Spurenlesen**: Vollständige Spurenlese-Integration aus Epic 2:
-    - Regime-Banner (Icon + Name + Konfidenz) dauerhaft über den Tabs sichtbar.
-    - Manueller "Spurenanalyse jetzt ausführen"-Button + automatischer Trigger
-      alle `trace_interval` Ticks.
-    - **Regime-Klassifikation**: Primär/Sekundär/Konfidenz + Beschreibung +
-      aufklappbare Evidence-Werte.
-    - **Narrativ**: Metaphorische Interpretationsfamilien, wahrscheinliche
-      Vergangenheit, mögliche Zukunftspfade, eingebetteter Wissenschafts-
-      vorbehalt (3-spaltig).
-    - **Morphologie**: Komponenten, Löcher, Euler-Zahl, Randkomplexität,
-      Elongation, Compactness + binäres Schwellwert-Bild.
-    - **MI-Matrix-Heatmap**: Normalisierte Mutual Information als Farbraster
-      mit eingetragenen Zahlenwerten.
-    - **Feldstatistik-Tabelle**: mean, std, min, max, aktive Fraktion.
-    - **Phasenübergangs-Indikator**: Suszeptibilität + Energie-Varianz.
-    - **JSON-Export**: Vollständiger TraceReport aufklappbar.
-  - Sidebar: neue Slider für `reactivity_recovery`, `reactivity_rest`,
+- `visualization/dashboard.py` fully extended to **v0.3.1**:
+  - **Tab 1 🔬 Simulation**: live heatmap (with mean/std in title),
+    RGB-composite, entropy time series, persistence bar, cluster statistics,
+    phase indicator.
+  - **Tab 2 🧭 Trace Reading**: full trace reading integration from Epic 2:
+    - Regime banner (icon + name + confidence) visible above all tabs.
+    - Manual "Run trace analysis now" button + auto-trigger every
+      `trace_interval` ticks.
+    - **Regime classification**: primary / secondary / confidence + description
+      + collapsible evidence values.
+    - **Narrative**: metaphoric interpretation families, probable past,
+      possible future paths, embedded scientific disclaimer (3-column layout).
+    - **Morphology**: components, holes, Euler number, boundary complexity,
+      elongation, compactness + binary threshold image.
+    - **MI-matrix heatmap**: normalised mutual information as colour raster
+      with numeric values.
+    - **Field statistics table**: mean, std, min, max, active fraction.
+    - **Phase transition indicator**: susceptibility + energy variance.
+    - **JSON export**: full `TraceReport` in collapsible expander.
+  - Sidebar: new sliders for `reactivity_recovery`, `reactivity_rest`,
     `matter_erosion_rate`, `matter_deposition_rate`, `trace_interval`,
     `show_mi_heatmap`, `show_morphology`.
 
@@ -169,50 +175,54 @@ ein Explorationsphänomen, keine biologische Aussage.
 
 ## [0.3.0] – 2026-05-08
 
-### Hinzugefügt (Epic 2 – Spurenlese-Engine)
+### Added (Epic 2 – Trace Reading Engine)
 
-- `analysis/morphology.py`: `compute_morphology` — Randkomplexität, Lochigkeit,
-  Euler-Zahl, Elongation, Compactness für 2-D-Felder.
+- `analysis/morphology.py`: `compute_morphology` — boundary complexity,
+  hole count, Euler number, elongation, compactness for 2D fields.
 - `analysis/mutual_information.py`: `field_mi`, `mi_matrix`, `local_mi` —
-  normalisierte Mutual Information zwischen Feldern (Histogramm-Methode).
-- `analysis/trace_reading.py`: `read_traces` + `TraceReport` — vollständige
-  Spurenlese-Engine, integriert alle Analyse-Module, JSON-exportierbar.
+  normalised mutual information between fields (histogram method).
+- `analysis/trace_reading.py`: `read_traces` + `TraceReport` — full trace
+  reading engine integrating all analysis modules, JSON-exportable.
 - `interpretation/regime_classifier.py`: `classify_regime` + `RegimeResult` —
-  8 heuristische Regime-Typen (QUIESCENT, DIFFUSE, CLUSTERED, VORTEX,
-  COHERENT, FILAMENTARY, CRITICAL, COMPLEX) mit Konfidenz-Score.
+  8 heuristic regime types (QUIESCENT, DIFFUSE, CLUSTERED, VORTEX,
+  COHERENT, FILAMENTARY, CRITICAL, COMPLEX) with confidence score.
 - `interpretation/narratives.py`: `build_narrative` + `Narrative` —
-  sprachliche Interpretation: Metaphern, wahrscheinliche Vergangenheit,
-  mögliche Zukunft, wissenschaftlicher Vorsichtshinweis.
-- `tests/test_epic2.py`: 26 neue Tests (78 gesamt, alle grün).
+  language interpretation: metaphors, probable past, possible futures,
+  scientific caution notice.
+- `tests/test_epic2.py`: 26 new tests (78 total, all passing).
 
-### Wissenschaftliche Vorsicht
+### Scientific Caution
 
-Alle Regime-Labels, Interpretationen und Narrative sind Lesarten,
-keine Wahrheitsetiketten. Jedes Ergebnis enthält explizite Vorsichtsformulierungen.
+All regime labels, interpretations and narratives are readings,
+not truth labels. Every result contains explicit caution formulations.
 
 ---
 
 ## [0.2.1] – 2026-05-08
 
-### Geändert / Gefixt
+### Changed / Fixed
 
-- `rules/reaction.py`: `reactivity`-Dynamik (EMA-Erholung + Verbrauch bei Aktivierung) und
-  `matter`-Dynamik (Erosion durch Fluss, Ablagerung in ruhigen Regionen) implementiert.
-  Alle 8 Grundparameter der Arbeitsmappe sind jetzt **vollständig dynamisch**.
-- `rules/coupling.py`: Basalzerfall-Term ergänzt, verhindert Sättigung bei homogenen Feldern.
-- `rules/reaction.py`: Ablagerungsformel auf `deposition * coupling * (1 - matter)` geändert,
-  verhindert Sättigung von `matter` bei 1.0.
-- `core/state.py`: Neue Default-Parameter `reactivity_recovery=0.98`, `reactivity_rest=0.5`,
-  `matter_erosion_rate=0.02`, `matter_deposition_rate=0.005`.
-- `examples/run_analysis.py`: Neues Analyse-Skript mit Persistenz-, Cluster-, Phasen-
-  und Feld-Summary-Output (5 CSVs + PNGs).
+- `rules/reaction.py`: `reactivity` dynamics (EMA recovery + consumption
+  on activation) and `matter` dynamics (erosion by flow, deposition in
+  calm regions) implemented. All 8 core parameters of the workbook are
+  now **fully dynamic**.
+- `rules/coupling.py`: basal decay term added, prevents saturation in
+  homogeneous fields.
+- `rules/reaction.py`: deposition formula changed to
+  `deposition * coupling * (1 - matter)`, prevents `matter` saturation at 1.0.
+- `core/state.py`: new default parameters `reactivity_recovery=0.98`,
+  `reactivity_rest=0.5`, `matter_erosion_rate=0.02`,
+  `matter_deposition_rate=0.005`.
+- `examples/run_analysis.py`: new analysis script with persistence, cluster,
+  phase and field summary output (5 CSVs + PNGs).
 
 ### Tests
 
-- 4 neue Tests: `test_reactivity_recovers_toward_rest`, `test_reactivity_consumed_by_activation`,
-  `test_matter_erodes_with_flow`, `test_matter_deposits_in_calm_regions` (52 gesamt).
+- 4 new tests: `test_reactivity_recovers_toward_rest`,
+  `test_reactivity_consumed_by_activation`, `test_matter_erodes_with_flow`,
+  `test_matter_deposits_in_calm_regions` (52 total).
 
-### Gleichgewichtswerte (Seed 42, 300 Ticks, 64×64)
+### Equilibrium values (Seed 42, 300 ticks, 64×64)
 
 ```
 energy=0.398  matter=0.563  information=0.199  coupling=0.480
@@ -223,53 +233,55 @@ reactivity=0.500  memory=0.119  coherence=0.150  flow≈0.003
 
 ## [0.2.0] – 2026-05-08
 
-### Hinzugefügt
+### Added
 
-- `src/emergent_noise/rules/coupling.py`: Bindung, Zerfall, Kohärenz-Synchronisation.
-- `src/emergent_noise/rules/flow.py`: Gradienten-Fluss, Dämpfung, Curl-Wirbel, advektiver Transport.
-- `src/emergent_noise/analysis/attractors.py`: `PersistenceTracker`, `find_clusters`, `compute_phase_indicator`, `field_summary`.
-- `src/emergent_noise/visualization/dashboard.py`: Streamlit Live-Dashboard mit Sidebar-Config, Heatmap, RGB-Composite, Entropie-Zeitreihe, Cluster-Analyse.
-- Numba-JIT optional in `rules/diffusion.py` (transparenter Fallback auf NumPy).
-- 7 neue Parameter in `SimConfig` (`coupling_*`, `flow_*`).
-- 15 neue pytest-Tests (48 gesamt).
-- `.github/`: CI-Workflow, Issue-Templates (Bug, Feature, Experiment), PR-Template.
+- `src/emergent_noise/rules/coupling.py`: binding, decay, coherence synchronisation.
+- `src/emergent_noise/rules/flow.py`: gradient flow, damping, curl vortex, advective transport.
+- `src/emergent_noise/analysis/attractors.py`: `PersistenceTracker`, `find_clusters`,
+  `compute_phase_indicator`, `field_summary`.
+- `src/emergent_noise/visualization/dashboard.py`: Streamlit live dashboard with
+  sidebar config, heatmap, RGB-composite, entropy time series, cluster analysis.
+- Numba-JIT optional in `rules/diffusion.py` (transparent fallback to NumPy).
+- 7 new parameters in `SimConfig` (`coupling_*`, `flow_*`).
+- 15 new pytest tests (48 total).
+- `.github/`: CI workflow, issue templates (bug, feature, experiment), PR template.
 - `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`.
-- `ROADMAP.md` mit 8 Epics nach Arbeitsmappe.
+- `ROADMAP.md` with 8 epics following the workbook.
 - `docs/design-decisions/ADR-0002-coupling-flow-architecture.md`.
 
-### Geändert
+### Changed
 
-- `core/tick.py`: Regelreihenfolge auf 8 Schritte erweitert (coupling + flow).
-- `README.md`: Vollständig überarbeitet für GitHub-Kollaboration.
+- `core/tick.py`: rule order extended to 8 steps (coupling + flow).
+- `README.md`: fully revised for GitHub collaboration.
 
-### Wissenschaftliche Vorsicht
+### Scientific Caution
 
-Alle neuen Felder (coupling, flow) sind jetzt aktiv — alle 8 Grundparameter  
-der Arbeitsmappe sind in der Simulation lebendig. Interpretationen bleiben  
-explorativ und hypothetisch.
+All new fields (coupling, flow) are now active — all 8 core parameters
+of the workbook are alive in the simulation. Interpretations remain
+exploratory and hypothetical.
 
 ---
 
 ## [0.1.0] – 2026-05-08
 
-### Hinzugefügt
+### Added
 
-- `pyproject.toml` mit hatchling build-backend, Abhängigkeiten und pytest-Konfiguration.
-- `src/emergent_noise/core/state.py`: `SimConfig` (Pydantic) und `GridState` (dataclass)
-  mit 8 Grundparametern + flow_x/flow_y.
-- `src/emergent_noise/core/tick.py`: `TickLoop` mit dokumentierter, deterministischer
-  Regelreihenfolge; Callback-Unterstützung.
-- `src/emergent_noise/rules/diffusion.py`: 5-Punkt-Laplace-Diffusion für energy + information.
-- `src/emergent_noise/rules/reaction.py`: Aktivierungs- und Zerfallsreaktion.
-- `src/emergent_noise/rules/memory.py`: Memory decay + imprint.
-- `src/emergent_noise/noise/structured_noise.py`: Sinus-Superposition mit Seed + Tick.
-- `src/emergent_noise/analysis/entropy.py`: normalisierte Shannon-Entropie.
-- `src/emergent_noise/visualization/render.py`: Panel-PNG (9 Felder) + RGB-Composite.
-- `examples/run_500.py`: Beispiellauf mit CLI-Argumenten, PNG-Ausgabe, Entropie-CSV.
-- `tests/`: 30+ pytest-Tests für Init, Deterministik, Wertebereiche, Regeln, Rauschen, Entropie.
+- `pyproject.toml` with hatchling build backend, dependencies and pytest configuration.
+- `src/emergent_noise/core/state.py`: `SimConfig` (Pydantic) and `GridState` (dataclass)
+  with 8 core parameters + flow_x/flow_y.
+- `src/emergent_noise/core/tick.py`: `TickLoop` with documented, deterministic
+  rule order; callback support.
+- `src/emergent_noise/rules/diffusion.py`: 5-point Laplace diffusion for energy + information.
+- `src/emergent_noise/rules/reaction.py`: activation and decay reaction.
+- `src/emergent_noise/rules/memory.py`: memory decay + imprint.
+- `src/emergent_noise/noise/structured_noise.py`: sinusoidal superposition with seed + tick.
+- `src/emergent_noise/analysis/entropy.py`: normalised Shannon entropy.
+- `src/emergent_noise/visualization/render.py`: panel PNG (9 fields) + RGB-composite.
+- `examples/run_500.py`: example run with CLI arguments, PNG output, entropy CSV.
+- `tests/`: 30+ pytest tests for init, determinism, value ranges, rules, noise, entropy.
 - `docs/design-decisions/ADR-0001-start-with-2d-grid.md`.
 
-### Wissenschaftliche Vorsicht
+### Scientific Caution
 
-Alle Interpretationen in dieser Version sind explorativ. Keine Behauptungen über
-Bewusstsein, echte Physik oder Leben.
+All interpretations in this version are exploratory. No claims about
+consciousness, real physics or life.

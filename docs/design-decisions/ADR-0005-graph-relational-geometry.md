@@ -1,44 +1,44 @@
-# ADR-0005: Relationale Geometrie via NetworkX-GraphState
+# ADR-0005: Relational Geometry via NetworkX GraphState
 
 **Status:** Accepted  
-**Datum:** 2026-05-08  
-**Bezug:** Arbeitsmappe Kap. 10.4, 14 – Graph-/Hypergraph-Modus
+**Date:** 2026-05-08  
+**Reference:** Workbook ch. 10.4, 14 – Graph / Hypergraph Mode
 
 ---
 
-## Kontext
+## Context
 
-Das bestehende System ist an ein euklidisches 2D-Gitter gebunden.
-Epic 5 fordert einen alternativen Zustandsraum, in dem Distanz aus
-Verbindungsstärken entsteht — analog zu Wolfram's Hypergraph Physics.
-
----
-
-## Entscheidung
-
-`GraphState` (NetworkX-Multigraph mit Knoten- und Kanten-Attributen):
-
-| Merkmal | Entscheidung |
-|---------|--------------|
-| Bibliothek | NetworkX (pure Python, einfache Integration, kein GPU) |
-| Topologien | small_world, scale_free, random, grid |
-| Distanz | Dijkstra auf 1/weight (starke Kante = kurze Distanz) |
-| Rewriting | Aktivste Knoten × Aktivste Knoten → neue Kante pro Tick |
-
-**Bewusste Vereinfachungen gegenüber Wolfram Physics:**
-- Kein echter Hypergraph (nur einfacher Graph mit Gewichten).
-- Keine kausale Invarianz, keine Branchiale Geometrie.
-- Ziel: Exploration, nicht Physik-Simulation.
+The existing system is bound to a Euclidean 2D grid.
+Epic 5 requires an alternative state space where distance emerges from
+connection strength — analogous to Wolfram's Hypergraph Physics.
 
 ---
 
-## Konsequenzen
+## Decision
 
-- Emergente Distanzmatrix erlaubt Topologie-Vergleiche (small_world vs. scale_free).
-- Dashboard Tab 5 zeigt NetworkX-Visualisierung + Distanzmatrix interaktiv.
-- NetworkX ist neue optionale Abhängigkeit.
+`GraphState` (NetworkX graph with node and edge attributes):
 
-## Wissenschaftliche Vorsicht
+| Feature | Decision |
+|---------|----------|
+| Library | NetworkX (pure Python, simple integration, no GPU) |
+| Topologies | small_world, scale_free, random, grid |
+| Distance | Dijkstra on 1/weight (strong edge = short distance) |
+| Rewriting | Most active nodes form a new edge per tick |
 
-Dieser Graph-Modus testet **keine** Wolfram-Physik-Hypothesen.
-Er ist eine strukturelle Analogie zur Exploration relationaler Geometrie.
+**Deliberate simplifications vs. Wolfram Physics:**
+- No true hypergraph (only a weighted graph).
+- No causal invariance, no branchial geometry.
+- Goal: exploration, not physics simulation.
+
+---
+
+## Consequences
+
+- Emergent distance matrix enables topology comparisons (small_world vs. scale_free).
+- Dashboard Tab 5 shows NetworkX visualisation + distance matrix interactively.
+- NetworkX is a new optional dependency.
+
+## Scientific Caution
+
+This graph mode does **not** test Wolfram Physics hypotheses.
+It is a structural analogy for exploring relational geometry.

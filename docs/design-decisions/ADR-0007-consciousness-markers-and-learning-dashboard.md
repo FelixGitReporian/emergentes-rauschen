@@ -1,72 +1,72 @@
-# ADR-0007: Bewusstseins-Marker + Lern-Dashboard (Epic 7–8)
+# ADR-0007: Consciousness Markers + Learning Dashboard (Epic 7–8)
 
 **Status:** Accepted  
-**Datum:** 2026-05-08  
-**Bezug:** Arbeitsmappe Kap. 13 – Leben, Intelligenz, Bewusstsein
+**Date:** 2026-05-08  
+**Reference:** Workbook ch. 13 – Life, Intelligence, Consciousness
 
 ---
 
-## Kontext
+## Context
 
-Epic 8 fordert vorsichtige, messbare Marker für Proto-Leben, Intelligenz
-und Bewusstseins-Theorien. Parallel soll das Dashboard als Lernumgebung
-für Complex Systems Science und Artificial Life dienen.
+Epic 8 requires careful, measurable markers for proto-life, intelligence
+and consciousness theories. In parallel the dashboard should serve as a
+learning environment for complex systems science and artificial life.
 
 ---
 
-## Entscheidung
+## Decision
 
-### Bewusstseins-Marker (`interpretation/consciousness.py`)
+### Consciousness Markers (`interpretation/consciousness.py`)
 
-Vier Marker-Typen, alle als Proxies implementiert:
+Four marker types, all implemented as proxies:
 
-| Marker | Theorie | Implementierung |
-|--------|---------|----------------|
+| Marker | Theory | Implementation |
+|--------|--------|----------------|
 | Φ-Proxy | IIT (Tononi 2004) | coherence × (1 − local_var) × mi_proxy |
-| Active Inference | Free-Energy (Friston 2010) | memory-energy Korrelation |
-| Proto-Leben | Arbeitsmappe Kap. 13.1 | 6 Kriterien (je 1/6 Punkt) |
-| Global Workspace | GWT (Baars/Dehaene) | Gini-Koeffizient der Information |
+| Active Inference | Free-Energy (Friston 2010) | memory–energy correlation |
+| Proto-Life | Workbook ch. 13.1 | 6 criteria (1/6 point each) |
+| Global Workspace | GWT (Baars/Dehaene) | Gini coefficient of information field |
 
-**Integrierter Score:** 0.3·Φ + 0.2·AI + 0.3·PL + 0.2·GW
+**Integrated score:** 0.3·Φ + 0.2·AI + 0.3·PL + 0.2·GW
 
-**Wichtige Einschränkungen:**
-- Echter IIT-Φ ist NP-schwer zu berechnen; dieser Proxy ist eine Heuristik.
-- Active-Inference-Marker testet keine echten prädiktiven Schleifen.
-- Global-Workspace-Score ≠ Bewusstseinsnachweis.
-- Alle Marker dienen der Exploration, nicht der Verifikation von Theorien.
+**Key limitations:**
+- True IIT-Φ is NP-hard to compute; this proxy is a heuristic.
+- Active-Inference marker does not test genuine predictive loops.
+- Global-Workspace score ≠ evidence of consciousness.
+- All markers serve exploration, not theory verification.
 
-### Lern-Dashboard (Tab 4)
+### Learning Dashboard (Tab 4)
 
-Drei Vertiefungsebenen:
+Three depth levels:
 
-| Ebene | Inhalt |
-|-------|--------|
-| 🟢 Einstieg | Zelluläre Automaten, Emergenz, Attraktoren; Bücher + Links |
-| 🟡 Mittelstufe | IIT, Free-Energy, GWT, Assembly Theory; Primärquellen |
-| 🔴 Forschungsfront | Offene Fragen, Experiment-Ideen, aktuelle Konferenzen |
+| Level | Content |
+|-------|---------|
+| 🟢 Entry | Cellular automata, emergence, attractors; books + links |
+| 🟡 Intermediate | IIT, Free-Energy, GWT, Assembly Theory; primary sources |
+| 🔴 Research Front | Open questions, experiment ideas, current conferences |
 
-Integrierte Quellen:
-- Bücher: Mitchell (Complexity), Levy (ALife)
+Integrated sources:
+- Books: Mitchell (Complexity), Levy (ALife)
 - Online: natureofcode.com, wolframscience.com, SFI Explorer
 - Demos: Lenia, Avida, OpenWorm, Framsticks
 - Podcasts: Complexity SFI, Sara Walker (Mindscape, Big Biology)
 - Papers: Tononi 2004, Friston 2010, Walker & Davies 2013
 
-### Experiment-Framework (`experiments/`)
+### Experiment Framework (`experiments/`)
 
-- 7 vordefinierte Experimente mit wissenschaftlichen Fragen verknüpft.
-- Reproduzierbarkeit: Git-Hash + Seed + Config in `experiment_meta.json`.
-- CSV-Output: 15 Metriken pro Analyse-Tick.
+- 8 predefined experiments linked to scientific questions.
+- Reproducibility: git hash + seed + config in `experiment_meta.json`.
+- CSV output: 15 metrics per analysis tick.
 
 ---
 
-## Wissenschaftliche Leitprinzip
+## Scientific Guiding Principle
 
-> "Wir bauen ein offenes Forschungsinstrument, kein Orakel.
-> Jede Metrik ist eine Lesart, keine Wahrheit."
-> — Arbeitsmappe Kap. 4
+> "We build an open research instrument, not an oracle.
+> Every metric is a reading, not a truth."
+> — Workbook ch. 4
 
-Alle Bewusstseins-Marker tragen explizite Wissenschaftsvorbehalte in:
+All consciousness markers carry explicit scientific disclaimers in:
 - Docstrings (`consciousness.py`)
-- Dashboard-Warnungen (`st.warning`)
-- Dieses ADR
+- Dashboard warnings (`st.warning`)
+- This ADR

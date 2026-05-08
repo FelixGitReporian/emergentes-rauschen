@@ -1,48 +1,48 @@
-# ADR-0006: Mehrskalenmodell Mikro/Meso/Makro
+# ADR-0006: Multiscale Model Micro / Meso / Macro
 
 **Status:** Accepted  
-**Datum:** 2026-05-08  
-**Bezug:** Arbeitsmappe Kap. 10.5, 16.2 – Mehrskalenmodell
+**Date:** 2026-05-08  
+**Reference:** Workbook ch. 10.5, 16.2 – Multiscale Model
 
 ---
 
-## Kontext
+## Context
 
-Das System hat bisher nur eine Beschreibungsebene (Mikro: Gitterzellen).
-Epic 6 fordert Meso- und Makro-Ebene für Emergenz-Analyse.
+The system previously had only one description level (micro: grid cells).
+Epic 6 requires meso and macro levels for emergence analysis.
 
 ---
 
-## Entscheidung
+## Decision
 
-**Drei Ebenen in `core/multiscale.py`:**
+**Three levels in `core/multiscale.py`:**
 
-| Ebene | Implementierung | Einheit |
-|-------|----------------|---------|
-| Mikro | GridState (bestehend) | Gitterzellen |
-| Meso  | MesoLayer (SciPy label + Tracking) | Cluster-Entitäten |
-| Makro | AttractorLandscape (Trajektorie in E×K) | Systemzustand |
+| Level | Implementation | Unit |
+|-------|---------------|------|
+| Micro | GridState (existing) | Grid cells |
+| Meso  | MesoLayer (SciPy label + tracking) | Cluster entities |
+| Macro | AttractorLandscape (trajectory in E×C) | System state |
 
 **MesoLayer:**
-- Verbundene Energie-Regionen (8-Konnektivität, SciPy `label`).
-- Tracking via Schwerpunkt-Matching (nächster Vorläufer ≤ 10 Zellen).
-- Geschwindigkeitsschätzung: Schwerpunktverschiebung pro Tick.
+- Connected energy regions (8-connectivity, SciPy `label`).
+- Tracking via centroid matching (nearest predecessor ≤ 10 cells).
+- Velocity estimation: centroid displacement per tick.
 
 **MacroLayer:**
-- Projektion des Systemzustands auf (energy_mean, coherence_mean).
-- Phasenübergang-Detektion: Δ > 0.05 in einer Tick-Periode.
-- Trajektorie als (N, 2) Array für Dashboard-Plot.
+- Projection of system state onto (energy_mean, coherence_mean).
+- Phase transition detection: Δ > 0.05 within one tick period.
+- Trajectory as (N, 2) array for dashboard plot.
 
 ---
 
-## Konsequenzen
+## Consequences
 
-- `MultiscaleController.update(state)` gibt Meso + Makro-Dict zurück.
-- Dashboard Tab 4 zeigt Attraktor-Trajektorie live.
-- Keine Performance-Einbuße: SciPy `label` ist O(H×W), schnell.
+- `MultiscaleController.update(state)` returns meso + macro dict.
+- Dashboard Tab 4 shows attractor trajectory live.
+- No performance penalty: SciPy `label` is O(H×W), fast.
 
-## Wissenschaftliche Vorsicht
+## Scientific Caution
 
-Meso-Entitäten sind Label-Artefakte, keine ontologischen Objekte.
-Phasenübergänge sind heuristische Sprung-Erkennungen, keine echten
-Phasenübergangsnachweise (kein Ordnungsparameter, kein kritisches Verlangsamen).
+Meso entities are label artefacts, not ontological objects.
+Phase transitions are heuristic jump detections, not genuine phase
+transition proofs (no order parameter, no critical slowing down).

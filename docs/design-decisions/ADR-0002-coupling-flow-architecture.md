@@ -1,63 +1,62 @@
-# ADR-0002 – Kopplung und Flussfeld als eigenständige Regelmodule
+# ADR-0002 – Coupling and Flow Field as Independent Rule Modules
 
-**Datum:** 2026-05-08  
-**Status:** Akzeptiert
+**Date:** 2026-05-08  
+**Status:** Accepted
 
-## Kontext
+## Context
 
-Epic 1 fügt zwei neue aktive Regelmodule hinzu: `coupling.py` und `flow.py`.
-Es wurden drei Alternativen für deren Integration erwogen.
+Epic 1 adds two new active rule modules: `coupling.py` and `flow.py`.
+Three alternatives for their integration were considered.
 
-## Entscheidung
+## Decision
 
-Kopplung und Fluss sind **eigenständige Module** mit je einem einzigen
-Einstiegspunkt (`apply_coupling`, `apply_flow`), die vom `TickLoop` in der
-dokumentierten Reihenfolge aufgerufen werden.
+Coupling and flow are **independent modules**, each with a single entry point
+(`apply_coupling`, `apply_flow`), called by `TickLoop` in the documented order.
 
-## Begründung
+## Rationale
 
-- Jedes Modul hat einen klar definierten Scope — einfacher zu testen und zu warten.
-- Der `TickLoop` bleibt die einzige Stelle, die Reihenfolge kennt.
-- Module können einzeln deaktiviert werden (z.B. kein Fluss in Baseline-Experimenten).
-- Passt zum etablierten Muster von `diffusion.py`, `reaction.py`, `memory.py`.
+- Each module has a clearly defined scope — easier to test and maintain.
+- `TickLoop` remains the single place that knows the execution order.
+- Modules can be individually disabled (e.g. no flow in baseline experiments).
+- Consistent with the established pattern of `diffusion.py`, `reaction.py`, `memory.py`.
 
-## Regelreihenfolge (v0.2.0)
+## Rule Order (v0.2.0)
 
 ```
-1. Rauschen         (Symmetriebrechung)
-2. Diffusion        (Transport)
-3. Reaktion         (lokale Transformation)
-4. Kopplung         (Netzwerkbildung, Kohärenz-Synchronisation)
-5. Fluss            (Vektordynamik, Wirbel, advektiver Transport)
-6. Gedächtnis       (Hysterese / Spur)
-7. Clip [0,1]
+1. Noise            (symmetry breaking)
+2. Diffusion        (transport)
+3. Reaction         (local transformation)
+4. Coupling         (network formation, coherence synchronisation)
+5. Flow             (vector dynamics, vortices, advective transport)
+6. Memory           (hysteresis / trace)
+7. Clip [0, 1]
 8. tick++
 ```
 
-## Physikalische Motivation
+## Physical Motivation
 
-- Kopplung nach Reaktion: Reaktion erzeugt Kohärenz-Unterschiede; Kopplung gleicht sie an.
-- Fluss nach Kopplung: Kopplungs-Curl treibt Wirbel an; Gradienten entstehen aus allen vorherigen Schritten.
-- Gedächtnis zuletzt: Schreibt den vollständigen Post-Transformations-Zustand als Spur.
+- Coupling after reaction: reaction creates coherence differences; coupling equalises them.
+- Flow after coupling: coupling curl drives vortices; gradients arise from all prior steps.
+- Memory last: writes the complete post-transformation state as a trace.
 
-## Alternativen
+## Alternatives
 
-- **Alles in einer Datei:** Schlechter wartbar, verstößt gegen Qualitätsregeln.
-- **Fluss in `diffusion.py`:** Konzeptuell falsch — Diffusion ist skalar, Fluss ist vektoriell.
-- **Kopplung als Teil von `reaction.py`:** Zu viel Scope; Kopplung hat eigene Zeitskala.
+- **Everything in one file:** Harder to maintain, violates quality rules.
+- **Flow inside `diffusion.py`:** Conceptually wrong — diffusion is scalar, flow is vectorial.
+- **Coupling as part of `reaction.py`:** Too broad scope; coupling has its own timescale.
 
-## Konsequenzen
+## Consequences
 
-- `flow_x` / `flow_y` sind jetzt aktive Felder mit eigenem Dynamik-Profil.
-- `coupling` und `coherence` sind jetzt dynamisch (nicht mehr konstant).
-- Neue Parameter in `SimConfig`: 7 neue Felder (`coupling_*`, `flow_*`).
-- CSV-Entropie-Log zeigt jetzt Variation in allen Feldern.
+- `flow_x` / `flow_y` are now active fields with their own dynamics.
+- `coupling` and `coherence` are now dynamic (no longer constant).
+- New parameters in `SimConfig`: 7 new fields (`coupling_*`, `flow_*`).
+- Entropy CSV log now shows variation in all fields.
 
-## Änderungsnotiz
+## Change Note
 
 v0.2.0 — 2026-05-08:
-- `rules/coupling.py`, `rules/flow.py` hinzugefügt
-- `analysis/attractors.py` mit Persistenz, Cluster, Phasenindikator
+- Added `rules/coupling.py`, `rules/flow.py`
+- `analysis/attractors.py` with persistence, clusters, phase indicator
 - `visualization/dashboard.py` (Streamlit)
 - Numba-JIT optional in `diffusion.py`
-- 15 neue Tests (48 gesamt)
+- 15 new tests (48 total)

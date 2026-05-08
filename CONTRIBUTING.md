@@ -1,20 +1,19 @@
 # Contributing – Emergentes Rauschen
 
-Danke für dein Interesse! Dieses Projekt ist offen für Beiträge aus
-Informatik, Physik, Biologie, Philosophie und Kunst.
+Contributions from computer science, physics, biology, philosophy and art are welcome!
 
 ---
 
-## Einstieg
+## Getting Started
 
 ```bash
-git clone https://github.com/FelixGitReporian/ermergentes-rauschen.git
-cd ermergentes-rauschen
+git clone https://github.com/FelixGitReporian/emergentes-rauschen.git
+cd emergentes-rauschen
 pip install -e ".[dev]"
 python -m pytest
 ```
 
-Für das Dashboard zusätzlich:
+For the dashboard:
 
 ```bash
 pip install -e ".[dashboard]"
@@ -23,28 +22,28 @@ streamlit run src/emergent_noise/visualization/dashboard.py
 
 ---
 
-## Beitragsarten
+## Contribution Types
 
-- **Bug-Fix** – Kleiner Scope, direkter PR auf `develop`.
-- **Feature** – Issue zuerst öffnen, dann Branch `feature/<name>`.
-- **Experiment** – Branch `experiment/<name>`, keine Tests erforderlich, aber Config + Seed angeben.
-- **Analyse** – Branch `analysis/<name>`, Notebook oder Skript mit Ergebnissen.
-- **Dokumentation** – Branch `docs/<name>`.
-
----
-
-## Code-Qualitätsregeln
-
-1. **Kleine Dateien** – keine Datei > 200 Zeilen ohne guten Grund.
-2. **Typisierung** – alle öffentlichen Funktionen haben Type-Hints.
-3. **Docstrings** – jede Funktion hat mindestens einen Satz Erklärung.
-4. **Konfiguration über `SimConfig`** – keine magischen Zahlen in Modulen.
-5. **Tests** – neues Feature → mindestens 2 Tests.
-6. **Wissenschaftliche Vorsicht** – keine unbewiesenen Behauptungen über Bewusstsein, Leben oder Physik.
+- **Bug fix** – Small scope, direct PR onto `develop`.
+- **Feature** – Open an issue first, then branch `feature/<name>`.
+- **Experiment** – Branch `experiment/<name>`, no tests required, but provide config + seed.
+- **Analysis** – Branch `analysis/<name>`, notebook or script with results.
+- **Documentation** – Branch `docs/<name>`.
 
 ---
 
-## Commit-Konvention
+## Code Quality Rules
+
+1. **Small files** – no file > 200 lines without good reason.
+2. **Type hints** – all public functions have type annotations.
+3. **Docstrings** – every function has at least one explanatory sentence.
+4. **Config via `SimConfig`** – no magic numbers in modules.
+5. **Tests** – new feature → at least 2 tests.
+6. **Scientific caution** – no unsubstantiated claims about consciousness, life or physics.
+
+---
+
+## Commit Convention
 
 ```
 feat: add transfer entropy metric
@@ -58,38 +57,38 @@ perf: numba-jit for laplace kernel
 
 ---
 
-## Pull Request Checkliste
+## Pull Request Checklist
 
-- [ ] Tests laufen durch (`python -m pytest`)
-- [ ] Docstring vorhanden
-- [ ] Keine magischen Zahlen (alles über `SimConfig`)
-- [ ] Wissenschaftliche Interpretationen vorsichtig formuliert
-- [ ] ADR oder Änderungsnotiz bei Architekturentscheidungen
+- [ ] Tests pass (`python -m pytest`)
+- [ ] Docstring present
+- [ ] No magic numbers (everything via `SimConfig`)
+- [ ] Scientific interpretations carefully worded
+- [ ] ADR or change note for architecture decisions
 
 ---
 
 ## Design Decision Records (ADR)
 
-Wichtige Entscheidungen dokumentieren wir in `docs/design-decisions/ADR-XXXX-<titel>.md`.  
-Vorlage:
+Important decisions are documented in `docs/design-decisions/ADR-XXXX-<title>.md`.  
+Template:
 
 ```markdown
-# ADR-XXXX – Titel
+# ADR-XXXX – Title
 
-**Datum:** YYYY-MM-DD
-**Status:** Vorschlag / Akzeptiert / Abgelehnt / Abgelöst
+**Date:** YYYY-MM-DD
+**Status:** Proposed / Accepted / Rejected / Superseded
 
-## Kontext
-## Entscheidung
-## Alternativen
-## Konsequenzen
-## Änderungsnotiz
+## Context
+## Decision
+## Alternatives
+## Consequences
+## Change Note
 ```
 
 ---
 
-## Forschungsethik
+## Research Ethics
 
-- Keine Behauptungen über Bewusstsein oder Leidensfähigkeit ohne klare Evidenzbasis.
-- Agentische Dynamiken mit Vorsicht beschreiben und dokumentieren.
-- Offene Sprache: „deutet auf", „ist kompatibel mit", „könnte interpretiert werden als".
+- No claims about consciousness or sentience without clear evidence.
+- Describe and document agentic dynamics with caution.
+- Use open language: "suggests", "is compatible with", "could be interpreted as".

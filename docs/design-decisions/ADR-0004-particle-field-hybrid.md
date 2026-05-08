@@ -1,102 +1,100 @@
-# ADR-0004: Partikel-Feld-Hybrid als vektorisiertes Array-System
+# ADR-0004: Particle-Field Hybrid as Vectorised Array System
 
 **Status:** Accepted  
-**Datum:** 2026-05-08  
-**Autor:** FelixGitReporian  
-**Bezug:** Arbeitsmappe Kap. 10.3, 13.1 – Partikel-Feld-Hybrid
+**Date:** 2026-05-08  
+**Author:** FelixGitReporian  
+**Reference:** Workbook ch. 10.3, 13.1 – Particle-Field Hybrid
 
 ---
 
-## Kontext
+## Context
 
-Das bestehende System ist ein reines Gitterautomaten-System. Arbeitsmappe
-Kap. 10.3 fordert ergänzend Partikel, die sich durch Felder bewegen und
-Felder verändern — für Verdichtung, Kollision, Schwärme, aktive Materie
-und proto-zelluläre Dynamiken.
+The existing system is a pure grid-automaton system. Workbook ch. 10.3 requires
+additional particles that move through fields and modify them — for condensation,
+collisions, swarms, active matter and proto-cellular dynamics.
 
 ---
 
-## Entscheidung
+## Decision
 
-### Repräsentation
+### Representation
 
-Partikel werden als **vektorisierte NumPy-Arrays** der Form `(N,)` oder
-`(N, 2)` gespeichert — kein Python-Objekt pro Partikel.
+Particles are stored as **vectorised NumPy arrays** of shape `(N,)` or
+`(N, 2)` — no Python object per particle.
 
-| Array            | Form     | Bedeutung                          |
-|------------------|----------|------------------------------------|
-| `positions`      | (N, 2)   | kontinuierliche (y, x)-Koordinaten |
-| `velocities`     | (N, 2)   | (vy, vx)-Geschwindigkeit           |
-| `energy`         | (N,)     | Partikel-Energie                   |
-| `mass`           | (N,)     | Trägheit / Aggregationszähler      |
-| `active`         | (N,)     | bool-Maske aktiver Partikel        |
-| `age`            | (N,)     | Ticks seit Entstehung              |
+| Array        | Shape  | Meaning                              |
+|--------------|--------|--------------------------------------|
+| `positions`  | (N, 2) | continuous (y, x) coordinates        |
+| `velocities` | (N, 2) | (vy, vx) velocity                    |
+| `energy`     | (N,)   | particle energy                      |
+| `mass`       | (N,)   | inertia / aggregation counter        |
+| `active`     | (N,)   | boolean mask of active particles     |
+| `age`        | (N,)   | ticks since creation                 |
 
-**Begründung:**
-- Vollständig vektorisierbar, keine Python-Loops außer Kollisionserkennung.
-- Inaktive Partikel bleiben im Array (aktiv-Maske statt Entfernen).
-- Maximalgröße ist fest → kein dynamisches Re-Allozieren.
+**Rationale:**
+- Fully vectorisable, no Python loops except collision detection.
+- Inactive particles remain in the array (active mask instead of removal).
+- Maximum size is fixed → no dynamic reallocation.
 
-### Kopplung (bidirektional)
+### Coupling (bidirectional)
 
-**Feld → Partikel:**
-1. Energie-Gradient-Attraktion via bilinearer Interpolation.
-2. Fluss-Transport (Drag-Term).
-3. Energie-Absorption (Partikel ziehen Energie vom Feld ab).
-4. Reaktivitäts-Aktivierung (hohe Reaktivität beschleunigt Partikel).
+**Field → Particle:**
+1. Energy gradient attraction via bilinear interpolation.
+2. Flow transport (drag term).
+3. Energy absorption (particles draw energy from the field).
+4. Reactivity activation (high reactivity accelerates particles).
 
-**Partikel → Feld:**
-1. Energie-Deposition (`np.add.at`).
-2. Materie-Deposition.
-3. Kopplungs-Verstärkung durch Dichte.
-4. Information-Injektion.
+**Particle → Field:**
+1. Energy deposition (`np.add.at`).
+2. Matter deposition.
+3. Coupling reinforcement by density.
+4. Information injection.
 
-### Kollision
+### Collision
 
-Einfaches O(N²) Paar-Scanning über aktive Partikel mit periodischen
-Randbedingungen. Fusion: schwereres Partikel absorbiert leichteres,
-Masse-gewichtete Position + Impuls, Energie addiert.
+Simple O(N²) pair scanning over active particles with periodic boundary
+conditions. Fusion: heavier particle absorbs lighter one, mass-weighted
+position + momentum, energy summed.
 
-Performance-Grenze: ~500 Partikel. Für größere Systeme → spatial hashing
+Performance limit: ~500 particles. For larger systems → spatial hashing
 (Epic 5+).
 
-### Proto-Kompartiment-Erkennung (analysis/compartments.py)
+### Proto-Compartment Detection (`analysis/compartments.py`)
 
-Zwei Methoden:
-- **Feldbasiert**: verbundene Energie-Regionen (SciPy `label`) mit Kopplung
-  und Compactness-Filterung + heuristischer Proto-Leben-Score.
-- **Partikelbasiert**: Partikel mit `mass >= min_mass` als Aggregat-Marker,
-  geglättete Dichtekarte.
-
----
-
-## Verworfene Alternativen
-
-| Alternative | Grund für Ablehnung |
-|-------------|---------------------|
-| Python-Objekte pro Partikel | ~100× langsamer, kein numpy-Broadcasting |
-| Separates Simulations-Framework (PyBullet, etc.) | Zu viel Overhead, schwer mit Gitter zu koppeln |
-| Partikel direkt in GridState | Vermischt Kontinuum- und Diskret-Welt; sauberere Trennung bevorzugt |
+Two methods:
+- **Field-based**: connected energy regions (SciPy `label`) with coupling
+  and compactness filtering + heuristic proto-life score.
+- **Particle-based**: particles with `mass >= min_mass` as aggregate markers,
+  smoothed density map.
 
 ---
 
-## Konsequenzen
+## Rejected Alternatives
 
-**Positiv:**
-- Reiche Interaktion: Partikel reagieren auf Felder, Felder auf Partikel.
-- Proto-zelluläre Aggregate entstehen durch Kollision + Feldkopplung.
-- `particles_enabled`-Toggle: System vollständig abschaltbar.
-- Vollständig in Tab 3 des Dashboards sichtbar.
-
-**Negativ / Risiken:**
-- Kollisionserkennung O(N²): performance-kritisch bei N > 200.
-- Physik ist bewusst vereinfacht (kein Impulserhalt, keine Energie-Erhaltung).
+| Alternative | Reason for rejection |
+|-------------|----------------------|
+| Python objects per particle | ~100× slower, no NumPy broadcasting |
+| Separate simulation framework (PyBullet, etc.) | Too much overhead, hard to couple with the grid |
+| Particles directly in GridState | Mixes continuum and discrete world; cleaner separation preferred |
 
 ---
 
-## Wissenschaftliche Vorsicht
+## Consequences
 
-Das Partikel-System ist eine explorative Abstraktion, kein physikalisches
-Modell. Proto-Leben-Scores sind strukturelle Proxies, kein Nachweis von
-Lebensprozessen. Emergente Aggregate sind interessante Phänomene, keine
-biologischen Organismen.
+**Positive:**
+- Rich interaction: particles react to fields, fields react to particles.
+- Proto-cellular aggregates emerge through collision + field coupling.
+- `particles_enabled` toggle: system fully disableable.
+- Fully visible in dashboard Tab 3.
+
+**Negative / Risks:**
+- Collision detection O(N²): performance-critical for N > 200.
+- Physics is deliberately simplified (no momentum or energy conservation).
+
+---
+
+## Scientific Caution
+
+The particle system is an exploratory abstraction, not a physical model.
+Proto-life scores are structural proxies, not evidence of life processes.
+Emergent aggregates are interesting phenomena, not biological organisms.

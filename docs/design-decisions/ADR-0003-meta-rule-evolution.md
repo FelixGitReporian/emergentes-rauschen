@@ -1,101 +1,101 @@
-# ADR-0003: Meta-Regel-Evolution als dezentrales Regelgenom
+# ADR-0003: Meta-Rule Evolution as Decentralised Rule Genome
 
 **Status:** Accepted  
-**Datum:** 2026-05-08  
-**Autor:** FelixGitReporian  
-**Bezug:** Arbeitsmappe Kap. 9 – Evolvierende Regeln und Meta-Evolution
+**Date:** 2026-05-08  
+**Author:** FelixGitReporian  
+**Reference:** Workbook ch. 9 – Evolving Rules and Meta-Evolution
 
 ---
 
-## Kontext
+## Context
 
-Das System besteht aus globalen Regelparametern (SimConfig), die für alle
-Zellen identisch sind. Um offene Evolution zu ermöglichen – d.h. die Entstehung
-räumlich differenzierter Regelprofile – wird ein Mechanismus benötigt, bei dem
-lokale Parameter variieren, selektiert und gesichert werden können.
+The system consists of global rule parameters (`SimConfig`) that are identical
+for all cells. To enable open-ended evolution — i.e. the emergence of spatially
+differentiated rule profiles — a mechanism is needed where local parameters can
+vary, be selected and be retained.
 
-Arbeitsmappe Kap. 9 fordert:
-- Jede Region besitzt ein lokales Regelprofil (Regelgenom).
-- Regelprofile können mutieren.
-- Erfolgreiche Profile breiten sich durch Selektion aus.
-- Persistent erfolgreiche Profile hinterlassen Gedächtnisspuren.
-
----
-
-## Entscheidung
-
-### Repräsentation
-
-Das Regelgenom wird als **zwei float32-Arrays** (`genome_strength`,
-`genome_threshold`) der Form `(height, width)` direkt im `GridState`
-gespeichert – kein separates Objekt pro Zelle.
-
-**Begründung:**
-- NumPy-native Arrays ermöglichen vektorisierte Operationen ohne Python-Loop.
-- Uniform mit allen anderen Zustandsfeldern (gleiche Shape, gleicher Wertebereich).
-- `clip_all()` und `as_dict()` können konsistent erweitert werden.
-- Genome werden bewusst aus `as_dict()` ausgelassen, um Analysemodule nicht
-  zu kontaminieren.
-
-### Genome-Parameter
-
-| Parameter         | Bedeutung                                  |
-|-------------------|--------------------------------------------|
-| `genome_strength` | Lokale Reaktionsstärke (Regel 1)           |
-| `genome_threshold`| Lokaler Energie-Aktivierungsschwellwert    |
-
-Nur Reaktionsregel 1 wurde genome-gesteuert gemacht, da sie die dominante
-Transformationsregel ist. Weitere Regeln können in späteren Epics folgen.
-
-### Evolutionsschritte (pro Tick, Schritt 7)
-
-1. **Fitness** = `coherence * (1 - lokale_energievarianz)` — heuristischer
-   Proxy für ein stabiles, geordnetes lokales Profil.
-2. **Mutation** — zufällig ausgewählte Zellen erhalten `±meta_mutation_strength`
-   auf einen Genome-Parameter.
-3. **Selektion** — lokale 3×3-Nachbarschaft: schwächere Zellen übernehmen
-   Profile fitterer Nachbarn.
-4. **Retention** — Zellen mit Fitness > Schwellwert verstärken das
-   Gedächtnisfeld (schwaches Signal, Faktor 0.01).
-
-### Steuerung
-
-- `meta_enabled` (bool): vollständiger Ein/Aus-Schalter.
-- `meta_mutation_rate`, `meta_mutation_strength`: steuern genetische Diversität.
-- `meta_selection_rate`: steuert Selektion sgeschwindigkeit.
-- `meta_retention_threshold`: bestimmt, welche Profile ins Gedächtnis schreiben.
+Workbook ch. 9 requires:
+- Each region has a local rule profile (rule genome).
+- Rule profiles can mutate.
+- Successful profiles spread through selection.
+- Persistently successful profiles leave memory traces.
 
 ---
 
-## Verworfene Alternativen
+## Decision
 
-| Alternative | Grund für Ablehnung |
-|-------------|---------------------|
-| Objekt-orientiertes Regelgenom pro Zelle (Klasse) | Python-Objekte in H×W-Arrays = massiver Overhead, keine Vektorisierung möglich |
-| Vollständig evolvierte Regelsets (jede Regel hat eigene Gene) | Zu komplex für v0.4.0; schrittweise Erweiterung geplant |
-| Genetischer Algorithmus mit Crossover | Räumliche Lokalität wäre verloren; lokale Selektion passt besser zur Grid-Architektur |
-| Externe Fitness-Funktion (Hand-designed) | Widerspricht dem Emergenz-Prinzip; interne Metriken bevorzugt |
+### Representation
+
+The rule genome is stored as **two float32 arrays** (`genome_strength`,
+`genome_threshold`) of shape `(height, width)` directly in `GridState` —
+no separate object per cell.
+
+**Rationale:**
+- NumPy-native arrays enable vectorised operations without Python loops.
+- Uniform with all other state fields (same shape, same value range).
+- `clip_all()` and `as_dict()` can be extended consistently.
+- Genomes are deliberately excluded from `as_dict()` to avoid contaminating
+  analysis modules.
+
+### Genome Parameters
+
+| Parameter          | Meaning                                      |
+|--------------------|----------------------------------------------|
+| `genome_strength`  | Local reaction strength (rule 1)             |
+| `genome_threshold` | Local energy activation threshold            |
+
+Only reaction rule 1 is genome-controlled, as it is the dominant transformation
+rule. Further rules can follow in later epics.
+
+### Evolution Steps (per tick, step 7)
+
+1. **Fitness** = `coherence × (1 − local_energy_variance)` — heuristic proxy
+   for a stable, ordered local profile.
+2. **Mutation** — randomly selected cells receive `±meta_mutation_strength`
+   on one genome parameter.
+3. **Selection** — local 3×3 neighbourhood: weaker cells adopt profiles from
+   fitter neighbours.
+4. **Retention** — cells with fitness > threshold reinforce the memory field
+   (weak signal, factor 0.01).
+
+### Controls
+
+- `meta_enabled` (bool): complete on/off switch.
+- `meta_mutation_rate`, `meta_mutation_strength`: control genetic diversity.
+- `meta_selection_rate`: controls selection speed.
+- `meta_retention_threshold`: determines which profiles write to memory.
 
 ---
 
-## Konsequenzen
+## Rejected Alternatives
 
-**Positiv:**
-- Räumlich heterogenes Reaktionsverhalten entsteht von selbst.
-- Genome sind direkt analysierbar (genome_diversity, genome_entropy).
-- `meta_enabled=False` schaltet die Evolution vollständig ab → Rückwärtskompatibilität.
-- Vollständig deterministisch (seed + tick als RNG-Basis).
-
-**Negativ / Risiken:**
-- Selektionsschritt enthält einen Python-Loop über ausgewählte Zellen
-  → Performance-Engpass bei großen Grids. Für v0.5.0 als NumPy-Vektoroperation
-  refaktorieren.
-- Fitness-Proxy ist heuristisch: Kohärenz ≠ biologische Fitness.
+| Alternative | Reason for rejection |
+|-------------|----------------------|
+| Object-oriented rule genome per cell (class) | Python objects in H×W arrays = massive overhead, no vectorisation possible |
+| Fully evolved rule sets (each rule has its own genes) | Too complex for v0.4.0; incremental extension planned |
+| Genetic algorithm with crossover | Spatial locality would be lost; local selection fits the grid architecture better |
+| External fitness function (hand-designed) | Contradicts the emergence principle; internal metrics preferred |
 
 ---
 
-## Wissenschaftliche Vorsicht
+## Consequences
 
-Die Meta-Regel-Evolution ist eine abstrakte Abstraktion, kein Modell realer
-Genetik oder Evolution. Entstehende Muster sind interessante Emergenz-
-Phänomene, keine Belege für biologische oder kognitive Prozesse.
+**Positive:**
+- Spatially heterogeneous reaction behaviour emerges spontaneously.
+- Genomes are directly analysable (`genome_diversity`, `genome_entropy`).
+- `meta_enabled=False` completely disables evolution → backward compatible.
+- Fully deterministic (seed + tick as RNG basis).
+
+**Negative / Risks:**
+- Selection step contains a Python loop over selected cells
+  → performance bottleneck for large grids. To be refactored as a NumPy
+  vector operation in v0.5.0.
+- Fitness proxy is heuristic: coherence ≠ biological fitness.
+
+---
+
+## Scientific Caution
+
+Meta-rule evolution is an abstract model, not a model of real genetics or
+evolution. Emerging patterns are interesting emergent phenomena, not evidence
+of biological or cognitive processes.

@@ -1,27 +1,27 @@
 # Code of Conduct – Emergentes Rauschen
 
-Dieses Projekt folgt dem [Contributor Covenant](https://www.contributor-covenant.org/) v2.1.
+This project follows the [Contributor Covenant](https://www.contributor-covenant.org/) v2.1.
 
-## Unsere Verpflichtung
+## Our Commitment
 
-Wir schaffen eine offene, einladende, respektvolle Umgebung für alle —
-unabhängig von Alter, Herkunft, Erfahrung, Geschlecht, Identität, Nationalität,
-Religion, politischer Überzeugung oder persönlicher Lebensweise.
+We create an open, welcoming and respectful environment for everyone —
+regardless of age, background, experience, gender, identity, nationality,
+religion, political views or personal lifestyle.
 
-## Erwartetes Verhalten
+## Expected Behaviour
 
-- Respektvoller, konstruktiver Umgangston
-- Offenheit für verschiedene Perspektiven (Wissenschaft, Philosophie, Kunst)
-- Feedback auf Ideen und Code, nicht auf Personen
-- Vorsichtige Sprache bei spekulativen wissenschaftlichen Behauptungen
+- Respectful, constructive communication
+- Openness to diverse perspectives (science, philosophy, art)
+- Feedback directed at ideas and code, not at people
+- Careful language when making speculative scientific claims
 
-## Inakzeptables Verhalten
+## Unacceptable Behaviour
 
-- Diskriminierung, Beleidigung, Belästigung jeder Art
-- Unbewiesene Behauptungen als Fakten darstellen
-- Persönliche Angriffe in Diskussionen
+- Discrimination, insults or harassment of any kind
+- Presenting unsubstantiated claims as facts
+- Personal attacks in discussions
 
-## Durchsetzung
+## Enforcement
 
-Verstöße können gemeldet werden an den Projektmaintainer.
-Alle Meldungen werden vertraulich behandelt.
+Violations can be reported to the project maintainer.
+All reports will be handled confidentially.

@@ -1,47 +1,47 @@
-# ADR-0001 – Start mit 2-D-Grid-Modell
+# ADR-0001 – Start with 2D Grid Model
 
-**Datum:** 2026-05-08  
-**Status:** Akzeptiert  
-**Kontext:** Phase 1 des Projekts „Emergentes Rauschen"
+**Date:** 2026-05-08  
+**Status:** Accepted  
+**Context:** Phase 1 of the Emergentes Rauschen project
 
-## Kontext
+## Context
 
-Das Projekt benötigt eine simulierbare, visualisierbare Grundstruktur. Es wurden
-drei Alternativen erwogen: 2-D-Grid, Partikel-System und Graph/Hypergraph.
+The project requires a simulatable, visualisable base structure. Three alternatives
+were considered: 2D grid, particle system and graph/hypergraph.
 
-## Entscheidung
+## Decision
 
-Wir starten mit einem **2-D-Grid** (periodische Randbedingungen, toroidale Topologie).
+We start with a **2D grid** (periodic boundary conditions, toroidal topology).
 
-## Begründung
+## Rationale
 
-- Einfach visualisierbar (Heatmap reicht aus).
-- Gut bekannt aus Zellulären Automaten, Reaktions-Diffusions-Systemen und Lenia.
-- NumPy-Operationen auf 2-D-Arrays sind schnell und gut lesbar.
-- Periodische Randbedingungen vermeiden Randeffekte ohne komplexe Logik.
-- Einfacher Einstieg für junior-freundliche Entwicklung.
+- Easy to visualise (a heatmap suffices).
+- Well known from cellular automata, reaction-diffusion systems and Lenia.
+- NumPy operations on 2D arrays are fast and readable.
+- Periodic boundary conditions avoid edge effects without complex logic.
+- Low barrier to entry for junior-friendly development.
 
-## Alternativen
+## Alternatives
 
-- **Partikel-System:** Realistischer für Bewegung, aber Kollisionserkennung und
-  Rasterung sind komplex. Für Phase 3 geplant.
-- **Graph/Hypergraph:** Näher an Wolfram-Modellen und CDT, aber schwerer zu
-  visualisieren und initial zu implementieren. Für Phase 4 geplant.
+- **Particle system:** More realistic for motion, but collision detection and
+  rasterisation are complex. Planned for Phase 3.
+- **Graph/Hypergraph:** Closer to Wolfram models and CDT, but harder to visualise
+  and initially implement. Planned for Phase 4.
 
-## Konsequenzen
+## Consequences
 
-- Raum ist vorgegeben, nicht emergent (wird in Phase 4 geändert).
-- Zelluläre Automaten-artige Regeln passen gut.
-- Räumliche Auflösung ist fix; für multi-scale-Modelle muss Architektur erweitert werden.
+- Space is predefined, not emergent (changed in Phase 4).
+- Cellular-automaton-style rules fit well.
+- Spatial resolution is fixed; architecture must be extended for multi-scale models.
 
-## Änderungsnotiz
+## Change Note
 
-Erste Implementierung (v0.1.0):
-- `core/state.py`: `GridState` mit 9 Feldern (8 Parameter + flow als flow_x/flow_y).
-- `core/tick.py`: deterministischer Tick-Loop mit dokumentierter Regelreihenfolge.
+First implementation (v0.1.0):
+- `core/state.py`: `GridState` with 9 fields (8 parameters + flow as flow_x/flow_y).
+- `core/tick.py`: deterministic tick loop with documented rule order.
 - `rules/diffusion.py`, `rules/reaction.py`, `rules/memory.py`.
-- `noise/structured_noise.py`: Sinus-Superposition als strukturiertes Rauschen.
-- `analysis/entropy.py`: normalisierte Shannon-Entropie.
-- `visualization/render.py`: Panel-PNG und RGB-Composite.
-- `examples/run_500.py`: 500-Tick-Beispiellauf.
-- `tests/`: pytest-Suite für Init, Deterministik, Wertebereiche, Regeln.
+- `noise/structured_noise.py`: sinusoidal superposition as structured noise.
+- `analysis/entropy.py`: normalised Shannon entropy.
+- `visualization/render.py`: panel PNG and RGB-composite.
+- `examples/run_500.py`: 500-tick example run.
+- `tests/`: pytest suite for init, determinism, value ranges, rules.

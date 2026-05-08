@@ -1,189 +1,189 @@
 # Roadmap – Emergentes Rauschen
 
-> Basiert auf der [Professionellen Arbeitsmappe](emergentes-rauschen-professionelle-arbeitsmappe.md) (v2.0).  
-> Jedes Epic entspricht einer Phase der Simulationsarchitektur (Abschnitte 10–16 der Arbeitsmappe).  
+> Based on the [Professional Workbook](emergentes-rauschen-professionelle-arbeitsmappe.md) (v2.0).  
+> Each epic corresponds to a phase of the simulation architecture (workbook sections 10–16).  
 > Status: ✅ Done · 🔄 In Progress · 📋 Planned · 💡 Research
 >
-> **Aktuell: v2.0.0 — alle 8 Epics abgeschlossen — 172 Tests, alle grün.**
+> **Current: v2.0.0 — all 8 epics complete — 172 tests, all passing.**
 
 ---
 
-## Epic 0 – Fundament (Phase 1: 2-D-Grid) ✅
+## Epic 0 – Foundation (Phase 1: 2D Grid) ✅
 
-**Ziel:** Minimaler, deterministischer, testgetriebener Prototyp.
+**Goal:** Minimal, deterministic, test-driven prototype.
 
-| # | Aufgabe | Status |
-|---|---------|--------|
-| 0.1 | Projektstruktur, `pyproject.toml`, Module-Gerüst | ✅ |
+| # | Task | Status |
+|---|------|--------|
+| 0.1 | Project structure, `pyproject.toml`, module scaffold | ✅ |
 | 0.2 | `core/state.py` – `GridState` + `SimConfig` | ✅ |
-| 0.3 | `core/tick.py` – deterministischer Tick-Loop | ✅ |
-| 0.4 | `rules/diffusion.py` – 5-Punkt-Laplace (energy, information) | ✅ |
-| 0.5 | `rules/reaction.py` – Aktivierungs- + Zerfallsregel | ✅ |
-| 0.6 | `rules/memory.py` – EMA-Gedächtnis (Zerfall + Imprint) | ✅ |
-| 0.7 | `noise/structured_noise.py` – Sinus-Superposition, Seed+Tick | ✅ |
-| 0.8 | `analysis/entropy.py` – normalisierte Shannon-Entropie | ✅ |
-| 0.9 | `visualization/render.py` – Panel-PNG + RGB-Composite | ✅ |
-| 0.10 | 33 pytest-Tests (Init, Deterministik, Wertebereiche) | ✅ |
-| 0.11 | `examples/run_500.py` + Entropie-CSV | ✅ |
+| 0.3 | `core/tick.py` – deterministic tick loop | ✅ |
+| 0.4 | `rules/diffusion.py` – 5-point Laplace (energy, information) | ✅ |
+| 0.5 | `rules/reaction.py` – activation + decay rule | ✅ |
+| 0.6 | `rules/memory.py` – EMA memory (decay + imprint) | ✅ |
+| 0.7 | `noise/structured_noise.py` – sinusoidal superposition, seed+tick | ✅ |
+| 0.8 | `analysis/entropy.py` – normalised Shannon entropy | ✅ |
+| 0.9 | `visualization/render.py` – panel PNG + RGB-composite | ✅ |
+| 0.10 | 33 pytest tests (init, determinism, value ranges) | ✅ |
+| 0.11 | `examples/run_500.py` + entropy CSV | ✅ |
 
 ---
 
-## Epic 1 – Relationsfelder + Vektordynamik 🔄
+## Epic 1 – Relation Fields + Vector Dynamics ✅
 
-**Ziel:** Alle 8 Grundparameter aktiv; Kopplung erzeugt Netzwerke; Fluss erzeugt Wirbel.
+**Goal:** All 8 core parameters active; coupling creates networks; flow creates vortices.
 
-| # | Aufgabe | Status |
-|---|---------|--------|
-| 1.1 | `rules/coupling.py` – Bindung, Zerfall, Kohärenz-Synchronisation | ✅ |
-| 1.2 | `rules/flow.py` – Gradienten-Fluss, Dämpfung, Advektions-Transport, Curl | ✅ |
-| 1.3 | `analysis/attractors.py` – Persistenz, Cluster, Phasenübergangs-Indikator | ✅ |
-| 1.4 | Numba-JIT für Laplace-Kern (optional, transparenter Fallback) | ✅ |
-| 1.5 | Streamlit Live-Dashboard (`visualization/dashboard.py`) | ✅ |
-| 1.6 | Tests für Kopplung, Fluss, Attraktoren (15+ neue Tests) | ✅ |
-| 1.7 | GitHub-Setup, vollständige Dokumentation, Roadmap | 🔄 |
-| 1.8 | ADR-0002: Kopplung + Fluss Architekturentscheidung | 📋 |
-| 1.9 | `examples/run_analysis.py` – Attraktoren + Cluster-Analyse nach Lauf | 📋 |
-
----
-
-## Epic 2 – Spurenlese-Engine (Analyse-Layer)
-
-**Ziel:** Das System kann Muster lesen, Vergangenheit rekonstruieren, Zukunft hypothetisieren.  
-*(Arbeitsmappe Kap. 11–12)*
-
-| # | Aufgabe | Status |
-|---|---------|--------|
-| 2.1 | `analysis/morphology.py` – Randkomplexität, Lochigkeit, Filamente | ✅ |
-| 2.2 | `analysis/mutual_information.py` – MI zwischen Feldern und Regionen | ✅ |
-| 2.3 | `analysis/trace_reading.py` – Spurenlese-Engine (JSON-Output) | ✅ |
-| 2.4 | `interpretation/regime_classifier.py` – 8 Regime-Typen, Konfidenz | ✅ |
-| 2.5 | `interpretation/narratives.py` – Sprachliche Interpretation, Vergangenheit/Zukunft | ✅ |
-| 2.6 | Dashboard-Erweiterung: Spurenlesen, Regime-Labels, Konfidenz | ✅ |
-| 2.7 | Tests für alle Analyse-Module (26 neue Tests) | ✅ |
-| 2.8 | Connected-Component-Tracking über Zeit | 📋 |
+| # | Task | Status |
+|---|------|--------|
+| 1.1 | `rules/coupling.py` – binding, decay, coherence synchronisation | ✅ |
+| 1.2 | `rules/flow.py` – gradient flow, damping, advective transport, curl | ✅ |
+| 1.3 | `analysis/attractors.py` – persistence, clusters, phase-transition indicator | ✅ |
+| 1.4 | Numba-JIT for Laplace kernel (optional, transparent fallback) | ✅ |
+| 1.5 | Streamlit live dashboard (`visualization/dashboard.py`) | ✅ |
+| 1.6 | Tests for coupling, flow, attractors (15+ new tests) | ✅ |
+| 1.7 | GitHub setup, full documentation, roadmap | ✅ |
+| 1.8 | ADR-0002: coupling + flow architecture decision | ✅ |
+| 1.9 | `examples/run_analysis.py` – attractors + cluster analysis | ✅ |
 
 ---
 
-## Epic 3 – Meta-Regeln + Regel-Evolution
+## Epic 2 – Trace Reading Engine (Analysis Layer) ✅
 
-**Ziel:** Lokale Regelprofile entstehen, variieren und selektieren sich.  
-*(Arbeitsmappe Kap. 9)*
+**Goal:** The system can read patterns, reconstruct the past, hypothesise the future.  
+*(Workbook ch. 11–12)*
 
-| # | Aufgabe | Status |
-|---|---------|--------|
-| 3.1 | `rules/meta_rules.py` – lokales Regelprofil pro Zelle (Rule-Genome) | ✅ |
-| 3.2 | Mutation: Regelparameter-Variation mit konfigurierbarer Rate | ✅ |
-| 3.3 | Selektion: Kohärenz × (1 - lokale Energievarianz) als Fitness-Proxy | ✅ |
-| 3.4 | Retention: erfolgreiche Regelprofile im Gedächtnisfeld sichern | ✅ |
-| 3.5 | Parameter-Kandidaten-Tracking via `analysis/novelty.py` | ✅ |
+| # | Task | Status |
+|---|------|--------|
+| 2.1 | `analysis/morphology.py` – boundary complexity, holes, filaments | ✅ |
+| 2.2 | `analysis/mutual_information.py` – MI between fields and regions | ✅ |
+| 2.3 | `analysis/trace_reading.py` – trace reading engine (JSON output) | ✅ |
+| 2.4 | `interpretation/regime_classifier.py` – 8 regime types, confidence | ✅ |
+| 2.5 | `interpretation/narratives.py` – language interpretation, past/future | ✅ |
+| 2.6 | Dashboard extension: trace reading, regime labels, confidence | ✅ |
+| 2.7 | Tests for all analysis modules (26 new tests) | ✅ |
+| 2.8 | Connected-component tracking over time | 📋 |
+
+---
+
+## Epic 3 – Meta-Rules + Rule Evolution ✅
+
+**Goal:** Local rule profiles emerge, vary and self-select.  
+*(Workbook ch. 9)*
+
+| # | Task | Status |
+|---|------|--------|
+| 3.1 | `rules/meta_rules.py` – local rule profile per cell (rule genome) | ✅ |
+| 3.2 | Mutation: rule parameter variation with configurable rate | ✅ |
+| 3.3 | Selection: coherence × (1 − local energy variance) as fitness proxy | ✅ |
+| 3.4 | Retention: successful rule profiles backed up in the memory field | ✅ |
+| 3.5 | Parameter candidate tracking via `analysis/novelty.py` | ✅ |
 | 3.6 | `analysis/novelty.py` – BehaviorVector, NoveltyTracker, genome_diversity | ✅ |
-| 3.7 | Tests für alle Epic-3-Module (32 Tests, 110 gesamt) | ✅ |
-| 3.8 | ADR-0003: Meta-Regel-Evolution Design | ✅ |
+| 3.7 | Tests for all Epic 3 modules (32 tests, 110 total) | ✅ |
+| 3.8 | ADR-0003: meta-rule evolution design | ✅ |
 
 ---
 
-## Epic 4 – Partikel-Feld-Hybrid (Phase 3)
+## Epic 4 – Particle-Field Hybrid (Phase 3) ✅
 
-**Ziel:** Partikel bewegen sich durch Felder; aktive Materie, Schwärme, proto-zelluläre Dynamik.  
-*(Arbeitsmappe Kap. 10.3, 13.1)*
+**Goal:** Particles move through fields; active matter, swarms, proto-cellular dynamics.  
+*(Workbook ch. 10.3, 13.1)*
 
-| # | Aufgabe | Status |
-|---|---------|--------|
-| 4.1 | `core/particles.py` – ParticleSystem (vektorisiert, NumPy-Arrays) | ✅ |
-| 4.2 | Feld-zu-Partikel-Kopplung: Gradient, Fluss-Drag, Reaktivitäts-Boost | ✅ |
-| 4.3 | Partikel-zu-Feld-Kopplung: Energie, Materie, Kopplung, Information | ✅ |
-| 4.4 | Kollision + Aggregation (O(N²), Masse-gewichtet) | ✅ |
-| 4.5 | `analysis/compartments.py` – Feld- + Partikel-Kompartimente, Proto-Leben-Score | ✅ |
-| 4.6 | Dashboard Tab 3: Partikel-Heatmap, Dichtekarte, Kompartiment-Tabelle, Genome | ✅ |
-
----
-
-## Epic 5 – Graph-/Hypergraph-Modus (Phase 4)
-
-**Ziel:** Raum entsteht aus Relationen; Wolfram-artige Rewriting-Experimente; emergente Geometrie.  
-*(Arbeitsmappe Kap. 10.4, 14)*
-
-| # | Aufgabe | Status |
-|---|---------|--------|
-| 5.1 | `core/graph_state.py` – GraphState mit NetworkX (small_world/scale_free/random/grid) | ✅ |
-| 5.2 | Hypergraph-Rewriting-Engine (aktive Knoten knüpfen neue Kanten) | ✅ |
-| 5.3 | Emergente Distanz-Metrik (gewichtete Pfadlänge, Dijkstra) | ✅ |
-| 5.4 | Dashboard Tab 5: Graph-Visualisierung + Distanzmatrix + Topologie-Vergleich | ✅ |
-| 5.5 | ADR-0005: Relationale Geometrie | ✅ |
+| # | Task | Status |
+|---|------|--------|
+| 4.1 | `core/particles.py` – ParticleSystem (vectorised, NumPy arrays) | ✅ |
+| 4.2 | Field-to-particle coupling: gradient, flow drag, reactivity boost | ✅ |
+| 4.3 | Particle-to-field coupling: energy, matter, coupling, information | ✅ |
+| 4.4 | Collision + aggregation (O(N²), mass-weighted) | ✅ |
+| 4.5 | `analysis/compartments.py` – field + particle compartments, proto-life score | ✅ |
+| 4.6 | Dashboard Tab 3: particle heatmap, density map, compartment table, genome | ✅ |
 
 ---
 
-## Epic 6 – Mehrskalenmodell + Performance (Phase 5)
+## Epic 5 – Graph / Hypergraph Mode (Phase 4) ✅
 
-**Ziel:** Mikro-Meso-Makro-Kopplung; GPU-Beschleunigung für große Grids.  
-*(Arbeitsmappe Kap. 10.5, 16.2)*
+**Goal:** Space emerges from relations; Wolfram-style rewriting experiments; emergent geometry.  
+*(Workbook ch. 10.4, 14)*
 
-| # | Aufgabe | Status |
-|---|---------|--------|
-| 6.1 | Taichi/JAX-Backend | 📋 (zurückgestellt – Fokus auf Funktionalität) |
-| 6.2 | `core/multiscale.py` – MesoLayer (Cluster-Entitäten + Tracker) | ✅ |
-| 6.3 | `core/multiscale.py` – MacroLayer (Attraktor-Trajektorie, Übergänge) | ✅ |
-| 6.4 | MultiscaleController + Dashboard-Integration (Tab 4) | ✅ |
-| 6.5 | Benchmark-Suite | 📋 |
-
----
-
-## Epic 7 – Experiment-Framework + Wissenschaftliche Infrastruktur
-
-**Ziel:** Reproduzierbare Experimente, Tracking, Versionierung, Publikationsvorbereitung.  
-*(Arbeitsmappe Kap. 17–18)*
-
-| # | Aufgabe | Status |
-|---|---------|--------|
-| 7.1 | `experiments/runner.py` – Experiment-Runner (Config-Sweep, CSV-Output) | ✅ |
-| 7.2 | `experiments/configs.py` – 7 vordefinierte Experiment-Configs | ✅ |
-| 7.3 | Git-Commit-Hash in Experiment-Output | ✅ |
-| 7.4 | MLflow/W&B-Integration | 📋 |
-| 7.5 | DVC für Datenversionierung | 📋 |
-| 7.6 | FastAPI-Endpunkte | 📋 |
-| 7.7 | Notebook-Templates | 📋 |
+| # | Task | Status |
+|---|------|--------|
+| 5.1 | `core/graph_state.py` – GraphState with NetworkX (small_world/scale_free/random/grid) | ✅ |
+| 5.2 | Hypergraph rewriting engine (active nodes form new edges) | ✅ |
+| 5.3 | Emergent distance metric (weighted path length, Dijkstra) | ✅ |
+| 5.4 | Dashboard Tab 5: graph visualisation + distance matrix + topology comparison | ✅ |
+| 5.5 | ADR-0005: relational geometry | ✅ |
 
 ---
 
-## Epic 8 – Interpretations- + Bewusstsein-Forschungsstrang
+## Epic 6 – Multiscale Model + Performance (Phase 5) ✅
 
-**Ziel:** Vorsichtige, messbare Marker für Proto-Leben, Intelligenz, Bewusstsein-Indikatoren.  
-*(Arbeitsmappe Kap. 13)*
+**Goal:** Micro-meso-macro coupling; GPU acceleration for large grids.  
+*(Workbook ch. 10.5, 16.2)*
 
-| # | Aufgabe | Status |
-|---|---------|--------|
-| 8.1 | `interpretation/consciousness.py` – Φ-Proxy (IIT), Active Inference, Proto-Leben (6 Kriterien), Global Workspace | ✅ |
-| 8.2 | `ConsciousnessAnalyzer` – Live-Marker-Berechnung + History | ✅ |
-| 8.3 | Dashboard Tab 4: Live-Marker + 3 Vertiefungsebenen + Glossar | ✅ |
-| 8.4 | 7 Lernquellen (Bücher, Links, Podcasts, Demos) pro Vertiefungsebene | ✅ |
-| 8.5 | Ethik-Vorsicht: Wissenschaftliche Disclaimers in allen Modulen | ✅ |
-
----
-
-## Meilensteine
-
-| Meilenstein | Epics | Ziel |
-|---|---|---|
-| **v0.1.0** | Epic 0 | Erster lauffähiger Prototyp, alle Tests grün |
-| **v0.2.0** | Epic 1 | Alle 8 Parameter aktiv, Dashboard, Attraktoren |
-| **v0.3.0** | Epic 2 | Spurenlese-Engine, Regime-Klassifikation |
-| **v0.4.0** | Epic 3 | Regel-Evolution, Meta-Regeln |
-| **v0.5.0** | Epic 4 | Partikel-Feld-Hybrid |
-| **v1.0.0** | Epic 5–6 | Graph-Modus, Mehrskaligkeit (Meso/Makro) |
-| **v2.0.0** | Epic 7–8 | Experiment-Framework, Bewusstseins-Marker, Lern-Dashboard |
+| # | Task | Status |
+|---|------|--------|
+| 6.1 | Taichi/JAX backend | 📋 (deferred – focus on functionality) |
+| 6.2 | `core/multiscale.py` – MesoLayer (cluster entities + tracker) | ✅ |
+| 6.3 | `core/multiscale.py` – MacroLayer (attractor trajectory, transitions) | ✅ |
+| 6.4 | MultiscaleController + dashboard integration (Tab 4) | ✅ |
+| 6.5 | Benchmark suite (`examples/benchmark_10k.py`) | ✅ |
 
 ---
 
-## Wissenschaftliche Leitfragen (aus Arbeitsmappe Kap. 4)
+## Epic 7 – Experiment Framework + Scientific Infrastructure ✅
 
-Diese Fragen leiten das Experiment-Design in jedem Epic:
+**Goal:** Reproducible experiments, tracking, versioning, publication preparation.  
+*(Workbook ch. 17–18)*
 
-1. Welche minimalen Regeln erzeugen dauerhaft komplexe Muster?
-2. Wann wird Rauschen strukturbildend statt destruktiv?
-3. Wann entstehen Grenzen, Membranen, Innen/Außen?
-4. Wann ist ein Muster selbsterhaltend (proto-lebensähnlich)?
-5. Können geometrieähnliche Räume aus Graphrelationen entstehen?
-6. Welche Marker korrelieren mit Bewusstseins-Theorien (IIT, GWT, Active Inference)?
+| # | Task | Status |
+|---|------|--------|
+| 7.1 | `experiments/runner.py` – experiment runner (config sweep, CSV output) | ✅ |
+| 7.2 | `experiments/configs.py` – 8 predefined experiment configs | ✅ |
+| 7.3 | Git commit hash in experiment output | ✅ |
+| 7.4 | MLflow / W&B integration | 📋 |
+| 7.5 | DVC for data versioning | 📋 |
+| 7.6 | FastAPI endpoints | 📋 |
+| 7.7 | Notebook templates | 📋 |
 
-> **Vorsicht:** Alle Interpretationen sind Hypothesen und Modelle.  
-> Wir beweisen keine Theorie von allem. Wir bauen ein offenes Forschungsinstrument.
+---
+
+## Epic 8 – Interpretation + Consciousness Research ✅
+
+**Goal:** Careful, measurable markers for proto-life, intelligence and consciousness indicators.  
+*(Workbook ch. 13)*
+
+| # | Task | Status |
+|---|------|--------|
+| 8.1 | `interpretation/consciousness.py` – Φ-Proxy (IIT), Active Inference, Proto-Life (6 criteria), Global Workspace | ✅ |
+| 8.2 | `ConsciousnessAnalyzer` – live marker computation + history | ✅ |
+| 8.3 | Dashboard Tab 4: live markers + 3 depth levels + glossary | ✅ |
+| 8.4 | Learning sources (books, links, podcasts, demos) per depth level | ✅ |
+| 8.5 | Scientific disclaimers in all modules (docstrings + dashboard warnings) | ✅ |
+
+---
+
+## Milestones
+
+| Milestone | Epics | Goal |
+|-----------|-------|------|
+| **v0.1.0** | Epic 0 | First working prototype, all tests passing |
+| **v0.2.0** | Epic 1 | All 8 parameters active, dashboard, attractors |
+| **v0.3.0** | Epic 2 | Trace reading engine, regime classification |
+| **v0.4.0** | Epic 3 | Rule evolution, meta-rules |
+| **v0.5.0** | Epic 4 | Particle-field hybrid |
+| **v1.0.0** | Epic 5–6 | Graph mode, multiscale model (meso/macro) |
+| **v2.0.0** | Epic 7–8 | Experiment framework, consciousness markers, learning dashboard |
+
+---
+
+## Scientific Guiding Questions (Workbook ch. 4)
+
+These questions guide the experiment design in each epic:
+
+1. What minimal rules reliably generate complex persistent patterns?
+2. When does noise become structure-forming rather than destructive?
+3. When do boundaries, membranes and inside/outside distinctions emerge?
+4. When is a pattern self-maintaining (proto-life-like)?
+5. Can geometry-like spaces emerge from graph relations?
+6. Which markers correlate with consciousness theories (IIT, GWT, Active Inference)?
+
+> **Caution:** All interpretations are hypotheses and models.  
+> We prove no theory of everything. We build an open research instrument.
