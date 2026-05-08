@@ -56,7 +56,7 @@
 | 2.3 | `analysis/trace_reading.py` – Spurenlese-Engine (JSON-Output) | ✅ |
 | 2.4 | `interpretation/regime_classifier.py` – 8 Regime-Typen, Konfidenz | ✅ |
 | 2.5 | `interpretation/narratives.py` – Sprachliche Interpretation, Vergangenheit/Zukunft | ✅ |
-| 2.6 | Dashboard-Erweiterung: Spurenlesen, Regime-Labels, Konfidenz | 📋 |
+| 2.6 | Dashboard-Erweiterung: Spurenlesen, Regime-Labels, Konfidenz | ✅ |
 | 2.7 | Tests für alle Analyse-Module (26 neue Tests) | ✅ |
 | 2.8 | Connected-Component-Tracking über Zeit | 📋 |
 

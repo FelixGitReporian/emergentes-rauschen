@@ -5,6 +5,35 @@ Format: [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.3.1] – 2026-05-08
+
+### Geändert – Dashboard (Epic 2.6)
+
+- `visualization/dashboard.py` komplett erweitert auf **v0.3.1**:
+  - **Tab 1 🔬 Simulation**: Live-Heatmap (mit mean/std im Titel), RGB-Composite,
+    Entropie-Zeitreihe, Persistenz-Balken, Cluster-Statistiken, Phasenindikator.
+  - **Tab 2 🧭 Spurenlesen**: Vollständige Spurenlese-Integration aus Epic 2:
+    - Regime-Banner (Icon + Name + Konfidenz) dauerhaft über den Tabs sichtbar.
+    - Manueller "Spurenanalyse jetzt ausführen"-Button + automatischer Trigger
+      alle `trace_interval` Ticks.
+    - **Regime-Klassifikation**: Primär/Sekundär/Konfidenz + Beschreibung +
+      aufklappbare Evidence-Werte.
+    - **Narrativ**: Metaphorische Interpretationsfamilien, wahrscheinliche
+      Vergangenheit, mögliche Zukunftspfade, eingebetteter Wissenschafts-
+      vorbehalt (3-spaltig).
+    - **Morphologie**: Komponenten, Löcher, Euler-Zahl, Randkomplexität,
+      Elongation, Compactness + binäres Schwellwert-Bild.
+    - **MI-Matrix-Heatmap**: Normalisierte Mutual Information als Farbraster
+      mit eingetragenen Zahlenwerten.
+    - **Feldstatistik-Tabelle**: mean, std, min, max, aktive Fraktion.
+    - **Phasenübergangs-Indikator**: Suszeptibilität + Energie-Varianz.
+    - **JSON-Export**: Vollständiger TraceReport aufklappbar.
+  - Sidebar: neue Slider für `reactivity_recovery`, `reactivity_rest`,
+    `matter_erosion_rate`, `matter_deposition_rate`, `trace_interval`,
+    `show_mi_heatmap`, `show_morphology`.
+
+---
+
 ## [0.3.0] – 2026-05-08
 
 ### Hinzugefügt (Epic 2 – Spurenlese-Engine)
