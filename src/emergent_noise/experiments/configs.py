@@ -170,6 +170,37 @@ PROTO_LIFE_SEARCH = ExperimentConfig(
     tags=["proto_life", "compartments", "emergence"],
 )
 
+REACTION_DIFFUSION_MEMORY = ExperimentConfig(
+    name="reaction_diffusion_memory",
+    description=(
+        "Reproduzierbares Referenz-Experiment: Reaktion-Diffusion-Kopplung mit "
+        "variierendem Gedächtnis-Zerfall. Dokumentiert Turing-ähnliche Musterbildung "
+        "und deren Abhängigkeit von Hysterese-Stärke."
+    ),
+    scientific_question=(
+        "Wie interagieren Reaktions-Diffusions-Dynamik und Gedächtniszerfall? "
+        "Wann entstehen stabile Turing-Muster vs. oszillierende Strukturen? "
+        "Welche Gedächtnis-Stärke maximiert Proto-Kompartiment-Formation?"
+    ),
+    base_config=SimConfig(
+        height=64, width=64, seed=42,
+        diffusion_energy=0.15,
+        diffusion_information=0.08,
+        reaction_energy_threshold=0.55,
+        reaction_strength=0.12,
+        coupling_gain=0.02,
+        noise_amplitude=0.02,
+        memory_imprint_rate=0.3,
+    ),
+    param_sweeps={
+        "memory_decay":      [0.90, 0.94, 0.97, 0.99],
+        "diffusion_energy":  [0.05, 0.15, 0.25],
+    },
+    n_ticks=500,
+    repeat=3,
+    tags=["reaction_diffusion", "memory", "turing_patterns", "reference_experiment"],
+)
+
 CONSCIOUSNESS_SCAN = ExperimentConfig(
     name="consciousness_marker_scan",
     description=(
@@ -197,6 +228,6 @@ ALL_EXPERIMENTS: Dict[str, ExperimentConfig] = {
     for exp in [
         STABILITY_SWEEP, REACTION_SWEEP, META_EVOLUTION,
         MEMORY_EFFECT, COUPLING_STUDY, PROTO_LIFE_SEARCH,
-        CONSCIOUSNESS_SCAN,
+        REACTION_DIFFUSION_MEMORY, CONSCIOUSNESS_SCAN,
     ]
 }

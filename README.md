@@ -70,7 +70,19 @@ python -m emergent_noise.experiments.runner -e stability_sweep
 
 ## Dashboard
 
-> *Screenshot / GIF folgt — Issue #6*
+<!-- Screenshots erzeugen: python examples/capture_dashboard.py -->
+<!-- Danach werden diese Zeilen automatisch befüllt:            -->
+
+| Simulation | Lernen & Theorie |
+|:---:|:---:|
+| ![simulation](docs/screenshots/dashboard_simulation.png) | ![lernen](docs/screenshots/dashboard_lernen.png) |
+
+| Graph-Modus | Partikel |
+|:---:|:---:|
+| ![graph](docs/screenshots/dashboard_graph.png) | ![partikel](docs/screenshots/dashboard_partikel.png) |
+
+> Screenshots erzeugen: `pip install playwright && playwright install chromium`
+> dann `python examples/capture_dashboard.py`
 
 5 Tabs:
 - **🔬 Simulation** — Live-Heatmap, RGB-Composite, Entropie-Zeitreihe, Regime-Klassifikation
